@@ -1,5 +1,4 @@
 import requests
-import re
 import google.generativeai as genai
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,51 +14,47 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Aapki API Keys
 GEMINI_API_KEY = "AIzaSyCAVgfnnL8Mjl2u1S86bTD8lP1USTNQ18M"
-SCRAPER_API_KEY = "36cdac12eea54b3eb0e4fe3c6d4c609e" # Aapki nayi ScraperAPI Key
+SCRAPER_API_KEY = "36cdac12eea54b3eb0e4fe3c6d4c609e" # Sirf ScraperAPI, Rainforest completely removed
 
 genai.configure(api_key=GEMINI_API_KEY)
 ai_model = genai.GenerativeModel('gemini-2.5-flash')
 
 def get_platform_data(url: str) -> dict:
-    # ScraperAPI ke through request bhejna (Firewall bypass karne ke liye)
+    # ScraperAPI ko call ja rahi hai
     payload = {
         'api_key': SCRAPER_API_KEY,
         'url': url,
-        'country_code': 'in', # Indian proxy use karne ke liye
-        'render': 'true'      # JavaScript load karne ke liye (Flipkart/Amazon ke liye zaroori)
+        'country_code': 'in',
+        'render': 'true'
     }
     
     try:
         response = requests.get('https://api.scraperapi.com/', params=payload)
         
         if response.status_code != 200:
-             return {"error": f"Scraping Failed. Status Code: {response.status_code}"}
+             return {"error": f"ScraperAPI Error. Status Code: {response.status_code}"}
              
         soup = BeautifulSoup(response.content, 'html.parser')
         
-        # Determine Platform
         platform = "Unknown"
         title = "Title not found"
         price_str = "0"
         price = 0.0
 
-        if "amazon.in" in url.lower():
-            platform = "Amazon India"
+        if "amazon" in url.lower():
+            platform = "Amazon"
             title_tag = soup.find(id="productTitle")
             title = title_tag.get_text().strip() if title_tag else "Title not found"
-            
             price_tag = soup.find("span", class_="a-price-whole")
             if price_tag:
                  price_str = price_tag.get_text().replace(',', '').strip()
 
-        elif "flipkart.com" in url.lower():
+        elif "flipkart" in url.lower():
              platform = "Flipkart"
-             # Flipkart title class
              title_tag = soup.find("span", class_="VU-Tz5") 
              title = title_tag.get_text().strip() if title_tag else "Title not found"
-             
-             # Flipkart price class
              price_tag = soup.find("div", class_="Nx9bqj CxhGGd") 
              if price_tag:
                  price_str = price_tag.get_text().replace('₹', '').replace(',', '').strip()
@@ -84,15 +79,13 @@ def calculate_margins(price: float, platform: str) -> dict:
     if price <= 0:
         return {"Selling_Price": "N/A", "Est_Net_Profit": "N/A", "ROI": "N/A"}
         
-    # Standard FBA/Marketplace Fees (Estimate)
     fba_fee = 70
     closing_fee = 20
     
-    # Flipkart's special zero-fee structure for items under ₹1000
     if platform == "Flipkart" and price <= 1000:
          referral_fee = 0 
     else:
-         referral_fee = price * 0.10 # Standard 10% assumption for Amazon/Flipkart >1000
+         referral_fee = price * 0.10 
          
     net_profit = price - (referral_fee + fba_fee + closing_fee)
     
