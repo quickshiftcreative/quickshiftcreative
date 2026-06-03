@@ -8,6 +8,7 @@ import uvicorn
 
 app = FastAPI(title="ProSight AI Engine")
 
+# CORS Settings taaki frontend bina kisi error ke connect ho sake
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], 
@@ -15,21 +16,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# API Keys Configuration
 GEMINI_API_KEY = "AIzaSyCAVgfnnL8Mjl2u1S86bTD8lP1USTNQ18M"
 RAINFOREST_API_KEY = "08E7B1F6E90940CE86724596428378F4"
 
+# Gemini AI Setup
 genai.configure(api_key=GEMINI_API_KEY)
 ai_model = genai.GenerativeModel('gemini-2.5-flash')
 
 def extract_asin(url: str):
     """Automatically extracts ASIN from any Amazon link (Short or Full)"""
     try:
-        # Chhote mobile links ko expand karega
+        # Agar amzn.in ya amzn.to wala short link hai toh use expand karega
         if "amzn.in" in url or "amzn.to" in url:
             r = requests.head(url, allow_redirects=True, timeout=5)
             url = r.url
         
-        # ASIN pakadne ke alag-alag patterns
+        # URL se 10 digit ka ASIN code nikalne ke alag-alag tarike
         match = re.search(r'/[dg]p/([A-Z0-9]{10})', url)
         if match: return match.group(1)
         match = re.search(r'/product/([A-Z0-9]{10})', url)
@@ -45,7 +48,7 @@ def get_marketplace_data(url: str) -> dict:
     if not asin:
         return {"error": "Link invalid hai ya ASIN nahi mila. Kripya sahi link daalein."}
 
-    # Ab hum API ko URL nahi, seedha ASIN aur domain bhej rahe hain
+    # API ko direct ASIN aur domain bhej rahe hain taaki error na aaye
     params = {
         "api_key": RAINFOREST_API_KEY,
         "type": "product",
@@ -58,7 +61,6 @@ def get_marketplace_data(url: str) -> dict:
         data = response.json()
         
         if "product" not in data:
-            # Agar API key limit cross hui ya aur koi error aaya toh exact reason batayega
             msg = data.get("request_info", {}).get("message", "API blocked the request")
             return {"error": f"API Error: {msg}"}
             
@@ -76,8 +78,9 @@ def get_marketplace_data(url: str) -> dict:
 
 def calculate_margins(price: float) -> dict:
     if price == 0:
-        return {"Error": "Price data missing"}
+        return {"Selling_Price": "N/A", "Est_Net_Profit": "N/A", "ROI": "N/A"}
         
+    # Standard B2B/FBA Margins Calc
     referral_fee = price * 0.10
     fba_fee = 70
     closing_fee = 20
@@ -90,8 +93,11 @@ def calculate_margins(price: float) -> dict:
     }
 
 def fix_title_with_ai(title: str) -> str:
+    if not title:
+        return "No title found to optimize."
     if len(title) > 150:
-        return "Your title length is well optimized."
+        return "Your title length is already well optimized."
+    
     prompt = f"Act as an Expert Amazon SEO Copywriter. Rewrite this title to be highly converting, SEO friendly, and under 200 characters: {title}"
     response = ai_model.generate_content(prompt)
     return response.text.strip()
