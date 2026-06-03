@@ -1,14 +1,13 @@
 import requests
-import json
 import re
 import google.generativeai as genai
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
+from bs4 import BeautifulSoup
 
-app = FastAPI(title="ProSight AI Engine")
+app = FastAPI(title="ProSight Universal Scraper")
 
-# CORS Settings taaki frontend bina kisi error ke connect ho sake
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], 
@@ -16,74 +15,85 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# API Keys Configuration
 GEMINI_API_KEY = "AIzaSyCAVgfnnL8Mjl2u1S86bTD8lP1USTNQ18M"
-RAINFOREST_API_KEY = "08E7B1F6E90940CE86724596428378F4"
+SCRAPER_API_KEY = "36cdac12eea54b3eb0e4fe3c6d4c609e" # Aapki nayi ScraperAPI Key
 
-# Gemini AI Setup
 genai.configure(api_key=GEMINI_API_KEY)
 ai_model = genai.GenerativeModel('gemini-2.5-flash')
 
-def extract_asin(url: str):
-    """Automatically extracts ASIN from any Amazon link (Short or Full)"""
-    try:
-        # Agar amzn.in ya amzn.to wala short link hai toh use expand karega
-        if "amzn.in" in url or "amzn.to" in url:
-            r = requests.head(url, allow_redirects=True, timeout=5)
-            url = r.url
-        
-        # URL se 10 digit ka ASIN code nikalne ke alag-alag tarike
-        match = re.search(r'/[dg]p/([A-Z0-9]{10})', url)
-        if match: return match.group(1)
-        match = re.search(r'/product/([A-Z0-9]{10})', url)
-        if match: return match.group(1)
-        match = re.search(r'([A-Z0-9]{10})', url)
-        if match: return match.group(1)
-    except Exception:
-        pass
-    return None
-
-def get_marketplace_data(url: str) -> dict:
-    asin = extract_asin(url)
-    if not asin:
-        return {"error": "Link invalid hai ya ASIN nahi mila. Kripya sahi link daalein."}
-
-    # API ko direct ASIN aur domain bhej rahe hain taaki error na aaye
-    params = {
-        "api_key": RAINFOREST_API_KEY,
-        "type": "product",
-        "amazon_domain": "amazon.in",
-        "asin": asin
+def get_platform_data(url: str) -> dict:
+    # ScraperAPI ke through request bhejna (Firewall bypass karne ke liye)
+    payload = {
+        'api_key': SCRAPER_API_KEY,
+        'url': url,
+        'country_code': 'in', # Indian proxy use karne ke liye
+        'render': 'true'      # JavaScript load karne ke liye (Flipkart/Amazon ke liye zaroori)
     }
     
     try:
-        response = requests.get('https://api.rainforestapi.com/request', params=params)
-        data = response.json()
+        response = requests.get('https://api.scraperapi.com/', params=payload)
         
-        if "product" not in data:
-            msg = data.get("request_info", {}).get("message", "API blocked the request")
-            return {"error": f"API Error: {msg}"}
+        if response.status_code != 200:
+             return {"error": f"Scraping Failed. Status Code: {response.status_code}"}
+             
+        soup = BeautifulSoup(response.content, 'html.parser')
+        
+        # Determine Platform
+        platform = "Unknown"
+        title = "Title not found"
+        price_str = "0"
+        price = 0.0
+
+        if "amazon.in" in url.lower():
+            platform = "Amazon India"
+            title_tag = soup.find(id="productTitle")
+            title = title_tag.get_text().strip() if title_tag else "Title not found"
             
-        product = data["product"]
-        price = product.get("buybox_winner", {}).get("price", {}).get("value", 0)
-        
+            price_tag = soup.find("span", class_="a-price-whole")
+            if price_tag:
+                 price_str = price_tag.get_text().replace(',', '').strip()
+
+        elif "flipkart.com" in url.lower():
+             platform = "Flipkart"
+             # Flipkart title class
+             title_tag = soup.find("span", class_="VU-Tz5") 
+             title = title_tag.get_text().strip() if title_tag else "Title not found"
+             
+             # Flipkart price class
+             price_tag = soup.find("div", class_="Nx9bqj CxhGGd") 
+             if price_tag:
+                 price_str = price_tag.get_text().replace('₹', '').replace(',', '').strip()
+
+        try:
+             price = float(price_str)
+        except ValueError:
+             price = 0.0
+
         return {
-            "Title": product.get("title", ""),
+            "Platform": platform,
+            "Title": title,
             "Price": price,
-            "Brand": product.get("brand", "Unknown"),
-            "BuyBox_Owner": product.get("buybox_winner", {}).get("merchant_info", {}).get("name", "Amazon")
+            "Brand": "Extracted via ScraperAPI",
+            "BuyBox_Owner": "N/A"
         }
+        
     except Exception as e:
         return {"error": str(e)}
 
-def calculate_margins(price: float) -> dict:
-    if price == 0:
+def calculate_margins(price: float, platform: str) -> dict:
+    if price <= 0:
         return {"Selling_Price": "N/A", "Est_Net_Profit": "N/A", "ROI": "N/A"}
         
-    # Standard B2B/FBA Margins Calc
-    referral_fee = price * 0.10
+    # Standard FBA/Marketplace Fees (Estimate)
     fba_fee = 70
     closing_fee = 20
+    
+    # Flipkart's special zero-fee structure for items under ₹1000
+    if platform == "Flipkart" and price <= 1000:
+         referral_fee = 0 
+    else:
+         referral_fee = price * 0.10 # Standard 10% assumption for Amazon/Flipkart >1000
+         
     net_profit = price - (referral_fee + fba_fee + closing_fee)
     
     return {
@@ -93,22 +103,22 @@ def calculate_margins(price: float) -> dict:
     }
 
 def fix_title_with_ai(title: str) -> str:
-    if not title:
-        return "No title found to optimize."
+    if not title or title == "Title not found":
+        return "No title extracted to optimize."
     if len(title) > 150:
         return "Your title length is already well optimized."
     
-    prompt = f"Act as an Expert Amazon SEO Copywriter. Rewrite this title to be highly converting, SEO friendly, and under 200 characters: {title}"
+    prompt = f"Act as an Expert SEO Copywriter. Rewrite this e-commerce title to be highly converting and under 200 characters: {title}"
     response = ai_model.generate_content(prompt)
     return response.text.strip()
 
 @app.get("/analyze")
 def analyze_listing(url: str):
-    data = get_marketplace_data(url)
+    data = get_platform_data(url)
     if "error" in data:
         return {"Status": "Failed", "Message": data["error"]}
 
-    financials = calculate_margins(data["Price"])
+    financials = calculate_margins(data["Price"], data["Platform"])
     ai_title = fix_title_with_ai(data["Title"])
     
     return {
