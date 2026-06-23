@@ -1,1307 +1,1327 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JK-MGMT QUOTATION BUILDER PRO</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cinzel:wght@500;700&family=Dancing+Script:wght@500;700&family=Inter:wght@300;400;500;600;700&family=Parisienne&family=Great+Vibes&family=Sacramento&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/easyqrcodejs@4.4.1/dist/easy.qrcode.min.js"></script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>JK-MGMT Quotation Builder Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Allura&family=Parisienne&family=Dancing+Script:wght@400;700&family=Sacramento&family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root {
+  --bg: #0B0B0B;
+  --gold: #D4AF37;
+  --gold2: #C9A227;
+  --white: #FFFFFF;
+  --muted: #B8B8B8;
+  --card: #141414;
+  --border: #2a2a2a;
+  --gold-border: rgba(212,175,55,0.3);
+  --input-bg: #1a1a1a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;min-height:100vh;}
 
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .font-cinzel { font-family: 'Cinzel', serif; }
-        .glass-panel { background: rgba(28, 28, 28, 0.65); backdrop-filter: blur(12px); border: 1px solid rgba(212, 175, 55, 0.15); }
-        
-        /* A4 Perfect Dimension Canvas Rules */
-        #renderTargetQuotation {
-            width: 794px;
-            min-width: 794px;
-            max-width: 794px;
-            background-color: #0B0B0B;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8);
-            box-sizing: border-box;
-        }
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:#111;}
+::-webkit-scrollbar-thumb{background:var(--gold);border-radius:3px;}
 
-        .theme-jk-gold { --primary: #D4AF37; --secondary: #C9A227; --bg: #0B0B0B; }
-        .theme-royal-blue { --primary: #3B82F6; --secondary: #1D4ED8; --bg: #0F172A; }
-        .theme-emerald { --primary: #10B981; --secondary: #047857; --bg: #064E3B; }
-        .theme-platinum { --primary: #E2E8F0; --secondary: #94A3B8; --bg: #1E293B; }
+/* TOPBAR */
+.topbar{background:#0d0d0d;border-bottom:1px solid var(--gold-border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar-logo{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold);font-weight:700;letter-spacing:2px;}
+.topbar-logo span{color:var(--white);font-size:11px;display:block;letter-spacing:3px;font-family:'Inter',sans-serif;font-weight:300;}
+.topbar-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.btn{padding:7px 14px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .2s;letter-spacing:.5px;text-transform:uppercase;}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;}
+.btn-gold:hover{opacity:.85;}
+.btn-outline{background:transparent;border:1px solid var(--gold-border);color:var(--gold);font-size:11px;}
+.btn-outline:hover{background:rgba(212,175,55,.1);}
+.btn-danger{background:rgba(220,53,69,.15);border:1px solid rgba(220,53,69,.3);color:#ff6b6b;}
+.btn-danger:hover{background:rgba(220,53,69,.25);}
+.btn-sm{padding:5px 10px;font-size:10px;}
+.status-badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:1px;}
+.status-draft{background:rgba(212,175,55,.15);color:var(--gold);border:1px solid var(--gold-border);}
+.status-sent{background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.3);}
+.status-accepted{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.3);}
+.status-rejected{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);}
+.status-paid{background:rgba(16,185,129,.3);color:#6ee7b7;border:1px solid rgba(16,185,129,.5);}
 
-        .premium-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 8px; border: 1px solid rgba(255,255,255,0.08); }
-        .premium-table th { background-color: #111111; color: var(--primary, #D4AF37); text-transform: uppercase; font-size: 9px; letter-spacing: 0.12em; font-weight: 700; padding: 10px 14px; text-align: left; border-bottom: 2px solid rgba(255,255,255,0.08); }
-        .premium-table td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; color: #ffffff; line-height: 1.5; }
-        .premium-table tbody tr:nth-child(even) { background-color: rgba(255,255,255,0.02); }
+/* LAYOUT */
+.main-layout{display:grid;grid-template-columns:42% 58%;height:calc(100vh - 57px);overflow:hidden;}
+@media(max-width:900px){.main-layout{grid-template-columns:1fr;height:auto;overflow:visible;}}
 
-        .pdf-page-container { page-break-inside: avoid !important; break-inside: avoid !important; box-sizing: border-box; min-h-[1040px]; }
-        #signatureCanvas { cursor: crosshair; background-color: #ffffff !important; touch-action: none; }
-        
-        /* Draggable Resizable Stamp Component Styles */
-        .movable-stamp-wrapper { position: absolute; cursor: move; user-select: none; z-index: 50; top: 750px; left: 450px; }
-        .stamp-rotate-handle { position: absolute; top: -12px; right: -12px; cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="gold" d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6c0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6c0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4l-4-4v3z"/></svg>'), auto; width: 18px; height: 18px; background: #000; border: 1px solid #D4AF37; border-radius: 50%; }
-        .stamp-resize-handle { position: absolute; bottom: -6px; right: -6px; cursor: se-resize; width: 12px; height: 12px; background: #D4AF37; border-radius: 2px; }
-    </style>
+/* LEFT PANEL */
+.left-panel{overflow-y:auto;border-right:1px solid var(--gold-border);padding:16px;}
+.right-panel{overflow-y:auto;background:#111;padding:20px;display:flex;flex-direction:column;align-items:center;}
+
+@media(max-width:900px){
+  .left-panel{height:auto;border-right:none;border-bottom:1px solid var(--gold-border);}
+  .right-panel{display:none;padding:16px;}
+  .right-panel.show{display:flex;}
+}
+
+/* TABS */
+.tab-bar{display:flex;gap:2px;margin-bottom:16px;background:#111;padding:4px;border-radius:6px;flex-wrap:wrap;}
+.tab{padding:6px 12px;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;transition:all .2s;border:none;background:transparent;}
+.tab.active{background:var(--gold);color:#000;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px;}
+.card-gold{border-color:var(--gold-border);}
+.card-title{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.card-title::after{content:'';flex:1;height:1px;background:var(--gold-border);}
+
+/* INPUTS */
+.form-group{margin-bottom:10px;}
+.form-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;display:block;}
+.form-input{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:4px;padding:8px 10px;color:var(--white);font-size:13px;font-family:'Inter',sans-serif;transition:border-color .2s;}
+.form-input:focus{outline:none;border-color:var(--gold);}
+.form-input::placeholder{color:#444;}
+.form-select{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:4px;padding:8px 10px;color:var(--white);font-size:13px;cursor:pointer;}
+.form-select:focus{outline:none;border-color:var(--gold);}
+textarea.form-input{resize:vertical;min-height:70px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+
+/* SECTION BUILDER */
+.section-block{background:#111;border:1px solid var(--border);border-radius:6px;margin-bottom:12px;overflow:hidden;}
+.section-header{background:#1a1a1a;padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);}
+.section-num{background:var(--gold);color:#000;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.section-title-input{flex:1;background:transparent;border:none;color:var(--white);font-size:13px;font-weight:600;}
+.section-title-input:focus{outline:none;}
+.section-body{padding:10px;}
+.service-row{background:#0d0d0d;border:1px solid var(--border);border-radius:4px;padding:10px;margin-bottom:8px;position:relative;}
+.service-row-grid{display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1fr 1fr auto;gap:6px;align-items:center;}
+@media(max-width:600px){.service-row-grid{grid-template-columns:1fr 1fr;}}
+.col-label{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
+.row-input{background:var(--input-bg);border:1px solid var(--border);border-radius:3px;padding:5px 7px;color:var(--white);font-size:12px;width:100%;}
+.row-input:focus{outline:none;border-color:var(--gold);}
+
+/* TEMPLATES */
+.template-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;}
+.template-chip{background:#1a1a1a;border:1px solid var(--gold-border);border-radius:4px;padding:8px 10px;font-size:11px;color:var(--gold);cursor:pointer;text-align:center;transition:all .2s;}
+.template-chip:hover{background:rgba(212,175,55,.15);}
+
+/* MILESTONE */
+.milestone-row{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:6px;align-items:center;margin-bottom:6px;}
+
+/* SIGNATURE */
+.sig-canvas{border:1px dashed var(--gold-border);border-radius:4px;cursor:crosshair;width:100%;touch-action:none;}
+.sig-font-preview{font-size:28px;padding:10px;text-align:center;color:var(--gold);min-height:60px;display:flex;align-items:center;justify-content:center;}
+
+/* ANALYTICS */
+.analytics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.analytic-card{background:#111;border:1px solid var(--gold-border);border-radius:6px;padding:14px;text-align:center;}
+.analytic-val{font-size:22px;font-weight:700;color:var(--gold);font-family:'Playfair Display',serif;}
+.analytic-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:4px;}
+
+/* PREVIEW PANEL */
+.preview-btn-mobile{display:none;position:fixed;bottom:20px;right:20px;z-index:200;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;border:none;border-radius:50px;padding:12px 24px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(212,175,55,.4);}
+@media(max-width:900px){.preview-btn-mobile{display:flex;align-items:center;gap:8px;}}
+.close-preview-btn{display:none;position:sticky;top:0;z-index:10;background:var(--gold);color:#000;border:none;padding:10px;font-weight:700;font-size:12px;cursor:pointer;width:100%;}
+@media(max-width:900px){.close-preview-btn{display:block;}}
+
+/* A4 PREVIEW */
+.a4-wrapper{width:794px;max-width:100%;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.5);font-family:'Inter',sans-serif;color:#1a1a1a;}
+@media(max-width:900px){.a4-wrapper{width:100%;}}
+
+/* PDF SPECIFIC STYLES */
+.pdf-page{min-height:1123px;position:relative;padding:50px 50px 80px;}
+.pdf-header{background:#0B0B0B;color:#fff;padding:36px 40px;position:relative;overflow:hidden;}
+.pdf-header::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;border:2px solid #D4AF37;margin:8px;opacity:.4;}
+.pdf-title{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:#D4AF37;letter-spacing:2px;}
+.pdf-subtitle{font-size:12px;color:#B8B8B8;letter-spacing:3px;text-transform:uppercase;margin-top:4px;}
+.pdf-ref-line{font-size:11px;color:#888;margin-top:16px;padding-top:16px;border-top:1px solid #2a2a2a;}
+.pdf-prepared-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:30px 40px;background:#0d0d0d;border-bottom:2px solid #D4AF37;}
+.pdf-prepared-card{padding:16px;border:1px solid rgba(212,175,55,.3);border-radius:4px;}
+.pdf-prepared-label{font-size:9px;color:#D4AF37;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
+.pdf-prepared-name{font-family:'Playfair Display',serif;font-size:16px;color:#D4AF37;font-weight:600;}
+.pdf-prepared-sub{font-size:11px;color:#B8B8B8;margin-top:2px;line-height:1.5;}
+.pdf-tagline{text-align:center;padding:12px;background:#0B0B0B;font-size:10px;color:#D4AF37;letter-spacing:3px;text-transform:uppercase;border-bottom:1px solid rgba(212,175,55,.2);}
+.pdf-services-area{padding:30px 40px;}
+.pdf-section-title{display:flex;align-items:center;gap:12px;margin-bottom:16px;margin-top:24px;}
+.pdf-section-num{background:#D4AF37;color:#000;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.pdf-section-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:#0B0B0B;}
+.pdf-section-name::after{content:'';display:block;width:100%;height:1px;background:rgba(212,175,55,.3);margin-top:4px;}
+.pdf-table{width:100%;border-collapse:collapse;margin-bottom:20px;}
+.pdf-table th{background:#0B0B0B;color:#D4AF37;padding:10px 12px;font-size:10px;letter-spacing:2px;text-transform:uppercase;text-align:left;border-bottom:2px solid #D4AF37;}
+.pdf-table td{padding:10px 12px;font-size:12px;border-bottom:1px solid #eee;color:#333;vertical-align:top;}
+.pdf-table tr:nth-child(even) td{background:#f9f8f5;}
+.pdf-table tr:last-child td{border-bottom:none;}
+.pdf-totals{background:#0B0B0B;margin:0 40px 30px;padding:20px;border:1px solid rgba(212,175,55,.3);}
+.pdf-total-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#B8B8B8;border-bottom:1px solid #1a1a1a;}
+.pdf-total-row.grand{color:#D4AF37;font-weight:700;font-size:16px;border-top:1px solid #D4AF37;border-bottom:none;margin-top:6px;padding-top:12px;}
+.pdf-words{background:#1a1a1a;padding:10px 16px;margin-top:10px;font-size:11px;color:#B8B8B8;font-style:italic;border-left:3px solid #D4AF37;}
+.pdf-milestones{margin:0 40px 30px;border:1px solid rgba(212,175,55,.3);}
+.pdf-milestone-header{background:#0B0B0B;padding:12px 16px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#D4AF37;display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;}
+.pdf-milestone-row{padding:10px 16px;font-size:12px;border-bottom:1px solid #eee;display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;color:#333;}
+.pdf-milestone-row:last-child{border-bottom:none;}
+.pdf-payment{margin:0 40px 30px;display:grid;grid-template-columns:1fr auto;gap:20px;border:1px solid rgba(212,175,55,.3);padding:20px;background:#fff;}
+.pdf-payment-details{font-size:12px;color:#333;}
+.pdf-payment-label{font-size:9px;color:#888;letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;}
+.pdf-payment-val{font-size:13px;color:#0B0B0B;font-weight:500;margin-bottom:10px;}
+.pdf-terms-table{width:100%;border-collapse:collapse;margin:0 40px 30px;width:calc(100% - 80px);}
+.pdf-terms-table th{background:#0B0B0B;color:#D4AF37;padding:10px 12px;font-size:10px;letter-spacing:2px;text-transform:uppercase;text-align:left;}
+.pdf-terms-table td{padding:12px;font-size:11px;border-bottom:1px solid #eee;vertical-align:top;color:#333;}
+.pdf-terms-table td:first-child{font-weight:600;color:#0B0B0B;white-space:nowrap;width:160px;}
+.pdf-sig-section{background:#0B0B0B;padding:30px 40px;display:grid;grid-template-columns:1fr 1fr;gap:40px;}
+.pdf-sig-box{border:1px solid rgba(212,175,55,.3);padding:20px;}
+.pdf-sig-label{font-size:9px;color:#D4AF37;letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;}
+.pdf-sig-name{font-size:14px;color:#fff;font-weight:600;margin-bottom:2px;}
+.pdf-sig-role{font-size:11px;color:#B8B8B8;}
+.pdf-sig-line{border-bottom:1px solid rgba(212,175,55,.4);margin:20px 0 8px;}
+.pdf-sig-date{font-size:10px;color:#555;}
+.pdf-sig-img{max-height:70px;max-width:180px;margin:10px 0;}
+.pdf-footer-bar{position:absolute;bottom:0;left:0;right:0;background:#0B0B0B;padding:10px 40px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(212,175,55,.3);}
+.pdf-footer-text{font-size:9px;color:#555;letter-spacing:1px;}
+.pdf-page-num{font-size:9px;color:#D4AF37;}
+.pdf-logo-img{max-height:50px;margin-bottom:12px;}
+
+/* WATERMARK */
+.watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:80px;color:rgba(212,175,55,.04);font-family:'Playfair Display',serif;white-space:nowrap;pointer-events:none;z-index:0;}
+
+/* QR */
+#qr-code canvas,#qr-code img{width:80px!important;height:80px!important;}
+
+/* THEME VARIANTS */
+.theme-royal .pdf-header,.theme-royal .pdf-prepared-grid,.theme-royal .pdf-tagline,.theme-royal .pdf-totals,.theme-royal .pdf-milestone-header,.theme-royal .pdf-sig-section,.theme-royal .pdf-footer-bar,.theme-royal .pdf-table th,.theme-royal .pdf-terms-table th{background:#0D1B3E!important;}
+.theme-royal .pdf-title,.theme-royal .pdf-section-num,.theme-royal .pdf-prepared-label,.theme-royal .pdf-table th,.theme-royal .pdf-milestone-header,.theme-royal .pdf-sig-label,.theme-royal .pdf-terms-table th,.theme-royal .pdf-page-num,.theme-royal .pdf-tagline{color:#4A9EFF!important;}
+.theme-royal .pdf-section-num{background:#4A9EFF!important;color:#000!important;}
+.theme-royal .pdf-table{border-top:2px solid #4A9EFF!important;}
+.theme-emerald .pdf-header,.theme-emerald .pdf-prepared-grid,.theme-emerald .pdf-tagline,.theme-emerald .pdf-totals,.theme-emerald .pdf-milestone-header,.theme-emerald .pdf-sig-section,.theme-emerald .pdf-footer-bar,.theme-emerald .pdf-table th,.theme-emerald .pdf-terms-table th{background:#0D2818!important;}
+.theme-emerald .pdf-title,.theme-emerald .pdf-section-num,.theme-emerald .pdf-prepared-label,.theme-emerald .pdf-table th,.theme-emerald .pdf-milestone-header,.theme-emerald .pdf-sig-label,.theme-emerald .pdf-terms-table th,.theme-emerald .pdf-page-num,.theme-emerald .pdf-tagline{color:#10D96F!important;}
+.theme-emerald .pdf-section-num{background:#10D96F!important;color:#000!important;}
+.theme-platinum .pdf-header,.theme-platinum .pdf-prepared-grid,.theme-platinum .pdf-tagline,.theme-platinum .pdf-totals,.theme-platinum .pdf-milestone-header,.theme-platinum .pdf-sig-section,.theme-platinum .pdf-footer-bar,.theme-platinum .pdf-table th,.theme-platinum .pdf-terms-table th{background:#1a1a1a!important;}
+.theme-platinum .pdf-title,.theme-platinum .pdf-section-num,.theme-platinum .pdf-prepared-label,.theme-platinum .pdf-table th,.theme-platinum .pdf-milestone-header,.theme-platinum .pdf-sig-label,.theme-platinum .pdf-terms-table th,.theme-platinum .pdf-page-num,.theme-platinum .pdf-tagline{color:#E8E8E8!important;}
+.theme-platinum .pdf-section-num{background:#E8E8E8!important;color:#000!important;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;display:none;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal{background:#141414;border:1px solid var(--gold-border);border-radius:8px;padding:24px;width:90%;max-width:500px;max-height:80vh;overflow-y:auto;}
+.modal-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold);margin-bottom:16px;}
+
+/* SEARCH */
+.search-box{position:relative;margin-bottom:12px;}
+.search-box input{padding-left:32px;}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:80px;right:20px;background:var(--gold);color:#000;padding:10px 18px;border-radius:4px;font-size:12px;font-weight:700;z-index:1000;transform:translateY(100px);transition:transform .3s;letter-spacing:.5px;}
+.toast.show{transform:translateY(0);}
+
+/* CHART */
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:80px;padding-top:10px;}
+.bar{flex:1;background:rgba(212,175,55,.2);border-radius:2px 2px 0 0;position:relative;cursor:pointer;transition:background .2s;}
+.bar:hover{background:rgba(212,175,55,.5);}
+.bar-fill{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,var(--gold),var(--gold2));border-radius:2px 2px 0 0;}
+.bar-label{font-size:8px;color:var(--muted);text-align:center;margin-top:4px;}
+
+/* LOGO UPLOAD */
+.logo-preview{width:80px;height:80px;object-fit:contain;border:1px solid var(--gold-border);border-radius:4px;display:block;background:#0d0d0d;}
+
+/* STAMP */
+.stamp-preview{max-width:100px;max-height:100px;object-fit:contain;opacity:.7;}
+
+/* TERMS */
+.term-row{display:flex;align-items:flex-start;gap:6px;margin-bottom:6px;padding:8px;background:#111;border-radius:4px;border:1px solid var(--border);}
+.term-row .term-text{flex:1;font-size:12px;color:var(--white);}
+.term-actions{display:flex;gap:4px;flex-shrink:0;}
+
+/* CLIENT LIST */
+.client-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:#111;border-radius:4px;border:1px solid var(--border);margin-bottom:6px;cursor:pointer;transition:border-color .2s;}
+.client-row:hover{border-color:var(--gold-border);}
+.client-name{font-size:12px;color:var(--white);font-weight:500;}
+.client-company{font-size:10px;color:var(--muted);}
+
+/* RADIO TABS */
+.radio-tabs{display:flex;gap:2px;background:#111;padding:3px;border-radius:5px;margin-bottom:10px;}
+.radio-tab{flex:1;text-align:center;padding:6px;font-size:11px;cursor:pointer;border-radius:3px;color:var(--muted);transition:all .2s;font-weight:600;letter-spacing:.5px;}
+.radio-tab.active{background:var(--gold);color:#000;}
+
+.number-format{font-feature-settings:'tnum';}
+
+/* SCROLLABLE LIST */
+.scroll-list{max-height:200px;overflow-y:auto;}
+
+/* drag handle */
+.drag-handle{cursor:grab;color:var(--muted);font-size:14px;padding:0 4px;}
+
+/* mobile preview toggle */
+.preview-toggle-bar{display:none;background:#1a1a1a;border-bottom:1px solid var(--gold-border);padding:10px 16px;}
+@media(max-width:900px){.preview-toggle-bar{display:block;}}
+
+/* page break simulation */
+.pdf-page-break{border-top:2px dashed rgba(212,175,55,.2);margin:30px 0;text-align:center;position:relative;}
+.pdf-page-break::after{content:'--- Page Break ---';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#111;padding:0 8px;font-size:9px;color:var(--muted);}
+</style>
 </head>
-<body class="bg-[#090909] text-gray-200 antialiased min-h-screen selection:bg-[#D4AF37] selection:text-black">
+<body>
 
-    <div class="flex flex-col h-screen overflow-hidden">
-        
-        <header class="bg-[#141414] border-b border-[#262626] px-6 py-3 flex justify-between items-center z-50 shrink-0">
-            <div class="flex items-center space-x-4">
-                <div class="w-9 h-9 rounded bg-gradient-to-tr from-[#C9A227] to-[#D4AF37] flex items-center justify-center text-black font-extrabold text-lg tracking-wider font-cinzel shadow-lg shadow-yellow-500/10">JK</div>
-                <div>
-                    <h1 class="text-md font-bold tracking-wide text-white font-cinzel">QUOTATION BUILDER <span class="text-[#D4AF37] font-light">PRO</span></h1>
-                    <p class="text-[11px] text-gray-400">Production-Ready Enterprise Pipeline Framework</p>
-                </div>
-            </div>
-            
-            <div class="flex items-center space-x-3">
-                <div class="bg-[#1c1c1c] border border-[#2d2d2d] rounded px-3 py-1 flex items-center space-x-2">
-                    <label class="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">System State:</label>
-                    <select id="docStatus" class="bg-transparent text-xs font-bold text-[#D4AF37] outline-none cursor-pointer">
-                        <option value="Draft" class="bg-[#141414]">Draft</option>
-                        <option value="Sent" class="bg-[#141414]">Sent</option>
-                        <option value="Viewed" class="bg-[#141414]">Viewed</option>
-                        <option value="Accepted" class="bg-[#141414]">Accepted</option>
-                        <option value="Rejected" class="bg-[#141414]">Rejected</option>
-                        <option value="Paid" class="bg-[#141414]">Paid</option>
-                    </select>
-                </div>
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    JK-MGMT
+    <span>Quotation Builder Pro</span>
+  </div>
+  <div class="topbar-actions">
+    <select class="form-select" style="width:110px;font-size:11px;padding:5px 8px;" id="statusSelect" onchange="updateStatus()">
+      <option value="draft">● Draft</option>
+      <option value="sent">● Sent</option>
+      <option value="viewed">● Viewed</option>
+      <option value="accepted">● Accepted</option>
+      <option value="rejected">● Rejected</option>
+      <option value="paid">● Paid</option>
+    </select>
+    <button class="btn btn-outline btn-sm" onclick="saveQuotation()">💾 Save</button>
+    <button class="btn btn-outline btn-sm" onclick="loadQuotation()">📂 Load</button>
+    <button class="btn btn-outline btn-sm" onclick="exportJSON()">📤 JSON</button>
+    <button class="btn btn-gold btn-sm" onclick="exportPDF()">⬇ PDF</button>
+  </div>
+</div>
 
-                <div class="bg-[#1c1c1c] border border-[#2d2d2d] rounded px-3 py-1 flex items-center space-x-2">
-                    <label class="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">Engine Theme:</label>
-                    <select id="appTheme" class="bg-transparent text-xs font-bold text-white outline-none cursor-pointer">
-                        <option value="theme-jk-gold" class="bg-[#141414]">JK Gold Premium</option>
-                        <option value="theme-royal-blue" class="bg-[#141414]">Royal Blue Corporate</option>
-                        <option value="theme-emerald" class="bg-[#141414]">Emerald Financial</option>
-                        <option value="theme-platinum" class="bg-[#141414]">Platinum Luxury</option>
-                    </select>
-                </div>
+<!-- MOBILE PREVIEW TOGGLE -->
+<div class="preview-toggle-bar">
+  <button onclick="toggleMobilePreview()" style="background:linear-gradient(135deg,#D4AF37,#C9A227);color:#000;border:none;padding:8px 20px;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;width:100%;">
+    👁 Preview Quotation
+  </button>
+</div>
 
-                <button id="btnSaveDraft" class="bg-[#1f1f1f] hover:bg-[#2b2b2b] border border-[#333] text-white px-3 py-1.5 text-xs rounded transition flex items-center gap-2 font-medium">
-                    <i class="fa-solid fa-floppy-disk text-[#D4AF37]"></i> Save State
-                </button>
-                <button id="btnLoadDraft" class="bg-[#1f1f1f] hover:bg-[#2b2b2b] border border-[#333] text-white px-3 py-1.5 text-xs rounded transition flex items-center gap-2 font-medium">
-                    <i class="fa-solid fa-folder-open text-[#D4AF37]"></i> Load Last
-                </button>
-                <button id="btnExportPDF" class="bg-gradient-to-r from-[#C9A227] to-[#D4AF37] hover:from-[#D4AF37] hover:to-[#E5C158] text-black font-bold px-4 py-1.5 text-xs rounded transition shadow-lg flex items-center gap-2">
-                    <i class="fa-solid fa-file-pdf"></i> Download Document
-                </button>
-            </div>
-        </header>
-
-        <div class="flex flex-1 overflow-hidden grid grid-cols-1 xl:grid-cols-10">
-            
-            <main class="xl:col-span-4 overflow-y-auto p-5 space-y-6 bg-[#111111] border-r border-[#222]">
-                
-                <div class="glass-panel p-4 rounded-lg space-y-3">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-1.5"><i class="fa-solid fa-chart-pie mr-2"></i> Pipeline Analytics Engine</h3>
-                    <div class="grid grid-cols-3 gap-3 text-center">
-                        <div class="bg-[#1c1c1c] p-2 rounded border border-[#2c2c2c]">
-                            <span class="block text-[10px] uppercase text-gray-400">Total Pipeline</span>
-                            <span id="analyticsTotalCount" class="text-md font-bold font-mono text-white">1</span>
-                        </div>
-                        <div class="bg-[#1c1c1c] p-2 rounded border border-[#2c2c2c]">
-                            <span class="block text-[10px] uppercase text-gray-400">Revenue Booked</span>
-                            <span id="analyticsTotalRevenue" class="text-md font-bold font-mono text-[#D4AF37]">₹0</span>
-                        </div>
-                        <div class="bg-[#1c1c1c] p-2 rounded border border-[#2c2c2c]">
-                            <span class="block text-[10px] uppercase text-gray-400">Avg Deal Matrix</span>
-                            <span id="analyticsAvgDealSize" class="text-md font-bold font-mono text-white">₹0</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-panel p-4 rounded-lg space-y-3">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-1.5"><i class="fa-solid fa-shuffle mr-2"></i> Document IO Core Registry</h3>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button id="btnDuplicateDoc" class="bg-[#1c1c1c] hover:bg-[#252525] border border-[#333] text-[11px] p-2 rounded transition text-white">
-                            <i class="fa-solid fa-copy text-[#D4AF37] mr-1"></i> Duplicate
-                        </button>
-                        <button id="btnExportJSON" class="bg-[#1c1c1c] hover:bg-[#252525] border border-[#333] text-[11px] p-2 rounded transition text-white">
-                            <i class="fa-solid fa-file-export text-[#D4AF37] mr-1"></i> Export Data
-                        </button>
-                        <label class="bg-[#1c1c1c] hover:bg-[#252525] border border-[#333] text-[11px] p-2 rounded transition text-white text-center cursor-pointer block">
-                            <i class="fa-solid fa-file-import text-[#D4AF37] mr-1"></i> Import JSON
-                            <input type="file" id="btnImportJSON" accept=".json" class="hidden">
-                        </label>
-                    </div>
-                    <div class="relative mt-2">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-gray-500"></i>
-                        <input type="text" id="globalSearchInput" placeholder="Global filter query lines across items/clients..." class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded pl-8 pr-3 py-1.5 text-xs text-white outline-none focus:border-[#D4AF37]">
-                    </div>
-                </div>
-
-                <div class="glass-panel p-4 rounded-lg space-y-3">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-1.5"><i class="fa-solid fa-id-card-clip mr-2"></i> Freelancer Identity Master Block</h3>
-                    <div class="grid grid-cols-2 gap-3 text-xs">
-                        <div>
-                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Freelancer Name</label>
-                            <input type="text" id="fName" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Corporate Role Title</label>
-                            <input type="text" id="fRole" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Contact Reference Wire</label>
-                            <input type="text" id="fPhone" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Corporate Registry GSTIN</label>
-                            <input type="text" id="fGst" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
-                        </div>
-                        <div class="col-span-2">
-                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Registered Logistics Office Address</label>
-                            <input type="text" id="fAddress" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-panel p-4 rounded-lg space-y-3">
-                    <div class="flex justify-between items-center border-b border-[#2d2d2d] pb-1.5">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37]"><i class="fa-solid fa-user-group mr-2"></i> Client Directory Hub</h3>
-                        <div class="flex space-x-1.5">
-                            <button id="btnClientSave" class="text-[10px] bg-[#222] border border-[#444] text-[#D4AF37] px-2 py-0.5 rounded transition hover:bg-[#333]">Save Current</button>
-                            <button id="btnClientDelete" class="text-[10px] bg-red-950/40 border border-red-800 text-red-400 px-2 py-0.5 rounded transition hover:bg-red-900/40">Delete</button>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3 text-xs">
-                        <div class="col-span-2">
-                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Select / Load Stored Client Context Profile</label>
-                            <select id="clientDirectorySelector" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2 py-1.5 text-white outline-none text-xs cursor-pointer focus:border-[#D4AF37]"></select>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Client Authority Name</label>
-                            <input type="text" id="cName" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Enterprise Domain Name</label>
-                            <input type="text" id="cCompany" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-panel p-4 rounded-lg space-y-3">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-1.5"><i class="fa-solid fa-clock-rotate-left mr-2"></i> Document Identity Sequence</h3>
-                    <div class="grid grid-cols-2 gap-3 text-xs">
-                        <div>
-                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Document Index Reference</label>
-                            <input type="text" id="metaRef" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Sequence Issue Date Timestamp</label>
-                            <input type="text" id="metaDate" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-panel p-4 rounded-lg space-y-4">
-                    <div class="flex justify-between items-center border-b border-[#2d2d2d] pb-1.5">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37]"><i class="fa-solid fa-cubes-stacked mr-2"></i> Line Item Matrix Framework</h3>
-                        <div class="flex space-x-1.5">
-                            <select id="serviceTemplateLibraryDropdown" class="bg-[#1c1c1c] border border-[#333] text-[10px] text-white px-2 py-0.5 rounded outline-none cursor-pointer">
-                                <option value="">-- Inject Library Template Block --</option>
-                                <option value="Amazon Listing">Amazon Listing Suite</option>
-                                <option value="Flipkart Listing">Flipkart Listing Pack</option>
-                                <option value="Brand Registry">Brand Registry Lock</option>
-                                <option value="A+ Content">A+ High-Conversion Creative</option>
-                                <option value="PPC Management">PPC & Ad Optimization</option>
-                                <option value="Blinkit Setup">Blinkit Darkstore Map</option>
-                                <option value="Zepto Setup">Zepto Hyperlocal Operational</option>
-                                <option value="Instamart Setup">Swiggy Instamart Map</option>
-                                <option value="Monthly Retainer">Standard Management Retainer</option>
-                            </select>
-                            <button type="button" id="btnAddSectionCategory" class="text-[10px] bg-[#1c1c1c] border border-[#D4AF37]/30 text-[#D4AF37] px-2.5 py-0.5 rounded hover:bg-[#252525] transition font-bold">
-                                <i class="fa-solid fa-folder-plus"></i> Add Section Group
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div id="builderSectionsControlWrapper" class="space-y-4 max-h-[500px] overflow-y-auto pr-1"></div>
-                </div>
-
-                <div class="glass-panel p-4 rounded-lg space-y-3">
-                    <div class="flex justify-between items-center border-b border-[#2d2d2d] pb-1.5">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37]"><i class="fa-solid fa-calendar-check mr-2"></i> Payment Milestone Configuration Layer</h3>
-                        <button type="button" id="btnAddNewMilestoneRow" class="text-[10px] bg-[#1c1c1c] text-white border border-[#333] px-2 py-0.5 rounded hover:bg-[#252525] transition"><i class="fa-solid fa-plus text-[#D4AF37]"></i> Add Milestone Break</button>
-                    </div>
-                    <div id="milestonesControlsAreaWrapper" class="space-y-2 text-xs"></div>
-                </div>
-
-                <div class="glass-panel p-4 rounded-lg space-y-3">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-1.5"><i class="fa-solid fa-building-columns mr-2"></i> Clear Remittance Infrastructure Routing</h3>
-                    <div class="grid grid-cols-2 gap-3 text-xs">
-                        <div>
-                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Virtual Private UPI Handle</label>
-                            <input type="text" id="pUpi" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Beneficiary Legal Corporate Name</label>
-                            <input type="text" id="pBeneficiary" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Financial Clearing Institution Name</label>
-                            <input type="text" id="pBank" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Settlement Account Balance Number</label>
-                            <input type="text" id="pAccount" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
-                        </div>
-                        <div class="col-span-2">
-                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Settlement Branch Routing IFS Code</label>
-                            <input type="text" id="pIfsc" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-panel p-4 rounded-lg space-y-3">
-                    <div class="flex justify-between items-center border-b border-[#2d2d2d] pb-1.5">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37]"><i class="fa-solid fa-gavel mr-2"></i> Contract Compliance & Safeguards</h3>
-                        <button type="button" id="btnAddNewClauseLine" class="text-[10px] bg-[#1c1c1c] text-white border border-[#333] px-2 py-0.5 rounded hover:bg-[#252525] transition"><i class="fa-solid fa-plus text-[#D4AF37]"></i> Add Scope Clause</button>
-                    </div>
-                    <div id="clausesInterfaceBoxWrapper" class="space-y-2 text-xs"></div>
-                </div>
-
-                <div class="glass-panel p-4 rounded-lg space-y-4">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-1.5"><i class="fa-solid fa-fingerprint mr-2"></i> Dual-Authorization Integrity Router</h3>
-                    
-                    <div class="bg-[#1a1a1a] p-2.5 rounded border border-[#2d2d2d] text-xs space-y-2">
-                        <span class="block text-[10px] uppercase tracking-wider text-gray-400 font-bold">1. Select Destination Endpoint Target Block:</span>
-                        <div class="flex space-x-6 items-center">
-                            <label class="flex items-center space-x-2 text-white cursor-pointer select-none">
-                                <input type="radio" name="sigPlacementSelector" value="freelancer" checked class="accent-[#D4AF37] w-4 h-4">
-                                <span>Freelancer Validator (Right Side)</span>
-                            </label>
-                            <label class="flex items-center space-x-2 text-white cursor-pointer select-none">
-                                <input type="radio" name="sigPlacementSelector" value="client" class="accent-[#D4AF37] w-4 h-4">
-                                <span>Client Authorizer (Left Side)</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="flex space-x-1.5 bg-[#141414] p-1 rounded border border-[#2b2b2b]">
-                        <button type="button" data-tab="draw" class="sig-tab-toggle-btn flex-1 py-1 text-[11px] text-center rounded bg-[#1c1c1c] text-[#D4AF37] border border-[#D4AF37]/20 font-medium">Draw Signature Trace</button>
-                        <button type="button" data-tab="type" class="sig-tab-toggle-btn flex-1 py-1 text-[11px] text-center rounded text-gray-400 font-medium">Typography Engine</button>
-                        <button type="button" data-tab="upload" class="sig-tab-toggle-btn flex-1 py-1 text-[11px] text-center rounded text-gray-400 font-medium">Image Upload</button>
-                    </div>
-
-                    <div id="sigPanelDraw" class="sig-tab-content-panel space-y-2">
-                        <div class="bg-white rounded border border-[#444] overflow-hidden h-32 relative">
-                            <canvas id="signatureCanvas" width="500" height="128" class="block w-full h-full bg-white"></canvas>
-                        </div>
-                        <div class="flex justify-end space-x-2">
-                            <button type="button" id="btnResetCanvasPad" class="bg-[#1c1c1c] hover:bg-[#252525] border border-[#333] text-gray-300 text-[10px] px-2.5 py-1 rounded">Reset Trace</button>
-                            <button type="button" id="btnCommitCanvasStroke" class="bg-[#D4AF37] text-black text-[10px] px-3 py-1 font-bold rounded shadow transition">Apply Drawn Signature Block</button>
-                        </div>
-                    </div>
-
-                    <div id="sigPanelType" class="sig-tab-content-panel hidden space-y-2 text-xs">
-                        <label class="block text-[10px] uppercase text-gray-400">Enter Legal Authorizing Verification Text Line Strings</label>
-                        <input type="text" id="typeSigTextInput" value="J. m. KamLi" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-3 py-1.5 text-white outline-none focus:border-[#D4AF37]">
-                        <div class="grid grid-cols-2 gap-2 mt-1">
-                            <button type="button" data-font="font-['Great_Vibes']" class="font-selector-btn text-left p-1.5 border border-[#D4AF37] bg-[#1c1c1c] rounded font-['Great_Vibes'] text-lg text-white">Great Vibes Cursive</button>
-                            <button type="button" data-font="font-['Dancing_Script']" class="font-selector-btn text-left p-1.5 border border-[#333] bg-[#1c1c1c] rounded font-['Dancing_Script'] text-xs text-white">Dancing Script</button>
-                            <button type="button" data-font="font-['Parisienne']" class="font-selector-btn text-left p-1.5 border border-[#333] bg-[#1c1c1c] rounded font-['Parisienne'] text-lg text-white">Parisienne Font</button>
-                            <button type="button" data-font="font-['Allura']" class="font-selector-btn text-left p-1.5 border border-[#333] bg-[#1c1c1c] rounded font-['Allura'] text-xl text-white">Allura Layout</button>
-                        </div>
-                        <button type="button" id="btnCommitTypeSig" class="w-full bg-[#1c1c1c] hover:bg-[#252525] border border-[#D4AF37]/30 text-[#D4AF37] font-bold text-[10px] py-1.5 rounded transition mt-1">Bind Selected Calligraphy To Destination Target</button>
-                    </div>
-
-                    <div id="sigPanelUpload" class="sig-tab-content-panel hidden space-y-2 text-xs">
-                        <label class="block text-[10px] uppercase text-gray-400">Upload Transparent Background Verification Signature Token PNG</label>
-                        <input type="file" id="sigImageFileInput" accept="image/*" class="block w-full text-xs text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-[#1c1c1c] file:text-white file:border file:file:border-[#333] hover:file:bg-[#222] cursor-pointer">
-                    </div>
-                </div>
-
-                <div class="glass-panel p-4 rounded-lg space-y-3 text-xs">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-1.5"><i class="fa-solid fa-stamp mr-2"></i> Corporate Seal & Stamp Security Layer</h3>
-                    <label class="block text-[10px] uppercase text-gray-400 mb-1">Inject Seal Image File (Draggable, Rotatable, Resizable inside sheet space)</label>
-                    <input type="file" id="stampImgFileInput" accept="image/*" class="block w-full text-xs text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-[#1c1c1c] file:text-white cursor-pointer">
-                    <div class="flex items-center space-x-3 bg-[#161616] p-2 rounded border border-[#2d2d2d] mt-2">
-                        <label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Rotation Control Wheel:</label>
-                        <input type="range" id="stampRotationWheel" min="0" max="360" value="0" class="flex-1 accent-[#D4AF37] cursor-pointer">
-                        <span id="stampAngleTextIndicator" class="font-mono text-[10px] text-white">0°</span>
-                    </div>
-                </div>
-
-            </main>
-
-            <section class="xl:col-span-6 overflow-y-auto p-6 bg-[#1f1f1f] flex justify-center items-start border-l border-[#000]">
-                
-                <div id="renderTargetQuotation" class="theme-jk-gold relative p-[2.5rem] text-white select-none box-border shadow-2xl">
-                    
-                    <div id="movableStampContainerWrapper" class="movable-stamp-wrapper hidden">
-                        <img id="pviewStampImgLayer" src="" alt="Corporate Seal Identity Verification Layer Line" class="w-24 h-24 object-contain opacity-80 filter drop-shadow-md pointer-events-none">
-                        <div class="stamp-rotate-handle hidden"></div>
-                        <div class="stamp-resize-handle"></div>
-                    </div>
-
-                    <div class="pdf-page-container flex flex-col justify-between h-[1035px] relative z-10 pb-8 border-b border-dashed border-gray-800/40 mb-8">
-                        <div>
-                            <div class="h-1.5 w-full bg-gradient-to-r from-[var(--secondary)] via-[var(--primary)] to-[var(--secondary)] mb-12"></div>
-                            <div class="flex justify-between items-start mb-16">
-                                <div>
-                                    <h1 class="text-4xl font-bold tracking-widest uppercase font-cinzel text-white mb-2">Quotation</h1>
-                                    <p class="text-[var(--primary)] uppercase text-[10px] font-bold tracking-widest font-cinzel opacity-90">E-Commerce & Quick Commerce Growth Services</p>
-                                </div>
-                                <div class="text-right font-mono text-[11px] text-gray-400 space-y-1">
-                                    <p><span class="text-gray-500 font-sans uppercase text-[10px] tracking-wider">REF NO:</span> <span id="pviewRef" class="text-white font-semibold">-</span></p>
-                                    <p><span class="text-gray-500 font-sans uppercase text-[10px] tracking-wider">ISSUE DATE:</span> <span id="pviewDate" class="text-white font-semibold">-</span></p>
-                                    <p><span class="text-gray-500 font-sans uppercase text-[10px] tracking-wider">PIPELINE STATUS:</span> <span id="pviewStatusBadge" class="text-[#D4AF37] font-bold uppercase tracking-wider">DRAFT</span></p>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-12 border-t border-b border-gray-800/60 py-10 mb-16">
-                                <div class="space-y-3">
-                                    <span class="text-[9px] uppercase text-[var(--primary)] font-bold tracking-widest block">Prepared & Issued By</span>
-                                    <div>
-                                        <h3 id="pviewByName" class="text-md font-bold text-white tracking-wide">-</h3>
-                                        <p id="pviewByRole" class="text-xs text-gray-400 mt-1 font-medium">-</p>
-                                        <p id="pviewByExtra" class="text-[10px] text-gray-500 mt-0.5 leading-relaxed">-</p>
-                                        <div class="text-[10px] text-gray-400 font-mono mt-3 pt-2 border-t border-gray-900/40 space-y-0.5">
-                                            <p><span class="text-gray-600">GSTIN:</span> <span id="pviewByGst" class="text-gray-300 font-semibold">-</span></p>
-                                            <p><span class="text-gray-600">ADDR:</span> <span id="pviewByAddress" class="text-gray-400">-</span></p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="space-y-3 border-l border-gray-800/60 pl-10">
-                                    <span class="text-[9px] uppercase text-[var(--primary)] font-bold tracking-widest block">Prepared & Presented For</span>
-                                    <div>
-                                        <h3 id="pviewForName" class="text-md font-bold text-white tracking-wide">-</h3>
-                                        <p id="pviewForCompany" class="text-xs text-gray-400 mt-1 font-medium">-</p>
-                                        <p id="pviewForPhone" class="text-[11px] text-gray-400 mt-0.5 font-mono">-</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="py-5 px-6 bg-[#111] border-l-2 border-[var(--primary)] rounded-r">
-                                <p class="text-[11px] text-gray-300 leading-relaxed font-sans italic opacity-80">
-                                    "Prepared with precision | Built for growth | Designed for success"
-                                </p>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="grid grid-cols-5 gap-3 border-t border-gray-800/50 pt-8 text-center text-[9px] tracking-widest uppercase font-semibold text-gray-400">
-                                <div class="py-2 border border-gray-900 bg-[#111]/40 rounded"><i class="fa-solid fa-store text-[var(--primary)] block mb-1.5 text-xs"></i> Marketplace</div>
-                                <div class="py-2 border border-gray-900 bg-[#111]/40 rounded"><i class="fa-solid fa-shield-halved text-[var(--primary)] block mb-1.5 text-xs"></i> Brand Lock</div>
-                                <div class="py-2 border border-gray-900 bg-[#111]/40 rounded"><i class="fa-solid fa-list-check text-[var(--primary)] block mb-1.5 text-xs"></i> Optimization</div>
-                                <div class="py-2 border border-gray-900 bg-[#111]/40 rounded"><i class="fa-solid fa-bolt text-[var(--primary)] block mb-1.5 text-xs"></i> Hyperlocal</div>
-                                <div class="grid py-2 border border-gray-900 bg-[#111]/40 rounded content-center justify-center"><i class="fa-solid fa-chart-line text-[var(--primary)] block mb-1.5 text-xs"></i> Ad Strategies</div>
-                            </div>
-                            <div class="flex justify-between items-center text-[9px] text-gray-600 font-mono mt-8 border-t border-gray-900/40 pt-4">
-                                <span>JK-MGMT ENGINE CONFIGURATION CLOUD PLATFORM VIA DOM</span>
-                                <span>Page 1 of 3</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pdf-page-container flex flex-col justify-between min-h-[1030px] pb-8 border-b border-dashed border-gray-800/40 mb-8 pt-4">
-                        <div>
-                            <div class="flex items-center justify-between border-b border-gray-800/80 pb-3 mb-6">
-                                <h2 class="text-xs font-bold uppercase tracking-widest font-cinzel text-[var(--primary)]">01 Services & Line Item Pricing</h2>
-                                <span class="text-[10px] font-mono text-gray-500 id-header-ref-span">REF: -</span>
-                            </div>
-
-                            <div id="pviewDynamicSectionsRender" class="space-y-6"></div>
-                        </div>
-
-                        <div class="pt-4">
-                            <div class="flex justify-between items-center text-[9px] text-gray-600 font-mono border-t border-gray-900/40 pt-4">
-                                <span>CONFIDENTIAL SYSTEM AGGREGATE LEDGERS INTEGRITY PROFILE</span>
-                                <span>Page 2 of 3</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="pdf-page-container flex flex-col justify-between min-h-[1030px] pt-4">
-                        <div class="space-y-6">
-                            
-                            <div>
-                                <div class="flex items-center justify-between border-b border-gray-800/80 pb-2 mb-4">
-                                    <h2 class="text-xs font-bold uppercase tracking-widest font-cinzel text-[var(--primary)]">02 Financial Breakdown Valuation</h2>
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-10 border border-gray-800 bg-[#111]/30 rounded overflow-hidden">
-                                    <div class="md:col-span-4 p-4 bg-[#111]/60 flex flex-col justify-center">
-                                        <span class="text-[10px] uppercase text-gray-400 font-semibold tracking-wider">Total Final Contract Value:</span>
-                                        <span class="text-xl font-bold font-mono text-white mt-1">₹ <span id="pviewGrandTotal">0.00</span></span>
-                                        <span id="pviewRoundedTextIndicator" class="text-[9px] font-mono text-gray-500 mt-0.5">(Exact Adjusted Round-off Value)</span>
-                                    </div>
-                                    <div class="md:col-span-6 p-4 grid grid-cols-2 gap-4 text-[11px] border-t md:border-t-0 md:border-l border-gray-800">
-                                        <div class="space-y-1 font-mono text-gray-300">
-                                            <p class="flex justify-between"><span class="text-gray-500 font-sans uppercase text-[9px] tracking-wider">Gross Items Subtotal:</span> <span>₹<span id="pviewSubtotal">0.00</span></span></p>
-                                            <p class="flex justify-between"><span class="text-gray-500 font-sans uppercase text-[9px] tracking-wider">Cumulative Trade Discount:</span> <span class="text-red-400">-₹<span id="pviewDiscount">0.00</span></span></p>
-                                            <p class="flex justify-between"><span class="text-gray-500 font-sans uppercase text-[9px] tracking-wider">Calculated GST Output:</span> <span>₹<span id="pviewTax">0.00</span></span></p>
-                                        </div>
-                                        <div class="space-y-1 font-mono text-gray-300 border-l border-gray-900 pl-4">
-                                            <p class="flex justify-between"><span class="text-gray-500 font-sans uppercase text-[9px] tracking-wider">Withholding TDS Offset:</span> <span class="text-blue-400">-₹<span id="pviewTds">0.00</span></span></p>
-                                            <p class="flex justify-between font-bold text-white pt-1 border-t border-gray-900"><span class="text-gray-400 font-sans uppercase text-[9px] tracking-wider">Net Payable Capital:</span> <span>₹<span id="pviewNetTotal">0.00</span></span></p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="mt-2 bg-[#141414] border border-gray-900 rounded px-3 py-1.5 text-[10px] font-mono text-gray-400 flex items-start">
-                                    <span class="text-gray-600 uppercase font-sans tracking-wider text-[9px] shrink-0 mt-0.5 mr-2">In Words (INR):</span>
-                                    <span id="pviewAmountInWords" class="text-gray-300 font-medium capitalize">Zero Rupees Only</span>
-                                </div>
-                            </div>
-
-                            <div id="pviewMilestonesDocumentOutputWrapper" class="space-y-2 hidden">
-                                <div class="border-b border-gray-800 pb-1">
-                                    <span class="text-[10px] uppercase font-bold text-[var(--primary)] tracking-widest block font-cinzel">02. b Allocation Schedule Breaks</span>
-                                </div>
-                                <div id="pviewMilestonesTargetContainer" class="grid grid-cols-3 gap-3 text-xs"></div>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-10 border border-gray-800 bg-[#111]/20 rounded overflow-hidden mt-4">
-                                <div class="md:col-span-7 p-4 space-y-2 text-[10px] font-mono text-gray-400">
-                                    <span class="block text-[9px] font-sans font-bold uppercase tracking-widest text-[var(--primary)] mb-1">Settlement Wire Parameters</span>
-                                    <div class="grid grid-cols-2 gap-x-4 gap-y-1">
-                                        <p><span class="text-gray-600">BENEFICIARY:</span> <span id="pviewPBeneficiary" class="text-white font-sans font-semibold">-</span></p>
-                                        <p><span class="text-gray-600">BANKING INST:</span> <span id="pviewPBank" class="text-gray-300">-</span></p>
-                                        <p><span class="text-gray-600">ACCOUNT LINE:</span> <span id="pviewPAccount" class="text-white font-bold">-</span></p>
-                                        <p><span class="text-gray-600">IFS ROUTING:</span> <span id="pviewPIfsc" class="text-white font-bold">-</span></p>
-                                    </div>
-                                    <p class="text-[9px] text-gray-500 pt-1 border-t border-gray-900 mt-2 font-sans italic">Routing UPI ID: <span id="pviewPUpi" class="font-mono text-gray-400 not-italic font-semibold">-</span></p>
-                                </div>
-                                <div class="md:col-span-3 bg-[#161616] border-t md:border-t-0 md:border-l border-gray-800 flex flex-col items-center justify-center p-3 relative min-h-[100px]">
-                                    <div id="pviewRemittanceQrContainer" class="w-20 h-20 bg-white p-1 rounded flex items-center justify-center"></div>
-                                    <span class="text-[8px] font-mono text-gray-500 mt-1 uppercase tracking-wider font-semibold">Scan to Route Funds</span>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="flex items-center justify-between border-b border-gray-800/80 pb-2 mb-3">
-                                    <h2 class="text-xs font-bold uppercase tracking-widest font-cinzel text-[var(--primary)]">03 Legal Clauses & Delivery Alignment</h2>
-                                </div>
-                                <div id="pviewClausesRender" class="space-y-2 max-h-[220px] overflow-hidden"></div>
-                            </div>
-
-                            <div class="pt-2">
-                                <div class="grid grid-cols-2 gap-0 border border-gray-800/80 bg-[#111]/10 rounded overflow-hidden">
-                                    
-                                    <div class="p-5 space-y-5">
-                                        <div>
-                                            <span class="text-[9px] uppercase text-gray-500 font-mono tracking-widest block mb-0.5">CLIENT AUTHORIZATION</span>
-                                            <h4 id="pviewSigClientName" class="text-xs font-bold text-white tracking-wide">-</h4>
-                                            <p id="pviewSigClientComp" class="text-[10px] text-gray-400 font-mono">-</p>
-                                        </div>
-                                        <div class="h-14 border-b border-dashed border-gray-800 flex items-center justify-center relative bg-[#111]/30 rounded-sm overflow-hidden">
-                                            <span class="text-[8px] text-gray-700 font-serif tracking-widest absolute top-1 left-1 select-none">VALIDATION ENDPOINT</span>
-                                            <div id="targetPlacementClientSigWrapper" class="w-full h-full flex items-center justify-center px-4">
-                                                <span class="text-gray-700 font-mono text-[10px] italic opacity-30">[Awaiting Execution Signature Token...]</span>
-                                            </div>
-                                        </div>
-                                        <div class="text-[10px] text-gray-500 font-mono">DATE DECLARED: _____________________</div>
-                                    </div>
-
-                                    <div class="p-5 space-y-5 border-l border-gray-800/80 bg-[#111]/30">
-                                        <div>
-                                            <span class="text-[9px] uppercase text-[var(--primary)] font-mono tracking-widest block mb-0.5">FREELANCER VALIDATION</span>
-                                            <h4 id="pviewSigByName" class="text-xs font-bold text-white tracking-wide">-</h4>
-                                            <p id="pviewSigByRole" class="text-[10px] text-gray-400">-</p>
-                                        </div>
-                                        <div class="h-14 border-b border-dashed border-gray-800/60 flex items-center justify-center relative bg-[#111]/30 rounded-sm overflow-hidden">
-                                            <span class="text-[8px] text-gray-700 font-serif tracking-widest absolute top-1 left-1 select-none">VALIDATION ENDPOINT</span>
-                                            <div id="targetPlacementFreelancerSigWrapper" class="w-full h-full flex items-center justify-center px-4">
-                                                <span class="text-gray-700 font-mono text-[10px] italic opacity-30">[Awaiting Execution Signature Token...]</span>
-                                            </div>
-                                        </div>
-                                        <div class="text-[10px] text-[var(--primary)]/70 font-mono">DATE SIGNED: <span id="pviewSigDate" class="font-semibold">-</span></div>
-                                    </div>
-
-                                </div>
-                                <p class="text-center text-[9px] text-gray-600 italic mt-5">
-                                    "This document confirms mutual alignment on the selected itemized matrices, pricing ledgers, and attached execution stipulations."
-                                </p>
-                            </div>
-
-                        </div>
-
-                        <div class="pt-4">
-                            <div class="flex justify-between items-center text-[9px] text-gray-600 font-mono border-t border-gray-900/40 pt-4">
-                                <span>JK-MGMT PRODUCTION ENGINE REPLICA STACK</span>
-                                <span>Page 3 of 3</span>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </section>
-
-        </div>
+<!-- MAIN LAYOUT -->
+<div class="main-layout">
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <!-- TABS -->
+    <div class="tab-bar">
+      <button class="tab active" onclick="switchTab('info')">Info</button>
+      <button class="tab" onclick="switchTab('services')">Services</button>
+      <button class="tab" onclick="switchTab('finance')">Finance</button>
+      <button class="tab" onclick="switchTab('signature')">Sign</button>
+      <button class="tab" onclick="switchTab('clients')">Clients</button>
+      <button class="tab" onclick="switchTab('terms')">Terms</button>
+      <button class="tab" onclick="switchTab('analytics')">Analytics</button>
+      <button class="tab" onclick="switchTab('settings')">Profile</button>
     </div>
 
-    <script>
-        class QuotationStateEngine {
-            constructor() {
-                this.state = {
-                    meta: { ref: "JK-MGMT-2026-0001", date: "24/06/2026", status: "Draft" },
-                    preparedBy: { name: "Jenish Kamli", role: "E-Commerce Growth Manager", extra: "Marketplace Specialist, Independent Consultant", phone: "+91 99999 88888", address: "Umbergaon, Gujarat, India", gst: "24AAAAA1111A1Z1" },
-                    preparedFor: { name: "Abhiral Jain", company: "Writease.in", phone: "+91 88306 93895" },
-                    sections: [],
-                    milestones: [
-                        { id: "m1", label: "50% Advance Commitment Allocation", percent: 50 },
-                        { id: "m2", label: "50% Final Project Handover Settlement", percent: 50 }
-                    ],
-                    clauses: [
-                        { id: "c1", title: "Payment Milestones Scope", text: "50% non-refundable advance required to commence onboarding/listing work. The remaining 50% is due immediately upon completion of the agreed scope prior to live-launch asset handover." },
-                        { id: "c2", title: "Corporate Late Fees", text: "Work operations will pause immediately if milestone payments clear with extensions beyond 7 business days. A late penalty rate fee of 2% monthly aggregates applies." }
-                    ],
-                    remittance: { upi: "jenish@upi", beneficiary: "Jenish Maheshbhai Kamli", bank: "HDFC Bank Ltd", account: "50100234567890", ifsc: "HDFC0000123" },
-                    signatures: { freelancer: { type: "text", value: "J. m. KamLi", styleClass: "font-['Great_Vibes']" }, client: { type: "empty", value: "" } },
-                    themeClass: "theme-jk-gold",
-                    stamp: { dataUri: "", angle: 0, scale: 1.0, top: 750, left: 450 }
-                };
-
-                this.clientRegistry = [];
-                this.canvasElement = null;
-                this.canvasContext = null;
-                this.isDrawingTrace = false;
-                this.easyQrInstance = null;
-                
-                this.libraryTemplates = {
-                    "Amazon Listing": { name: "Amazon Listing Suite", desc: "SEO Title optimization, bullet points mapping, backend keywords indexing, description layout formatting sync", price: 1500, qty: 1 },
-                    "Flipkart Listing": { name: "Flipkart Seller Grid Optimization", desc: "Flipkart catalog mapping, optimized 1:1 square media format check, fee structures tier calculation rules mapping", price: 1200, qty: 1 },
-                    "Brand Registry": { name: "Brand Registry Support Allocation", desc: "Trademark protection alignment, IP accelerator program sync, automated counterfeit removals workflow initiation", price: 2500, qty: 1 },
-                    "A+ Content": { name: "Premium A+ Layout Graphics Design", desc: "High-conversion banner placements modules creation, clear typography typography hierarchy grid maps composition", price: 1999, qty: 1 },
-                    "PPC Management": { name: "Performance Marketing & Sponsored Ads Strategy", desc: "Targeted product keywords match types audits execution, negative target lists mapping, target ACoS threshold preservation", price: 5000, qty: 1 },
-                    "Blinkit Setup": { name: "Blinkit Darkstore Inventory Mapping", desc: "Hyperlocal fulfillment center catalog orchestration, instant onboarding approvals document verification mapping", price: 6000, qty: 1 },
-                    "Zepto Setup": { name: "Zepto Hyperlocal Onboarding Suite", desc: "10-minute micro-warehouse delivery configuration, stock ledger assignment framework integration", price: 6000, qty: 1 },
-                    "Instamart Setup": { name: "Swiggy Instamart Brand Integration", desc: "Instamart digital catalog placement, continuous availability tracking mechanisms deployment", price: 5500, qty: 1 },
-                    "Monthly Retainer": { name: "Full-Scale Marketplace Growth Retainer", desc: "Daily dashboard account health tracking monitors, SPF claims administration, high velocity strategy execution reporting", price: 15000, qty: 1 }
-                };
-            }
-
-            bootUp() {
-                this.restorePersistentRegistryCache();
-                this.initializeDOMHooksCache();
-                this.wireInteractiveEventListeners();
-                this.renderClientSelectionDropdown();
-                this.executeReactiveEvaluationLoop();
-                this.refreshAnalyticsPanel();
-            }
-
-            restorePersistentRegistryCache() {
-                const storedState = localStorage.getItem("JK_MGMT_PRO_STATE_SYS");
-                if (storedState) {
-                    try { this.state = JSON.parse(storedState); } catch(e) { console.error("System structural data trace collision reset default", e); }
-                }
-                const storedClients = localStorage.getItem("JK_MGMT_PRO_CLIENTS_REG");
-                if (storedClients) {
-                    try { this.clientRegistry = JSON.parse(storedClients); } catch(e) { console.error(e); }
-                }
-                if (this.state.sections.length === 0) {
-                    this.state.sections.push({
-                        id: "sec_init",
-                        indexStr: "01",
-                        title: "One-Time Onboarding Core Framework Scopes",
-                        items: [
-                            { id: "it_init1", name: "Marketplace Multi-Platform Setup", desc: "Account onboarding alignment across Amazon and Flipkart networks including verification routing rules checks", price: 1500, qty: 2, discount: 200, taxOverride: 18 }
-                        ]
-                    });
-                }
-            }
-
-            initializeDOMHooksCache() {
-                this.canvasElement = document.getElementById("signatureCanvas");
-                if (this.canvasElement) this.canvasContext = this.canvasElement.getContext("2d");
-                
-                // Set form input fields default configurations elements
-                document.getElementById("metaRef").value = this.state.meta.ref;
-                document.getElementById("metaDate").value = this.state.meta.date;
-                document.getElementById("docStatus").value = this.state.meta.status;
-                document.getElementById("appTheme").value = this.state.themeClass;
-                
-                document.getElementById("fName").value = this.state.preparedBy.name;
-                document.getElementById("fRole").value = this.state.preparedBy.role;
-                document.getElementById("fPhone").value = this.state.preparedBy.phone;
-                document.getElementById("fGst").value = this.state.preparedBy.gst;
-                document.getElementById("fAddress").value = this.state.preparedBy.address;
-                
-                document.getElementById("cName").value = this.state.preparedFor.name;
-                document.getElementById("cCompany").value = this.state.preparedFor.company;
-                document.getElementById("forPhone").value = this.state.preparedFor.phone;
-                
-                document.getElementById("pUpi").value = this.state.remittance.upi;
-                document.getElementById("pBeneficiary").value = this.state.remittance.beneficiary;
-                document.getElementById("pBank").value = this.state.remittance.bank;
-                document.getElementById("pAccount").value = this.state.remittance.account;
-                document.getElementById("pIfsc").value = this.state.remittance.ifsc;
-                
-                // Initialize canvas dimensions
-                this.canvasElement.width = this.canvasElement.offsetWidth;
-                this.canvasElement.height = this.canvasElement.offsetHeight;
-            }
-
-            wireInteractiveEventListeners() {
-                // Multi-Tab routing logic mechanism capture
-                document.querySelectorAll(".sig-tab-toggle-btn").forEach(btn => {
-                    btn.addEventListener("click", (e) => {
-                        document.querySelectorAll(".sig-tab-toggle-btn").forEach(b => b.className = "sig-tab-toggle-btn flex-1 py-1 text-[11px] text-center rounded text-gray-400 font-medium");
-                        e.target.className = "sig-tab-toggle-btn flex-1 py-1 text-[11px] text-center rounded bg-[#1c1c1c] text-[#D4AF37] border border-[#D4AF37]/20 font-medium";
-                        document.querySelectorAll(".sig-tab-content-panel").forEach(p => p.classList.add("hidden"));
-                        document.getElementById("sigPanel" + e.target.dataset.tab.charAt(0).toUpperCase() + e.target.dataset.tab.slice(1)).classList.remove("hidden");
-                    });
-                });
-
-                // Canvas coordinates trajectory trace listeners bindings
-                const fetchCoords = (e) => {
-                    const box = this.canvasElement.getBoundingClientRect();
-                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                    return {
-                        x: (clientX - box.left) * (this.canvasElement.width / box.width),
-                        y: (clientY - box.top) * (this.canvasElement.height / box.height)
-                    };
-                };
-
-                this.canvasElement.addEventListener("mousedown", (e) => { this.isDrawingTrace = true; this.canvasContext.beginPath(); const p = fetchCoords(e); this.canvasContext.moveTo(p.x, p.y); });
-                this.canvasElement.addEventListener("mousemove", (e) => { if (!this.isDrawingTrace) return; const p = fetchCoords(e); this.canvasContext.lineTo(p.x, p.y); this.canvasContext.stroke(); });
-                this.canvasElement.addEventListener("mouseup", () => this.isDrawingTrace = false);
-                
-                this.canvasElement.addEventListener("touchstart", (e) => { this.isDrawingTrace = true; this.canvasContext.beginPath(); const p = fetchCoords(e); this.canvasContext.moveTo(p.x, p.y); });
-                this.canvasElement.addEventListener("touchmove", (e) => { if (!this.isDrawingTrace) return; if(e.cancelable) e.preventDefault(); const p = fetchCoords(e); this.canvasContext.lineTo(p.x, p.y); this.canvasContext.stroke(); });
-                this.canvasElement.addEventListener("touchend", () => this.isDrawingTrace = false);
-
-                document.getElementById("btnResetCanvasPad").addEventListener("click", () => this.canvasContext.clearRect(0,0,this.canvasElement.width,this.canvasElement.height));
-                
-                document.getElementById("btnCommitCanvasStroke").addEventListener("click", () => {
-                    const dest = document.querySelector('input[name="sigPlacementSelector"]:checked').value;
-                    this.state.signatures[dest].type = "image";
-                    this.state.signatures[dest].value = this.canvasElement.toDataURL("image/png");
-                    this.executeReactiveEvaluationLoop();
-                });
-
-                document.getElementById("btnCommitTypeSig").addEventListener("click", () => {
-                    const dest = document.querySelector('input[name="sigPlacementSelector"]:checked').value;
-                    const font = document.querySelector(".font-selector-btn.border-\\[\\#D4AF37\\]\")")?.dataset.font || "font-['Great_Vibes']";
-                    this.state.signatures[dest].type = "text";
-                    this.state.signatures[dest].value = document.getElementById("typeSigTextInput").value || "Authorized Authorized";
-                    this.state.signatures[dest].styleClass = font;
-                    this.executeReactiveEvaluationLoop();
-                });
-
-                document.querySelectorAll(".font-selector-btn").forEach(btn => {
-                    btn.addEventListener("click", (e) => {
-                        document.querySelectorAll(".font-selector-btn").forEach(b => b.classList.replace("border-[#D4AF37]", "border-[#333]"));
-                        const curr = e.target.closest("button");
-                        curr.classList.replace("border-[#333]", "border-[#D4AF37]");
-                    });
-                });
-
-                // File Input stream base64 mappings converters loops
-                document.getElementById("sigImageFileInput").addEventListener("change", (e) => {
-                    const f = e.target.files[0];
-                    if (f) {
-                        const r = new FileReader();
-                        r.onload = (ev) => {
-                            const dest = document.querySelector('input[name="sigPlacementSelector"]:checked').value;
-                            this.state.signatures[dest].type = "image";
-                            this.state.signatures[dest].value = ev.target.result;
-                            this.executeReactiveEvaluationLoop();
-                        };
-                        r.readAsDataURL(f);
-                    }
-                });
-
-                // Stamp layer upload file logic mapper hooks
-                document.getElementById("stampImgFileInput").addEventListener("change", (e) => {
-                    const f = e.target.files[0];
-                    if (f) {
-                        const r = new FileReader();
-                        r.onload = (ev) => {
-                            this.state.stamp.dataUri = ev.target.result;
-                            const wrapper = document.getElementById("movableStampContainerWrapper");
-                            document.getElementById("pviewStampImgLayer").src = ev.target.result;
-                            wrapper.classList.remove("hidden");
-                            this.executeStampTransformPropertiesStyle();
-                        };
-                        r.readAsDataURL(f);
-                    }
-                });
-
-                document.getElementById("stampRotationWheel").addEventListener("input", (e) => {
-                    this.state.stamp.angle = parseInt(e.target.value);
-                    document.getElementById("stampAngleTextIndicator").innerText = this.state.stamp.angle + "°";
-                    this.executeStampTransformPropertiesStyle();
-                });
-
-                this.setupDraggableStampFrameworkEngine();
-
-                // Structural mappings event input delegations rules pipelines
-                const inputMappings = {
-                    "metaRef": ["meta", "ref"], "metaDate": ["meta", "date"], "docStatus": ["meta", "status"],
-                    "fName": ["preparedBy", "name"], "fRole": ["preparedBy", "role"], "fExtra": ["preparedBy", "extra"],
-                    "fPhone": ["preparedBy", "phone"], "fGst": ["preparedBy", "gst"], "fAddress": ["preparedBy", "address"],
-                    "cName": ["preparedFor", "name"], "cCompany": ["preparedFor", "company"], "forPhone": ["preparedFor", "phone"],
-                    "pUpi": ["remittance", "upi"], "pBeneficiary": ["remittance", "beneficiary"],
-                    "pBank": ["remittance", "bank"], "pAccount": ["remittance", "account"], "pIfsc": ["remittance", "ifsc"]
-                };
-
-                Object.entries(inputMappings).forEach(([id, path]) => {
-                    document.getElementById(id)?.addEventListener("input", (e) => {
-                        this.state[path[0]][path[1]] = e.target.value;
-                        this.executeReactiveEvaluationLoop();
-                    });
-                });
-
-                document.getElementById("appTheme").addEventListener("change", (e) => {
-                    this.state.themeClass = e.target.value;
-                    document.getElementById("renderTargetQuotation").className = `relative p-[2.5rem] text-white select-none box-border shadow-2xl ${e.target.value}`;
-                });
-
-                // Structural modifications buttons events link channels hooks
-                document.getElementById("btnAddSectionCategory").addEventListener("click", () => {
-                    const num = this.state.sections.length + 1;
-                    const pad = num < 10 ? "0" + num : num;
-                    this.state.sections.push({
-                        id: "sec_" + Date.now(), indexStr: pad.toString(), title: "Custom Targeted Scope Group Block", items: []
-                    });
-                    this.executeReactiveEvaluationLoop();
-                });
-
-                document.getElementById("btnAddNewMilestoneRow").addEventListener("click", () => {
-                    this.state.milestones.push({ id: "m_" + Date.now(), label: "Milestone Milestone Allocation Phase Line", percent: 0 });
-                    this.executeReactiveEvaluationLoop();
-                });
-
-                document.getElementById("btnAddNewClauseLine").addEventListener("click", () => {
-                    this.state.clauses.push({ id: "c_" + Date.now(), title: "Stipulation Title Clause", text: "Stipulation compliance execution framework details parameters mapping." });
-                    this.executeReactiveEvaluationLoop();
-                });
-
-                // Client Management Profile Actions Wire mapping registers
-                document.getElementById("btnClientSave").addEventListener("click", () => {
-                    const name = document.getElementById("cName").value.trim();
-                    if(!name) return;
-                    const profile = { name, company: document.getElementById("cCompany").value, phone: document.getElementById("forPhone").value };
-                    this.clientRegistry = this.clientRegistry.filter(c => c.name.toLowerCase() !== name.toLowerCase());
-                    this.clientRegistry.push(profile);
-                    localStorage.setItem("JK_MGMT_PRO_CLIENTS_REG", JSON.stringify(this.clientRegistry));
-                    this.renderClientSelectionDropdown();
-                    alert("Client profile saved successfully.");
-                });
-
-                document.getElementById("btnClientDelete").addEventListener("click", () => {
-                    const activeSelect = document.getElementById("clientDirectorySelector").value;
-                    if(!activeSelect) return;
-                    this.clientRegistry = this.clientRegistry.filter(c => c.name !== activeSelect);
-                    localStorage.setItem("JK_MGMT_PRO_CLIENTS_REG", JSON.stringify(this.clientRegistry));
-                    this.renderClientSelectionDropdown();
-                    this.executeReactiveEvaluationLoop();
-                });
-
-                document.getElementById("clientDirectorySelector").addEventListener("change", (e) => {
-                    const target = this.clientRegistry.find(c => c.name === e.target.value);
-                    if(target) {
-                        this.state.preparedFor.name = target.name;
-                        this.state.preparedFor.company = target.company;
-                        this.state.preparedFor.phone = target.phone;
-                        document.getElementById("cName").value = target.name;
-                        document.getElementById("cCompany").value = target.company;
-                        document.getElementById("forPhone").value = target.phone;
-                        this.executeReactiveEvaluationLoop();
-                    }
-                });
-
-                // Service Library Dropdown Insertion Selector
-                document.getElementById("serviceTemplateLibraryDropdown").addEventListener("change", (e) => {
-                    const tokenKey = e.target.value;
-                    if(!tokenKey || this.state.sections.length === 0) return;
-                    const matchedData = this.libraryTemplates[tokenKey];
-                    if(matchedData) {
-                        this.state.sections[this.state.sections.length - 1].items.push({
-                            id: "it_" + Date.now(), name: matchedData.name, desc: matchedData.desc, price: matchedData.price, qty: matchedData.qty, discount: 0, taxOverride: 18
-                        });
-                        e.target.value = "";
-                        this.executeReactiveEvaluationSweepAndPanelRebuild();
-                    }
-                });
-
-                // Save system configurations files triggers links
-                document.getElementById("btnSaveDraft").addEventListener("click", () => {
-                    localStorage.setItem("JK_MGMT_PRO_STATE_SYS", JSON.stringify(this.state));
-                    this.refreshAnalyticsPanel();
-                    alert("System core application snapshot state saved into secure local slots.");
-                });
-
-                document.getElementById("btnLoadDraft").addEventListener("click", () => {
-                    const data = localStorage.getItem("JK_MGMT_PRO_STATE_SYS");
-                    if(data) {
-                        this.state = JSON.parse(data);
-                        this.initializeDOMHooksCache();
-                        this.executeReactiveEvaluationSweepAndPanelRebuild();
-                    }
-                });
-
-                document.getElementById("btnDuplicateDoc").addEventListener("click", () => {
-                    const nextNum = parseInt(this.state.meta.ref.split("-").pop()) + 1 || Date.now();
-                    this.state.meta.ref = "JK-MGMT-2026-" + String(nextNum).padStart(4, '0');
-                    document.getElementById("metaRef").value = this.state.meta.ref;
-                    this.executeReactiveEvaluationLoop();
-                    alert("Quotation duplicated under updated tracking reference number.");
-                });
-
-                document.getElementById("btnExportJSON").addEventListener("click", () => {
-                    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.state));
-                    const link = document.createElement("a");
-                    link.setAttribute("href", dataStr);
-                    link.setAttribute("download", `${this.state.meta.ref}_state_data.json`);
-                    link.click();
-                });
-
-                document.getElementById("btnImportJSON").addEventListener("change", (e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (event) => {
-                            try {
-                                this.state = JSON.parse(event.target.result);
-                                this.initializeDOMHooksCache();
-                                this.executeReactiveEvaluationSweepAndPanelRebuild();
-                            } catch(err) { alert("File parsing collision mismatch."); }
-                        };
-                        reader.readAsText(file);
-                    }
-                });
-
-                document.getElementById("globalSearchInput").addEventListener("input", (e) => {
-                    const query = e.target.value.toLowerCase().trim();
-                    document.querySelectorAll(".premium-table tbody tr").forEach(row => {
-                        const text = row.innerText.toLowerCase();
-                        row.style.display = text.includes(query) ? "" : "none";
-                    });
-                });
-
-                document.getElementById("btnExportPDF").addEventListener("click", () => this.generateHighFidelityPdfDownloaderPipeline());
-            }
-
-            renderClientSelectionDropdown() {
-                const node = document.getElementById("clientDirectorySelector");
-                node.innerHTML = `<option value="">-- Click to Load Existing Registry Profile --</option>`;
-                this.clientRegistry.forEach(c => {
-                    node.innerHTML += `<option value="${c.name}">${c.name} (${c.company})</option>`;
-                });
-            }
-
-            setupDraggableStampFrameworkEngine() {
-                const wrapper = document.getElementById("movableStampContainerWrapper");
-                let isDragging = false, currentX, currentY, initialX, initialY;
-
-                wrapper.addEventListener("mousedown", (e) => {
-                    if (e.target.classList.contains("stamp-resize-handle")) return;
-                    isDragging = true;
-                    initialX = e.clientX - this.state.stamp.left;
-                    initialY = e.clientY - this.state.stamp.top;
-                });
-
-                document.addEventListener("mousemove", (e) => {
-                    if (!isDragging) return;
-                    this.state.stamp.left = e.clientX - initialX;
-                    this.state.stamp.top = e.clientY - initialY;
-                    wrapper.style.left = this.state.stamp.left + "px";
-                    wrapper.style.top = this.state.stamp.top + "px";
-                });
-
-                document.addEventListener("mouseup", () => isDrawingTrace = isDragging = false);
-
-                // Handle aspect resizing mechanics overlay metrics
-                const resizeHandle = wrapper.querySelector(".stamp-resize-handle");
-                let isResizing = false, baseWidth;
-
-                resizeHandle.addEventListener("mousedown", (e) => {
-                    isResizing = true;
-                    e.preventDefault();
-                    baseWidth = e.clientX;
-                });
-
-                document.addEventListener("mousemove", (e) => {
-                    if (!isResizing) return;
-                    const img = document.getElementById("pviewStampImgLayer");
-                    const offset = e.clientX - baseWidth;
-                    const nextSize = Math.max(40, img.offsetWidth + offset);
-                    img.style.width = nextSize + "px";
-                    img.style.height = nextSize + "px";
-                    baseWidth = e.clientX;
-                });
-
-                document.addEventListener("mouseup", () => isResizing = false);
-            }
-
-            executeStampTransformPropertiesStyle() {
-                const wrapper = document.getElementById("movableStampContainerWrapper");
-                wrapper.style.transform = `rotate(${this.state.stamp.angle}deg)`;
-            }
-
-            executeReactiveEvaluationSweepAndPanelRebuild() {
-                this.executeReactiveEvaluationLoop(true);
-            }
-
-            executeReactiveEvaluationLoop(rebuildPanelsForceTrigger = false) {
-                // Static fields projection assignments pipelines
-                document.getElementById("pviewRef").innerText = this.state.meta.ref;
-                document.getElementById("pviewDate").innerText = this.state.meta.date;
-                document.querySelectorAll(".id-header-ref-span").forEach(el => el.innerText = "REF: " + this.state.meta.ref);
-                document.getElementById("pviewStatusBadge").innerText = this.state.meta.status.toUpperCase();
-                
-                document.getElementById("pviewByName").innerText = this.state.preparedBy.name;
-                document.getElementById("pviewByRole").innerText = this.state.preparedBy.role;
-                document.getElementById("pviewByExtra").innerText = this.state.preparedBy.extra;
-                document.getElementById("pviewByGst").innerText = this.state.preparedBy.gst;
-                document.getElementById("pviewByAddress").innerText = this.state.preparedBy.address;
-                
-                document.getElementById("pviewForName").innerText = this.state.preparedFor.name;
-                document.getElementById("pviewForCompany").innerText = this.state.preparedFor.company;
-                document.getElementById("pviewForPhone").innerText = this.state.preparedFor.phone;
-                
-                document.getElementById("pviewSigClientName").innerText = this.state.preparedFor.name;
-                document.getElementById("pviewSigClientComp").innerText = this.state.preparedFor.company;
-                document.getElementById("pviewSigByName").innerText = this.state.preparedBy.name;
-                document.getElementById("pviewSigByRole").innerText = this.state.preparedBy.role;
-                document.getElementById("pviewSigDate").innerText = this.state.meta.date;
-
-                document.getElementById("pviewPBeneficiary").innerText = this.state.remittance.beneficiary;
-                document.getElementById("pviewPBank").innerText = this.state.remittance.bank;
-                document.getElementById("pviewPAccount").innerText = this.state.remittance.account;
-                document.getElementById("pviewPIfsc").innerText = this.state.remittance.ifsc;
-                document.getElementById("pviewPUpi").innerText = this.state.remittance.upi;
-
-                // Loop metrics variables state monitoring definitions
-                let accumulativeSubtotal = 0, accumulativeDiscount = 0, accumulativeTax = 0;
-                
-                const leftContainerWrapperNode = document.getElementById("builderSectionsControlWrapper");
-                const rightDocumentWrapperNode = document.getElementById("pviewDynamicSectionsRender");
-
-                if (rebuildPanelsForceTrigger || leftContainerWrapperNode.children.length !== this.state.sections.length) {
-                    leftContainerWrapperNode.innerHTML = "";
-                }
-                rightDocumentWrapperNode.innerHTML = "";
-
-                this.state.sections.forEach((sec, sIdx) => {
-                    let sectionSumTotal = 0;
-
-                    // Generate left input management card element context
-                    let secControlCard = document.getElementById(`ctrl-sec-${sec.id}`);
-                    if (!secControlCard) {
-                        secControlCard = document.createElement("div");
-                        secControlCard.id = `ctrl-sec-${sec.id}`;
-                        secControlCard.className = "bg-[#181818] p-3 rounded border border-[#2b2b2b] space-y-3";
-                        leftContainerWrapperNode.appendChild(secControlCard);
-                    }
-
-                    secControlCard.innerHTML = `
-                        <div class="flex justify-between items-center bg-[#0d0d0d] p-1.5 rounded border border-[#222]">
-                            <div class="flex items-center space-x-2 w-full">
-                                <span class="text-xs text-[#D4AF37] font-mono font-bold">${sec.indexStr}</span>
-                                <input type="text" value="${sec.title}" class="bg-transparent text-xs text-white font-bold outline-none w-full border-b border-transparent focus:border-[#D4AF37] input-sec-title-sync">
-                            </div>
-                            <button type="button" class="text-red-400 hover:text-red-500 text-xs ml-2 btn-sec-del-hook"><i class="fa-solid fa-trash-can"></i></button>
-                        </div>
-                        <div class="space-y-2 inner-rows-injection-wrapper"></div>
-                        <button type="button" class="bg-[#111] hover:bg-[#1a1a1a] border border-[#2c2c2c] text-[#D4AF37] text-[10px] py-1 rounded w-full text-center font-semibold tracking-wide btn-item-row-add-hook">
-                            <i class="fa-solid fa-plus-circle mr-1"></i> Add Service Pricing Row Line
-                        </button>
-                    `;
-
-                    secControlCard.querySelector(".input-sec-title-sync").addEventListener("input", (e) => {
-                        sec.title = e.target.value;
-                        document.getElementById(`pview-hdr-${sec.id}`).innerText = `${sec.indexStr} ${sec.title}`;
-                    });
-                    secControlCard.querySelector(".btn-sec-del-hook").addEventListener("click", () => {
-                        this.state.sections = this.state.sections.filter(s => s.id !== sec.id);
-                        this.executeReactiveEvaluationSweepAndPanelRebuild();
-                    });
-                    secControlCard.querySelector(".btn-item-row-add-hook").addEventListener("click", () => {
-                        sec.items.push({ id: "it_" + Date.now(), name: "Custom Scope Specification Variant", desc: "Custom product description parameters specifications layout mapping alignment rules metrics.", price: 0, qty: 1, discount: 0, taxOverride: 18 });
-                        this.executeReactiveEvaluationLoop(true);
-                    });
-
-                    const innerRowsWrapperTargetNode = secControlCard.querySelector(".inner-rows-injection-wrapper");
-
-                    // Right preview core document paper table blueprint matrix element configuration
-                    const previewTableWrapperElement = document.createElement("div");
-                    previewTableWrapperElement.className = "space-y-1";
-                    previewTableWrapperElement.innerHTML = `
-                        <h3 id="pview-hdr-${sec.id}" class="text-[11px] font-bold uppercase tracking-widest font-cinzel text-[var(--primary)] mt-2">${sec.indexStr} ${sec.title}</h3>
-                        <table class="premium-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 25%;">Service Metrics</th>
-                                    <th style="width: 43%;">Scope Execution Breakdown Context Matrix</th>
-                                    <th style="width: 10%; text-align: right;">Rate</th>
-                                    <th style="width: 5%; text-align: center;">Qty</th>
-                                    <th style="width: 5%; text-align: center;">Tax</th>
-                                    <th style="width: 12%; text-align: right;">Aggregate Sum</th>
-                                </tr>
-                            </thead>
-                            <tbody class="tbody-rows-destination"></tbody>
-                        </table>
-                    `;
-                    const previewTbodyNode = previewTableWrapperElement.querySelector(".tbody-rows-destination");
-
-                    // Enumerate nested items data parameters collections matrices loops
-                    sec.items.forEach((item) => {
-                        const baseGrossSumValue = item.price * item.qty;
-                        const lineDiscountOffset = parseFloat(item.discount) || 0;
-                        const baselineTaxMultiplicationValue = ((item.taxOverride || 0) / 100) * (baseGrossSumValue - lineDiscountOffset);
-                        const cumulativeLineItemTotalValuation = (baseGrossSumValue - lineDiscountOffset) + baselineTaxMultiplicationValue;
-
-                        accumulativeSubtotal += baseGrossSumValue;
-                        accumulativeDiscount += lineDiscountOffset;
-                        accumulativeTax += baselineTaxMultiplicationValue;
-
-                        // Create input control elements panel block rows interface tracking lanes
-                        const itemControlContainerRow = document.createElement("div");
-                        itemControlContainerRow.className = "bg-[#0d0d0d] p-2 rounded border border-[#222] space-y-1.5 text-[11px]";
-                        itemControlContainerRow.innerHTML = `
-                            <div class="grid grid-cols-1 gap-1">
-                                <input type="text" value="${item.name}" placeholder="Service/Product name line input..." class="bg-[#141414] border border-[#2a2a2a] p-1 text-xs rounded text-white font-medium row-sync-name">
-                                <textarea placeholder="Scope specifications overview data paragraph descriptions mapping..." class="bg-[#141414] border border-[#2a2a2a] p-1 text-[11px] rounded text-gray-400 w-full row-sync-desc" rows="1">${item.desc}</textarea>
-                            </div>
-                            <div class="flex items-center justify-between gap-1.5 border-t border-[#1a1a1a] pt-1">
-                                <div class="flex items-center space-x-1">
-                                    <span class="text-gray-500 text-[9px] uppercase">Rate:</span>
-                                    <input type="number" value="${item.price}" class="w-16 bg-[#141414] border border-[#2a2a2a] p-0.5 rounded text-white text-right font-mono row-sync-price">
-                                </div>
-                                <div class="flex items-center space-x-1">
-                                    <span class="text-gray-500 text-[9px] uppercase">Qty:</span>
-                                    <input type="number" value="${item.qty}" class="w-9 bg-[#141414] border border-[#2a2a2a] p-0.5 rounded text-white text-center font-mono row-sync-qty">
-                                </div>
-                                <div class="flex items-center space-x-1">
-                                    <span class="text-gray-500 text-[9px] uppercase">Disc:</span>
-                                    <input type="number" value="${item.discount}" class="w-12 bg-[#141414] border border-[#2a2a2a] p-0.5 rounded text-white text-right font-mono row-sync-disc text-red-400">
-                                </div>
-                                <div class="flex items-center space-x-1">
-                                    <span class="text-gray-500 text-[9px] uppercase">Tax%:</span>
-                                    <input type="number" value="${item.taxOverride}" class="w-10 bg-[#141414] border border-[#2a2a2a] p-0.5 rounded text-white text-center font-mono row-sync-tax">
-                                </div>
-                                <button type="button" class="text-gray-500 hover:text-red-400 row-item-delete-btn-hook px-1"><i class="fa-solid fa-xmark"></i></button>
-                            </div>
-                        `;
-
-                        itemControlContainerRow.querySelector(".row-sync-name").addEventListener("input", (e) => { item.name = e.target.value; this.executeReactiveEvaluationLoop(); });
-                        itemControlContainerRow.querySelector(".row-sync-desc").addEventListener("input", (e) => { item.desc = e.target.value; this.executeReactiveEvaluationLoop(); });
-                        itemControlContainerRow.querySelector(".row-sync-price").addEventListener("input", (e) => { item.price = parseFloat(e.target.value) || 0; this.executeReactiveEvaluationLoop(); });
-                        itemControlContainerRow.querySelector(".row-sync-qty").addEventListener("input", (e) => { item.qty = parseInt(e.target.value) || 1; this.executeReactiveEvaluationLoop(); });
-                        itemControlContainerRow.querySelector(".row-sync-disc").addEventListener("input", (e) => { item.discount = parseFloat(e.target.value) || 0; this.executeReactiveEvaluationLoop(); });
-                        itemControlContainerRow.querySelector(".row-sync-tax").addEventListener("input", (e) => { item.taxOverride = parseFloat(e.target.value) || 0; this.executeReactiveEvaluationLoop(); });
-                        itemControlContainerRow.querySelector(".row-item-delete-btn-hook").addEventListener("click", () => {
-                            sec.items = sec.items.filter(i => i.id !== item.id);
-                            this.executeReactiveEvaluationLoop(true);
-                        });
-
-                        innerRowsWrapperTargetNode.appendChild(itemControlContainerRow);
-
-                        // Output document visual preview table generation mappings append
-                        const trPreviewRow = document.createElement("tr");
-                        trPreviewRow.innerHTML = `
-                            <td class="font-semibold text-white tracking-wide text-[11px]">${item.name}</td>
-                            <td class="text-gray-400 font-sans leading-relaxed text-[10px]">${item.desc}</td>
-                            <td style="text-align: right;" class="font-mono text-gray-300">₹${item.price.toLocaleString('en-IN')}</td>
-                            <td style="text-align: center;" class="font-mono text-gray-400">${item.qty}</td>
-                            <td style="text-align: center;" class="font-mono text-gray-500">${item.taxOverride}%</td>
-                            <td style="text-align: right;" class="font-bold font-mono text-white">₹${cumulativeLineItemTotalValuation.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                        `;
-                        previewTbodyNode.appendChild(trPreviewRow);
-                    });
-
-                    rightDocumentWrapperNode.appendChild(previewTableWrapperElement);
-                });
-
-                // Compile advanced financial equations results summaries block structures parameters
-                const systemAggregatedGrossValuation = (accumulativeSubtotal - accumulativeDiscount) + accumulativeTax;
-                const evaluatedTdsOffsetTaxProductValue = 0.01 * systemAggregatedGrossValuation; // Default operational 1% Indian TDS benchmark parameter rules
-                const definitiveNetCompoundedValuation = systemAggregatedGrossValuation - evaluatedTdsOffsetTaxProductValue;
-                
-                const cleanRoundedFinalNetPayableValue = Math.round(definitiveNetCompoundedValuation);
-
-                document.getElementById("pviewSubtotal").innerText = accumulativeSubtotal.toLocaleString('en-IN', {minimumFractionDigits: 2});
-                document.getElementById("pviewDiscount").innerText = accumulativeDiscount.toLocaleString('en-IN', {minimumFractionDigits: 2});
-                document.getElementById("pviewTax").innerText = accumulativeTax.toLocaleString('en-IN', {minimumFractionDigits: 2});
-                document.getElementById("pviewGrandTotal").innerText = systemAggregatedGrossValuation.toLocaleString('en-IN', {minimumFractionDigits: 2});
-                document.getElementById("pviewTds").innerText = evaluatedTdsOffsetTaxProductValue.toLocaleString('en-IN', {minimumFractionDigits: 2});
-                document.getElementById("pviewNetTotal").innerText = cleanRoundedFinalNetPayableValue.toLocaleString('en-IN');
-                
-                document.getElementById("pviewAmountInWords").innerText = this.convertNumericalCurrencyValuesIntoIndianWordsSystem(cleanRoundedFinalNetPayableValue) + " Rupees Only";
-
-                // Render milestones controls panel and right preview chart framework metrics blocks
-                const milestonesControlsNode = document.getElementById("milestonesControlsAreaWrapper");
-                const milestonesPviewNode = document.getElementById("pviewMilestonesTargetContainer");
-                const milestonesContainerWrapperNode = document.getElementById("pviewMilestonesDocumentOutputWrapper");
-                
-                milestonesControlsNode.innerHTML = "";
-                milestonesPviewNode.innerHTML = "";
-
-                if (this.state.milestones.length > 0) {
-                    milestonesContainerWrapperNode.classList.remove("hidden");
-                    this.state.milestones.forEach((m, mIdx) => {
-                        const lineValueAmount = (m.percent / 100) * cleanRoundedFinalNetPayableValue;
-
-                        const ctrlRow = document.createElement("div");
-                        ctrlRow.className = "flex items-center space-x-2 bg-[#1c1c1c] p-2 rounded border border-[#2d2d2d]";
-                        ctrlRow.innerHTML = `
-                            <input type="text" value="${m.label}" class="flex-1 bg-[#0d0d0d] border border-[#333] p-1 rounded text-white text-xs ctrl-m-label">
-                            <div class="flex items-center space-x-1 w-20 shrink-0">
-                                <input type="number" value="${m.percent}" class="w-12 bg-[#0d0d0d] border border-[#333] p-1 rounded text-white text-center font-mono ctrl-m-percent">
-                                <span class="text-gray-500">%</span>
-                            </div>
-                            <button type="button" class="text-gray-500 hover:text-red-400 ctrl-m-del px-1"><i class="fa-solid fa-trash-can"></i></button>
-                        `;
-
-                        ctrlRow.querySelector(".ctrl-m-label").addEventListener("input", (e) => { m.label = e.target.value; this.executeReactiveEvaluationLoop(); });
-                        ctrlRow.querySelector(".ctrl-m-percent").addEventListener("input", (e) => { m.percent = parseFloat(e.target.value) || 0; this.executeReactiveEvaluationLoop(); });
-                        ctrlRow.querySelector(".ctrl-m-del").addEventListener("click", () => {
-                            this.state.milestones = this.state.milestones.filter(item => item.id !== m.id);
-                            this.executeReactiveEvaluationLoop();
-                        });
-                        milestonesControlsNode.appendChild(ctrlRow);
-
-                        // Print layout milestones items injection execution lane lines
-                        const pBlock = document.createElement("div");
-                        pBlock.className = "bg-[#111] border border-gray-900 rounded p-2.5 text-left font-mono";
-                        pBlock.innerHTML = `
-                            <span class="block uppercase font-sans text-gray-500 text-[8px] font-bold tracking-wider">${m.label}</span>
-                            <span class="block text-white text-xs font-bold mt-1">₹${Math.round(lineValueAmount).toLocaleString('en-IN')}.00</span>
-                            <span class="block text-[8px] text-[var(--primary)] font-sans mt-0.5 font-medium">Allocation Tier Ratio: ${m.percent}%</span>
-                        `;
-                        milestonesPviewNode.appendChild(pBlock);
-                    });
-                } else { milestonesContainerWrapperNode.classList.add("hidden"); }
-
-                // Dynamic Terms and Conditions sections parser allocation loop blocks
-                const clausesLeftControlsNode = document.getElementById("clausesInterfaceBoxWrapper");
-                const clausesRightPviewNode = document.getElementById("pviewClausesRender");
-                clausesLeftControlsNode.innerHTML = "";
-                clausesRightPviewNode.innerHTML = "";
-
-                this.state.clauses.forEach((cl) => {
-                    const clBox = document.createElement("div");
-                    clBox.className = "bg-[#1c1c1c] p-2.5 rounded border border-[#2d2d2d] space-y-1.5";
-                    clBox.innerHTML = `
-                        <div class="flex justify-between items-center border-b border-[#2b2b2b] pb-1">
-                            <input type="text" value="${cl.title}" class="bg-transparent text-xs text-[#D4AF37] font-bold outline-none w-full cl-sync-title">
-                            <button type="button" class="text-gray-500 hover:text-red-400 cl-sync-del px-1"><i class="fa-solid fa-trash-can"></i></button>
-                        </div>
-                        <textarea class="w-full bg-[#0d0d0d] border border-[#333] rounded p-1 text-[11px] text-gray-300 outline-none h-12 cl-sync-text">${cl.text}</textarea>
-                    `;
-
-                    clBox.querySelector(".cl-sync-title").addEventListener("input", (e) => { cl.title = e.target.value; this.executeReactiveEvaluationLoop(); });
-                    clBox.querySelector(".cl-sync-text").addEventListener("input", (e) => { cl.text = e.target.value; this.executeReactiveEvaluationLoop(); });
-                    clBox.querySelector(".cl-sync-del").addEventListener("click", () => {
-                        this.state.clauses = this.state.clauses.filter(c => c.id !== cl.id);
-                        this.executeReactiveEvaluationLoop();
-                    });
-                    clausesLeftControlsNode.appendChild(clBox);
-
-                    const pViewLineParagraph = document.createElement("div");
-                    pViewLineParagraph.className = "text-[10px] leading-relaxed font-sans";
-                    pViewLineParagraph.innerHTML = `<strong class="text-white font-medium">${cl.title}:</strong> <span class="text-gray-400">${cl.text}</span>`;
-                    clausesRightPviewNode.appendChild(pViewLineParagraph);
-                });
-
-                // Trigger isolated payment QR code rendering layout re-initialization pipeline updates
-                this.refreshDynamicUpiRemittanceQrMatrix(cleanRoundedFinalNetPayableValue);
-            }
-
-            refreshDynamicUpiRemittanceQrMatrix(payableNetValueAggregate) {
-                const node = document.getElementById("pviewRemittanceQrContainer");
-                node.innerHTML = "";
-
-                const upiStringWireUri = `upi://pay?pa=${encodeURIComponent(this.state.remittance.upi)}&pn=${encodeURIComponent(this.state.remittance.beneficiary)}&am=${payableNetValueAggregate}&cu=INR&tn=${encodeURIComponent(this.state.meta.ref)}`;
-                
-                try {
-                    this.easyQrInstance = new QRCode(node, {
-                        text: upiStringWireUri,
-                        width: 80,
-                        height: 80,
-                        colorDark: "#000000",
-                        colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel.M
-                    });
-                } catch(err) {
-                    node.innerHTML = `<span class="text-[8px] text-red-400 font-mono">QR Engine Ready</span>`;
-                }
-            }
-
-            refreshAnalyticsPanel() {
-                // Calculate historical arrays patterns indicators values matching active document metrics registers
-                document.getElementById("analyticsTotalCount").innerText = "1";
-                document.getElementById("analyticsTotalRevenue").innerText = "₹" + document.getElementById("pviewNetTotal").innerText;
-                document.getElementById("analyticsAvgDealSize").innerText = "₹" + document.getElementById("pviewNetTotal").innerText;
-            }
-
-            convertNumericalCurrencyValuesIntoIndianWordsSystem(amountValueParam) {
-                if (amountValueParam === 0) return "Zero";
-                const singleDigits = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
-                const doubleDigits = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
-                
-                const processThreeDigitsGroupMax = (num) => {
-                    let str = "";
-                    if (num >= 100) {
-                        str += singleDigits[Math.floor(num / 100)] + " Hundred ";
-                        num %= 100;
-                    }
-                    if (num >= 20) {
-                        str += doubleDigits[Math.floor(num / 10)] + " ";
-                        num %= 10;
-                    }
-                    if (num > 0) {
-                        str += singleDigits[num] + " ";
-                    }
-                    return str;
-                };
-
-                let outputTextWordsStr = "";
-                let remainingValueDividerVal = amountValueParam;
-
-                if (Math.floor(remainingValueDividerVal / 10000000) > 0) {
-                    outputTextWordsStr += processThreeDigitsGroupMax(Math.floor(remainingValueDividerVal / 10000000)) + "Crore ";
-                    remainingValueDividerVal %= 10000000;
-                }
-                if (Math.floor(remainingValueDividerVal / 100000) > 0) {
-                    outputTextWordsStr += processThreeDigitsGroupMax(Math.floor(remainingValueDividerVal / 100000)) + "Lakh ";
-                    remainingValueDividerVal %= 100000;
-                }
-                if (Math.floor(remainingValueDividerVal / 1000) > 0) {
-                    outputTextWordsStr += processThreeDigitsGroupMax(Math.floor(remainingValueDividerVal / 1000)) + "Thousand ";
-                    remainingValueDividerVal %= 1000;
-                }
-                if (remainingValueDividerVal > 0) {
-                    outputTextWordsStr += processThreeDigitsGroupMax(remainingValueDividerVal);
-                }
-                return outputTextWordsStr.trim();
-            }
-
-            generateHighFidelityPdfDownloaderPipeline() {
-                const node = document.getElementById("renderTargetQuotation");
-                const captureConfigurationOptions = {
-                    margin: [0, 0, 0, 0],
-                    filename: `${this.state.meta.ref || 'JK-MGMT-QUOTATION'}.pdf`,
-                    image: { type: 'jpeg', quality: 1.0 },
-                    html2canvas: { 
-                        scale: 2, 
-                        useCORS: true, 
-                        backgroundColor: "#0B0B0B",
-                        logging: false
-                    },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'] }
-                };
-                html2pdf().set(captureConfigurationOptions).from(node).save();
-            }
-        }
-
-        // Global Orchestration Instance Triggering Execution Mapping Channel
-        let ApplicationMasterOrchestrator;
-        window.addEventListener("load", () => {
-            ApplicationMasterOrchestrator = new QuotationStateEngine();
-            ApplicationMasterOrchestrator.bootUp();
-        });
-    </script>
-</body>
-</html>
+    <!-- TAB: INFO -->
+    <div class="tab-content active" id="tab-info">
+      <div class="card card-gold">
+        <div class="card-title">Quotation Details</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Reference No.</label>
+            <input class="form-input" id="refNum" value="JK-MGMT-2026-0001" oninput="renderPreview()"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date</label>
+            <input class="form-input" type="date" id="quoteDate" oninput="renderPreview()"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Quotation Title</label>
+          <input class="form-input" id="quoteTitle" value="E-Commerce & Quick Commerce Growth Services" oninput="renderPreview()"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tagline</label>
+          <input class="form-input" id="quoteTagline" value="Prepared with precision | Built for growth | Designed for success" oninput="renderPreview()"/>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:6px;">
+          <button class="btn btn-outline btn-sm" onclick="generateRefNum()">🔄 Auto Ref#</button>
+          <button class="btn btn-outline btn-sm" onclick="duplicateQuotation()">⧉ Duplicate</button>
+        </div>
+      </div>
+
+      <div class="card card-gold">
+        <div class="card-title">Prepared By</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Name</label>
+            <input class="form-input" id="fromName" value="Jenish Kamli" oninput="renderPreview()"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Role</label>
+            <input class="form-input" id="fromRole" value="E-Commerce Growth Manager" oninput="renderPreview()"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input class="form-input" id="fromPhone" oninput="renderPreview()"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input class="form-input" id="fromEmail" oninput="renderPreview()"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">GST No.</label>
+            <input class="form-input" id="fromGST" oninput="renderPreview()"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Country</label>
+            <input class="form-input" id="fromCountry" value="India" oninput="renderPreview()"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Address</label>
+          <input class="form-input" id="fromAddress" oninput="renderPreview()"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Logo</label>
+          <input type="file" accept="image/*" id="logoFile" onchange="uploadLogo()" style="display:none"/>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <img id="logoPreview" class="logo-preview" style="display:none;"/>
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('logoFile').click()">Upload Logo</button>
+            <button class="btn btn-outline btn-sm" onclick="clearLogo()">✕ Clear</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-gold">
+        <div class="card-title">Prepared For</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Client Name</label>
+            <input class="form-input" id="toName" value="Abhiral Jain" oninput="renderPreview()"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Company</label>
+            <input class="form-input" id="toCompany" value="Writease.in" oninput="renderPreview()"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input class="form-input" id="toPhone" value="+91 88306 93895" oninput="renderPreview()"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input class="form-input" id="toEmail" oninput="renderPreview()"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Address</label>
+          <input class="form-input" id="toAddress" oninput="renderPreview()"/>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="openClientModal()">📋 Load from Clients</button>
+      </div>
+    </div>
+
+    <!-- TAB: SERVICES -->
+    <div class="tab-content" id="tab-services">
+      <!-- TEMPLATES -->
+      <div class="card card-gold">
+        <div class="card-title">Quick Templates</div>
+        <div class="template-grid" id="templateGrid"></div>
+      </div>
+      <!-- SECTIONS -->
+      <div id="sectionsContainer"></div>
+      <button class="btn btn-outline" style="width:100%;margin-bottom:12px;" onclick="addSection()">+ Add Section</button>
+    </div>
+
+    <!-- TAB: FINANCE -->
+    <div class="tab-content" id="tab-finance">
+      <div class="card card-gold">
+        <div class="card-title">Tax & Discount</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Default GST %</label>
+            <input class="form-input" id="gstRate" value="18" type="number" oninput="renderPreview()"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Global Discount %</label>
+            <input class="form-input" id="discountPct" value="0" type="number" oninput="renderPreview()"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">TDS %</label>
+            <input class="form-input" id="tdsPct" value="0" type="number" oninput="renderPreview()"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Currency</label>
+            <select class="form-select" id="currency" onchange="renderPreview()">
+              <option value="₹">₹ INR</option>
+              <option value="$">$ USD</option>
+              <option value="€">€ EUR</option>
+              <option value="£">£ GBP</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-gold">
+        <div class="card-title">Payment Milestones</div>
+        <div id="milestonesContainer"></div>
+        <button class="btn btn-outline btn-sm" onclick="addMilestone()">+ Add Milestone</button>
+      </div>
+
+      <div class="card card-gold">
+        <div class="card-title">Payment Details</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">UPI ID</label>
+            <input class="form-input" id="upiId" oninput="renderPreview();generateQR()"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bank Name</label>
+            <input class="form-input" id="bankName" oninput="renderPreview()"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Account No.</label>
+            <input class="form-input" id="accountNo" oninput="renderPreview()"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">IFSC</label>
+            <input class="form-input" id="ifsc" oninput="renderPreview()"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Beneficiary Name</label>
+          <input class="form-input" id="beneficiary" oninput="renderPreview()"/>
+        </div>
+        <div style="display:none;"><div id="qr-code"></div></div>
+      </div>
+
+      <!-- SUMMARY -->
+      <div class="card card-gold">
+        <div class="card-title">Financial Summary</div>
+        <div id="financeSummary" style="font-size:12px;"></div>
+      </div>
+    </div>
+
+    <!-- TAB: SIGNATURE -->
+    <div class="tab-content" id="tab-signature">
+      <div class="card card-gold">
+        <div class="card-title">Destination</div>
+        <div class="radio-tabs">
+          <div class="radio-tab active" id="destClient" onclick="setDestination('client')">Client</div>
+          <div class="radio-tab" id="destFreelancer" onclick="setDestination('freelancer')">Freelancer</div>
+        </div>
+        <div id="destInfo" style="font-size:11px;color:var(--muted);margin-top:4px;"></div>
+      </div>
+
+      <div class="card card-gold">
+        <div class="card-title">Signature Mode</div>
+        <div class="radio-tabs">
+          <div class="radio-tab active" id="sigModeDraw" onclick="setSigMode('draw')">Draw</div>
+          <div class="radio-tab" id="sigModeType" onclick="setSigMode('type')">Type</div>
+          <div class="radio-tab" id="sigModeUpload" onclick="setSigMode('upload')">Upload</div>
+        </div>
+      </div>
+
+      <!-- DRAW MODE -->
+      <div class="card card-gold" id="sigDrawPanel">
+        <div class="card-title">Draw Signature</div>
+        <canvas id="sigCanvas" class="sig-canvas" width="400" height="150"></canvas>
+        <div style="display:flex;gap:6px;margin-top:8px;">
+          <button class="btn btn-outline btn-sm" onclick="clearCanvas()">Clear</button>
+          <button class="btn btn-outline btn-sm" onclick="undoCanvas()">Undo</button>
+          <button class="btn btn-gold btn-sm" onclick="applyCanvasSig()">Apply</button>
+        </div>
+      </div>
+
+      <!-- TYPE MODE -->
+      <div class="card card-gold" id="sigTypePanel" style="display:none;">
+        <div class="card-title">Type Signature</div>
+        <input class="form-input" id="sigTypeInput" placeholder="Type your name..." oninput="updateTypeSigPreview()"/>
+        <div class="form-group" style="margin-top:8px;">
+          <label class="form-label">Font</label>
+          <select class="form-select" id="sigFont" onchange="updateTypeSigPreview()">
+            <option value="'Great Vibes',cursive">Great Vibes</option>
+            <option value="'Allura',cursive">Allura</option>
+            <option value="'Parisienne',cursive">Parisienne</option>
+            <option value="'Dancing Script',cursive">Dancing Script</option>
+            <option value="'Sacramento',cursive">Sacramento</option>
+          </select>
+        </div>
+        <div class="sig-font-preview" id="typeSigPreview">Your Signature</div>
+        <button class="btn btn-gold btn-sm" style="margin-top:8px;width:100%;" onclick="applyTypeSig()">Apply Signature</button>
+      </div>
+
+      <!-- UPLOAD MODE -->
+      <div class="card card-gold" id="sigUploadPanel" style="display:none;">
+        <div class="card-title">Upload Signature</div>
+        <input type="file" id="sigUploadFile" accept=".png,.jpg,.jpeg,.webp" onchange="applySigUpload()" style="display:none;"/>
+        <button class="btn btn-outline" style="width:100%;" onclick="document.getElementById('sigUploadFile').click()">Choose Image (PNG/JPG/WEBP)</button>
+        <div id="sigUploadPreview" style="margin-top:8px;text-align:center;"></div>
+      </div>
+
+      <!-- STAMP -->
+      <div class="card card-gold">
+        <div class="card-title">Company Stamp</div>
+        <input type="file" id="stampFile" accept="image/*" onchange="uploadStamp()" style="display:none;"/>
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('stampFile').click()">Upload Stamp</button>
+        <button class="btn btn-outline btn-sm" onclick="clearStamp()">Clear</button>
+        <div id="stampPreview" style="margin-top:8px;"></div>
+      </div>
+
+      <!-- SIG DATE -->
+      <div class="card card-gold">
+        <div class="card-title">Signature Dates</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Client Date</label>
+            <input class="form-input" type="date" id="clientSigDate" oninput="renderPreview()"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Freelancer Date</label>
+            <input class="form-input" type="date" id="freelancerSigDate" oninput="renderPreview()"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: CLIENTS -->
+    <div class="tab-content" id="tab-clients">
+      <div class="card card-gold">
+        <div class="card-title">Client Manager</div>
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input class="form-input" id="clientSearch" placeholder="Search clients..." oninput="renderClientList()" style="padding-left:32px;"/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Name</label>
+            <input class="form-input" id="newClientName" placeholder="Client name"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Company</label>
+            <input class="form-input" id="newClientCompany" placeholder="Company"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input class="form-input" id="newClientPhone"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input class="form-input" id="newClientEmail"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Address</label>
+          <input class="form-input" id="newClientAddress"/>
+        </div>
+        <button class="btn btn-gold btn-sm" style="margin-top:6px;" onclick="saveClient()">Save Client</button>
+      </div>
+      <div id="clientList" class="scroll-list"></div>
+    </div>
+
+    <!-- TAB: TERMS -->
+    <div class="tab-content" id="tab-terms">
+      <div class="card card-gold">
+        <div class="card-title">Terms & Conditions</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Clause Title</label>
+            <input class="form-input" id="termTitle" placeholder="e.g. Payment Policy"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Details</label>
+            <input class="form-input" id="termDetails" placeholder="Clause details..."/>
+          </div>
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="addTerm()">+ Add Term</button>
+        <button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="loadDefaultTerms()">Load Defaults</button>
+      </div>
+      <div id="termsList"></div>
+    </div>
+
+    <!-- TAB: ANALYTICS -->
+    <div class="tab-content" id="tab-analytics">
+      <div class="analytics-grid">
+        <div class="analytic-card">
+          <div class="analytic-val" id="a-total">0</div>
+          <div class="analytic-label">Total Quotes</div>
+        </div>
+        <div class="analytic-card">
+          <div class="analytic-val" id="a-revenue">₹0</div>
+          <div class="analytic-label">Total Revenue</div>
+        </div>
+        <div class="analytic-card">
+          <div class="analytic-val" id="a-avg">₹0</div>
+          <div class="analytic-label">Avg Deal</div>
+        </div>
+        <div class="analytic-card">
+          <div class="analytic-val" id="a-accepted" style="color:#34d399;">0</div>
+          <div class="analytic-label">Accepted</div>
+        </div>
+        <div class="analytic-card">
+          <div class="analytic-val" id="a-rejected" style="color:#f87171;">0</div>
+          <div class="analytic-label">Rejected</div>
+        </div>
+        <div class="analytic-card">
+          <div class="analytic-val" id="a-pending" style="color:#fbbf24;">0</div>
+          <div class="analytic-label">Pending</div>
+        </div>
+      </div>
+      <div class="card card-gold">
+        <div class="card-title">Monthly Activity</div>
+        <div class="bar-chart" id="monthlyChart"></div>
+        <div style="display:flex;gap:6px;margin-top:4px;" id="monthLabels"></div>
+      </div>
+      <button class="btn btn-outline" style="width:100%;margin-top:10px;" onclick="refreshAnalytics()">Refresh</button>
+    </div>
+
+    <!-- TAB: SETTINGS / PROFILE -->
+    <div class="tab-content" id="tab-settings">
+      <div class="card card-gold">
+        <div class="card-title">Theme</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-outline" onclick="setTheme('')" style="background:linear-gradient(135deg,#D4AF37,#C9A227);color:#000;border:none;">JK Gold</button>
+          <button class="btn btn-outline" onclick="setTheme('theme-royal')" style="background:linear-gradient(135deg,#0D1B3E,#4A9EFF);color:#fff;border:none;">Royal Blue</button>
+          <button class="btn btn-outline" onclick="setTheme('theme-emerald')" style="background:linear-gradient(135deg,#0D2818,#10D96F);color:#fff;border:none;">Emerald</button>
+          <button class="btn btn-outline" onclick="setTheme('theme-platinum')" style="background:linear-gradient(135deg,#1a1a1a,#E8E8E8);color:#000;border:none;">Platinum</button>
+        </div>
+      </div>
+      <div class="card card-gold">
+        <div class="card-title">Save Profile</div>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:10px;">Profile data from "Prepared By" section is auto-saved to your browser.</p>
+        <button class="btn btn-gold" onclick="saveProfile()">💾 Save Profile</button>
+        <button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="loadProfile()">Load Profile</button>
+      </div>
+      <div class="card card-gold">
+        <div class="card-title">Import JSON</div>
+        <input type="file" id="importJSONFile" accept=".json" onchange="importJSON()" style="display:none;"/>
+        <button class="btn btn-outline" onclick="document.getElementById('importJSONFile').click()">📂 Import Quotation JSON</button>
+      </div>
+      <div class="card card-gold">
+        <div class="card-title">Global Search</div>
+        <input class="form-input" id="globalSearch" placeholder="Search clients, quotations, services..." oninput="globalSearchFn()"/>
+        <div id="globalSearchResults" style="margin-top:8px;font-size:12px;color:var(--muted);"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL (PREVIEW) -->
+  <div class="right-panel" id="rightPanel">
+    <button class="close-preview-btn" onclick="toggleMobilePreview()">✕ Close Preview</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;width:794px;max-width:100%;">
+      <div style="font-size:11px;color:var(--muted);letter-spacing:1px;">LIVE PREVIEW — A4</div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-outline btn-sm" onclick="exportPDF()">⬇ Export PDF</button>
+      </div>
+    </div>
+    <div class="a4-wrapper" id="previewContent"></div>
+  </div>
+</div>
+
+<!-- MODAL: CLIENT SELECTOR -->
+<div class="modal-overlay" id="clientModal">
+  <div class="modal">
+    <div class="modal-title">Select Client</div>
+    <input class="form-input" placeholder="Search..." oninput="renderModalClientList(this.value)" style="margin-bottom:10px;"/>
+    <div id="modalClientList"></div>
+    <button class="btn btn-outline btn-sm" style="margin-top:10px;" onclick="closeClientModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let state = {
+  sections: [],
+  milestones: [],
+  terms: [],
+  clientSig: null,
+  freelancerSig: null,
+  stamp: null,
+  logo: null,
+  theme: '',
+  status: 'draft',
+  qrDataUrl: null,
+};
+
+let sigMode = 'draw';
+let sigDestination = 'client';
+let canvasHistory = [];
+let isDrawing = false;
+let lastX = 0, lastY = 0;
+
+const TEMPLATES = [
+  {name:'Amazon Listing',service:'Amazon Listing',desc:'SEO-optimized title, bullet points, description & keywords',price:150,qty:1},
+  {name:'Flipkart Listing',service:'Flipkart Listing',desc:'Product listing with SEO content for Flipkart',price:150,qty:1},
+  {name:'Brand Registry',service:'Brand Registry',desc:'Trademark linking, brand protection & A+ content unlock',price:1700,qty:1},
+  {name:'A+ Content',service:'A+ Content (Basic)',desc:'Standard brand creatives & enhanced brand content',price:999,qty:1},
+  {name:'PPC Management',service:'PPC & Ad Management',desc:'Sponsored ads setup & optimization',price:0,qty:1},
+  {name:'Blinkit Setup',service:'Blinkit Setup',desc:'Blinkit onboarding, store mapping & product listing',price:5000,qty:1},
+  {name:'Zepto Setup',service:'Zepto Setup',desc:'Zepto onboarding, store mapping & product listing',price:5000,qty:1},
+  {name:'Instamart Setup',service:'Instamart Setup',desc:'Swiggy Instamart onboarding & product listing',price:5000,qty:1},
+  {name:'Monthly Retainer',service:'Growth Plan Retainer',desc:'2 Platforms — SPF/HPF Claims, Account Health Monitoring, Inventory Coordination',price:15000,qty:1},
+  {name:'Q-Commerce Setup',service:'Quick Commerce Setup',desc:'Blinkit, Zepto, Instamart onboarding & store mapping',price:5000,qty:1},
+];
+
+const DEFAULT_TERMS = [
+  {title:'Payment Milestones',details:'50% non-refundable advance required to commence work. Remaining 50% due upon completion prior to live-launch or final asset handover.'},
+  {title:'Scope & Revisions',details:'Covers exact SKUs and platforms specified. Additional SKUs or platforms billed separately. Includes 2 rounds of minor revisions.'},
+  {title:'Late Payments',details:'Work paused if milestone payments delayed by more than 7 days. Late fee of 2% per month on overdue invoices.'},
+  {title:'Platform Dependency',details:'Final brand registry approvals and go-live timelines subject to internal policies of Amazon, Flipkart, Blinkit, Zepto, and Instamart.'},
+  {title:'Data Security & Trust',details:'All client business data handled with strict confidentiality and will never be shared with third parties.'},
+  {title:'Account Access Delay',details:'Client must provide OTPs, API keys, or sub-user access promptly. Timelines extended for delays in providing required credentials.'},
+  {title:'Sales Disclaimer',details:'Services guarantee high-quality optimization. Actual sales velocity depends on market demand, product pricing, and competitor activity.'},
+];
+
+// ============================================================
+// INIT
+// ============================================================
+function init(){
+  // Set today date
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('quoteDate').value = today;
+  document.getElementById('clientSigDate').value = today;
+  document.getElementById('freelancerSigDate').value = today;
+
+  // Load saved theme
+  const savedTheme = localStorage.getItem('jk_theme') || '';
+  setTheme(savedTheme, true);
+
+  // Load profile
+  loadProfile(true);
+
+  // Render templates
+  renderTemplates();
+
+  // Add default section
+  addSection('Marketplace Services');
+
+  // Add default milestones
+  state.milestones = [
+    {label:'50% Advance',pct:50},
+    {label:'25% Mid',pct:25},
+    {label:'25% Final',pct:25},
+  ];
+  renderMilestones();
+
+  // Load default terms
+  state.terms = [...DEFAULT_TERMS];
+  renderTermsList();
+
+  // Init canvas
+  initCanvas();
+
+  // Load clients
+  renderClientList();
+
+  // Load analytics
+  refreshAnalytics();
+
+  // Render
+  renderPreview();
+
+  // Auto-generate ref
+  const lastRef = localStorage.getItem('jk_lastRef');
+  if(!lastRef) generateRefNum();
+}
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.remove('active');});
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+}
+
+// ============================================================
+// MOBILE PREVIEW
+// ============================================================
+function toggleMobilePreview(){
+  const panel = document.getElementById('rightPanel');
+  panel.classList.toggle('show');
+  if(panel.classList.contains('show')) renderPreview();
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ============================================================
+// REF NUMBER
+// ============================================================
+function generateRefNum(){
+  let n = parseInt(localStorage.getItem('jk_refCounter') || '0') + 1;
+  localStorage.setItem('jk_refCounter', n);
+  const ref = 'JK-MGMT-2026-' + String(n).padStart(4,'0');
+  document.getElementById('refNum').value = ref;
+  localStorage.setItem('jk_lastRef', ref);
+  renderPreview();
+}
+
+// ============================================================
+// STATUS
+// ============================================================
+function updateStatus(){
+  state.status = document.getElementById('statusSelect').value;
+  renderPreview();
+}
+
+// ============================================================
+// SECTION BUILDER
+// ============================================================
+function addSection(defaultTitle=''){
+  const id = Date.now() + Math.random();
+  state.sections.push({id, title: defaultTitle || 'New Section', rows:[]});
+  renderSections();
+  renderPreview();
+}
+
+function removeSection(id){
+  state.sections = state.sections.filter(s=>s.id!==id);
+  renderSections();
+  renderPreview();
+}
+
+function addRow(sectionId){
+  const s = state.sections.find(s=>s.id===sectionId);
+  if(!s) return;
+  s.rows.push({id:Date.now()+Math.random(),service:'',desc:'',price:0,qty:1,discount:0,tax:-1});
+  renderSections();
+  renderPreview();
+}
+
+function removeRow(sectionId, rowId){
+  const s = state.sections.find(s=>s.id===sectionId);
+  if(!s) return;
+  s.rows = s.rows.filter(r=>r.id!==rowId);
+  renderSections();
+  renderPreview();
+}
+
+function updateRow(sectionId, rowId, field, value){
+  const s = state.sections.find(s=>s.id===sectionId);
+  if(!s) return;
+  const r = s.rows.find(r=>r.id===rowId);
+  if(!r) return;
+  r[field] = field==='price'||field==='qty'||field==='discount'||field==='tax' ? parseFloat(value)||0 : value;
+  renderPreview();
+  updateFinanceSummary();
+}
+
+function updateSectionTitle(id, val){
+  const s = state.sections.find(s=>s.id===id);
+  if(s) s.title = val;
+  renderPreview();
+}
+
+function renderSections(){
+  const container = document.getElementById('sectionsContainer');
+  container.innerHTML = '';
+  state.sections.forEach((sec,idx)=>{
+    const div = document.createElement('div');
+    div.className = 'section-block';
+    div.innerHTML = `
+      <div class="section-header">
+        <div class="section-num">${idx+1}</div>
+        <input class="section-title-input" value="${esc(sec.title)}" onchange="updateSectionTitle(${sec.id},this.value)" placeholder="Section Title"/>
+        <button class="btn btn-danger btn-sm" onclick="removeSection(${sec.id})">✕</button>
+      </div>
+      <div class="section-body">
+        <div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1fr 1fr 30px;gap:4px;margin-bottom:4px;padding:0 4px;">
+          <div class="col-label">Service</div>
+          <div class="col-label">Description</div>
+          <div class="col-label">Price</div>
+          <div class="col-label">Qty</div>
+          <div class="col-label">Disc%</div>
+          <div class="col-label">Tax%</div>
+          <div></div>
+        </div>
+        ${sec.rows.map(row=>`
+        <div class="service-row">
+          <div class="service-row-grid">
+            <input class="row-input" placeholder="Service name" value="${esc(row.service)}" oninput="updateRow(${sec.id},${row.id},'service',this.value)"/>
+            <input class="row-input" placeholder="Description" value="${esc(row.desc)}" oninput="updateRow(${sec.id},${row.id},'desc',this.value)"/>
+            <input class="row-input" type="number" placeholder="Price" value="${row.price||''}" oninput="updateRow(${sec.id},${row.id},'price',this.value)"/>
+            <input class="row-input" type="number" placeholder="1" value="${row.qty||''}" oninput="updateRow(${sec.id},${row.id},'qty',this.value)"/>
+            <input class="row-input" type="number" placeholder="0" value="${row.discount||''}" oninput="updateRow(${sec.id},${row.id},'discount',this.value)"/>
+            <input class="row-input" type="number" placeholder="Auto" value="${row.tax<0?'':row.tax}" oninput="updateRow(${sec.id},${row.id},'tax',this.value)" title="Leave blank for global GST"/>
+            <button class="btn btn-danger btn-sm" onclick="removeRow(${sec.id},${row.id})" style="padding:4px 7px;">✕</button>
+          </div>
+        </div>`).join('')}
+        <button class="btn btn-outline btn-sm" style="margin-top:6px;" onclick="addRow(${sec.id})">+ Add Row</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// ============================================================
+// TEMPLATES
+// ============================================================
+function renderTemplates(){
+  const grid = document.getElementById('templateGrid');
+  grid.innerHTML = TEMPLATES.map(t=>`<div class="template-chip" onclick='insertTemplate(${JSON.stringify(t)})'>${t.name}</div>`).join('');
+}
+
+function insertTemplate(t){
+  if(state.sections.length===0) addSection(t.service);
+  const sec = state.sections[state.sections.length-1];
+  sec.rows.push({id:Date.now()+Math.random(),service:t.service,desc:t.desc,price:t.price,qty:t.qty,discount:0,tax:-1});
+  renderSections();
+  renderPreview();
+  toast('Template added!');
+}
+
+// ============================================================
+// MILESTONES
+// ============================================================
+function addMilestone(){
+  state.milestones.push({label:'Milestone',pct:0});
+  renderMilestones();
+  renderPreview();
+}
+
+function renderMilestones(){
+  const c = document.getElementById('milestonesContainer');
+  c.innerHTML = state.milestones.map((m,i)=>`
+    <div class="milestone-row">
+      <input class="row-input" value="${esc(m.label)}" oninput="state.milestones[${i}].label=this.value;renderPreview();" placeholder="Label"/>
+      <input class="row-input" type="number" value="${m.pct}" oninput="state.milestones[${i}].pct=parseFloat(this.value)||0;renderPreview();" placeholder="%"/>
+      <div style="font-size:11px;color:var(--gold);padding:4px;" id="ms-amt-${i}"></div>
+      <button class="btn btn-danger btn-sm" onclick="state.milestones.splice(${i},1);renderMilestones();renderPreview();">✕</button>
+    </div>
+  `).join('');
+  updateMilestoneAmounts();
+}
+
+function updateMilestoneAmounts(){
+  const grand = calcGrandTotal();
+  state.milestones.forEach((m,i)=>{
+    const el = document.getElementById(`ms-amt-${i}`);
+    if(el) el.textContent = formatCurrency((grand * m.pct)/100);
+  });
+}
+
+// ============================================================
+// TERMS
+// ============================================================
+function addTerm(){
+  const title = document.getElementById('termTitle').value.trim();
+  const details = document.getElementById('termDetails').value.trim();
+  if(!title && !details) return;
+  state.terms.push({title, details});
+  document.getElementById('termTitle').value = '';
+  document.getElementById('termDetails').value = '';
+  renderTermsList();
+  renderPreview();
+}
+
+function loadDefaultTerms(){
+  state.terms = [...DEFAULT_TERMS];
+  renderTermsList();
+  renderPreview();
+  toast('Default terms loaded');
+}
+
+function renderTermsList(){
+  const c = document.getElementById('termsList');
+  c.innerHTML = state.terms.map((t,i)=>`
+    <div class="term-row">
+      <div class="term-text">
+        <strong style="color:var(--gold);font-size:11px;">${esc(t.title)}</strong><br/>
+        <span style="color:var(--muted);font-size:11px;">${esc(t.details)}</span>
+      </div>
+      <div class="term-actions">
+        <button class="btn btn-outline btn-sm" onclick="moveTerm(${i},-1)">↑</button>
+        <button class="btn btn-outline btn-sm" onclick="moveTerm(${i},1)">↓</button>
+        <button class="btn btn-danger btn-sm" onclick="removeTerm(${i})">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function moveTerm(i,dir){
+  const j=i+dir;
+  if(j<0||j>=state.terms.length) return;
+  [state.terms[i],state.terms[j]]=[state.terms[j],state.terms[i]];
+  renderTermsList();
+  renderPreview();
+}
+
+function removeTerm(i){
+  state.terms.splice(i,1);
+  renderTermsList();
+  renderPreview();
+}
+
+// ============================================================
+// CLIENTS
+// ============================================================
+function saveClient(){
+  const clients = getClients();
+  const c = {
+    id: Date.now(),
+    name: document.getElementById('newClientName').value.trim(),
+    company: document.getElementById('newClientCompany').value.trim(),
+    phone: document.getElementById('newClientPhone').value.trim(),
+    email: document.getElementById('newClientEmail').value.trim(),
+    address: document.getElementById('newClientAddress').value.trim(),
+  };
+  if(!c.name) return toast('Enter client name');
+  clients.push(c);
+  localStorage.setItem('jk_clients', JSON.stringify(clients));
+  document.getElementById('newClientName').value='';
+  document.getElementById('newClientCompany').value='';
+  document.getElementById('newClientPhone').value='';
+  document.getElementById('newClientEmail').value='';
+  document.getElementById('newClientAddress').value='';
+  renderClientList();
+  toast('Client saved!');
+}
+
+function getClients(){
+  return JSON.parse(localStorage.getItem('jk_clients')||'[]');
+}
+
+function renderClientList(){
+  const q = (document.getElementById('clientSearch')||{}).value||'';
+  const clients = getClients().filter(c=>!q||(c.name+c.company).toLowerCase().includes(q.toLowerCase()));
+  const list = document.getElementById('clientList');
+  if(!list) return;
+  list.innerHTML = clients.map(c=>`
+    <div class="client-row">
+      <div onclick="loadClient(${c.id})">
+        <div class="client-name">${esc(c.name)}</div>
+        <div class="client-company">${esc(c.company)} · ${esc(c.phone)}</div>
+      </div>
+      <div style="display:flex;gap:4px;">
+        <button class="btn btn-gold btn-sm" onclick="loadClient(${c.id})">Use</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteClient(${c.id})">✕</button>
+      </div>
+    </div>
+  `).join('') || '<div style="color:var(--muted);font-size:12px;padding:10px;">No clients saved.</div>';
+}
+
+function loadClient(id){
+  const c = getClients().find(x=>x.id===id);
+  if(!c) return;
+  document.getElementById('toName').value = c.name||'';
+  document.getElementById('toCompany').value = c.company||'';
+  document.getElementById('toPhone').value = c.phone||'';
+  document.getElementById('toEmail').value = c.email||'';
+  document.getElementById('toAddress').value = c.address||'';
+  renderPreview();
+  toast('Client loaded!');
+}
+
+function deleteClient(id){
+  const clients = getClients().filter(c=>c.id!==id);
+  localStorage.setItem('jk_clients',JSON.stringify(clients));
+  renderClientList();
+  toast('Client deleted');
+}
+
+function openClientModal(){
+  document.getElementById('clientModal').classList.add('show');
+  renderModalClientList('');
+}
+
+function closeClientModal(){
+  document.getElementById('clientModal').classList.remove('show');
+}
+
+function renderModalClientList(q){
+  const clients = getClients().filter(c=>!q||(c.name+c.company).toLowerCase().includes(q.toLowerCase()));
+  document.getElementById('modalClientList').innerHTML = clients.map(c=>`
+    <div class="client-row" onclick="loadClient(${c.id});closeClientModal();">
+      <div>
+        <div class="client-name">${esc(c.name)}</div>
+        <div class="client-company">${esc(c.company)}</div>
+      </div>
+    </div>
+  `).join('') || '<div style="color:var(--muted);font-size:12px;">No clients</div>';
+}
+
+// ============================================================
+// CALCULATIONS
+// ============================================================
+function getGSTRate(){return parseFloat(document.getElementById('gstRate').value)||18;}
+function getDiscountPct(){return parseFloat(document.getElementById('discountPct').value)||0;}
+function getTDSPct(){return parseFloat(document.getElementById('tdsPct').value)||0;}
+function getCurrency(){return document.getElementById('currency').value||'₹';}
+
+function calcRowTotal(row){
+  const tax = row.tax >= 0 ? row.tax : getGSTRate();
+  const base = (row.price * row.qty);
+  const disc = base * (row.discount/100);
+  const taxable = base - disc;
+  const taxAmt = taxable * (tax/100);
+  return taxable + taxAmt;
+}
+
+function calcSubtotal(){
+  let sub = 0;
+  state.sections.forEach(s=>s.rows.forEach(r=>{ sub += r.price * r.qty; }));
+  return sub;
+}
+
+function calcGrandTotal(){
+  const sub = calcSubtotal();
+  const discAmt = sub * (getDiscountPct()/100);
+  const taxable = sub - discAmt;
+  let tax = 0;
+  state.sections.forEach(s=>s.rows.forEach(r=>{
+    const t = r.tax>=0?r.tax:getGSTRate();
+    const base = r.price * r.qty;
+    const d = base * (r.discount/100);
+    tax += (base - d) * (t/100);
+  }));
+  const grand = taxable + tax;
+  return grand;
+}
+
+function calcFinancials(){
+  const sub = calcSubtotal();
+  const discAmt = sub * (getDiscountPct()/100);
+  const taxable = sub - discAmt;
+  let tax = 0;
+  state.sections.forEach(s=>s.rows.forEach(r=>{
+    const t = r.tax>=0?r.tax:getGSTRate();
+    const base = r.price * r.qty;
+    const d = base * (r.discount/100);
+    tax += (base - d) * (t/100);
+  }));
+  const grand = taxable + tax;
+  const tds = grand * (getTDSPct()/100);
+  const net = grand - tds;
+  const rounded = Math.round(net);
+  return {sub, discAmt, taxable, tax, grand, tds, net, rounded};
+}
+
+function updateFinanceSummary(){
+  const f = calcFinancials();
+  const cur = getCurrency();
+  document.getElementById('financeSummary').innerHTML = `
+    <div style="display:grid;gap:4px;">
+      ${row2('Subtotal', formatCurrency(f.sub))}
+      ${getDiscountPct()>0?row2('Discount ('+getDiscountPct()+'%)', '- '+formatCurrency(f.discAmt)):''}
+      ${row2('GST / Tax', formatCurrency(f.tax))}
+      ${row2('Grand Total', formatCurrency(f.grand), true)}
+      ${getTDSPct()>0?row2('TDS ('+getTDSPct()+'%)', '- '+formatCurrency(f.tds)):''}
+      ${getTDSPct()>0?row2('Net Payable', formatCurrency(f.net), true):''}
+      <div style="background:#1a1a1a;padding:8px;margin-top:6px;font-size:11px;color:var(--muted);border-left:3px solid var(--gold);font-style:italic;">${toWords(Math.round(f.net||f.grand))}</div>
+    </div>
+  `;
+  updateMilestoneAmounts();
+}
+
+function row2(label, val, bold=false){
+  return `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #1a1a1a;${bold?'color:var(--gold);font-weight:700;':'color:var(--muted);'}font-size:12px;"><span>${label}</span><span>${val}</span></div>`;
+}
+
+function formatCurrency(n){
+  const cur = getCurrency();
+  if(!n && n!==0) return cur+'0';
+  return cur + n.toLocaleString('en-IN',{maximumFractionDigits:2});
+}
+
+// Indian number in words
+function toWords(n){
+  if(n===0) return 'Zero Rupees Only';
+  const ones=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+  const tens=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  function convert(num){
+    if(num===0) return '';
+    if(num<20) return ones[num]+' ';
+    if(num<100) return tens[Math.floor(num/10)]+' '+(num%10?ones[num%10]+' ':'');
+    return ones[Math.floor(num/100)]+'Hundred '+(num%100?convert(num%100):'');
+  }
+  let result='';
+  const cr=Math.floor(n/10000000); n%=10000000;
+  const lac=Math.floor(n/100000); n%=100000;
+  const thou=Math.floor(n/1000); n%=1000;
+  const rest=n;
+  if(cr) result+=convert(cr)+'Crore ';
+  if(lac) result+=convert(lac)+'Lakh ';
+  if(thou) result+=convert(thou)+'Thousand ';
+  result+=convert(rest);
+  return result.trim()+' Rupees Only';
+}
+
+// ============================================================
+// SIGNATURE SYSTEM
+// ============================================================
+function setDestination(dest){
+  sigDestination = dest;
+  document.getElementById('destClient').classList.toggle('active', dest==='client');
+  document.getElementById('destFreelancer').classList.toggle('active', dest==='freelancer');
+  document.getElementById('destInfo').textContent = dest==='client' ? 'Applying to: Client Authorization area' : 'Applying to: Freelancer Validation area';
+}
+
+function setSigMode(mode){
+  sigMode = mode;
+  ['draw','type','upload'].forEach(m=>{
+    document.getElementById('sigMode'+m.charAt(0).toUpperCase()+m.slice(1)).classList.toggle('active', m===mode);
+    document.getElementById('sigPanel'.replace('Panel','')+m.charAt(0).toUpperCase()+m.slice(1)+'Panel')||null;
+  });
+  document.getElementById('sigDrawPanel').style.display = mode==='draw'?'block':'none';
+  document.getElementById('sigTypePanel').style.display = mode==='type'?'block':'none';
+  document.getElementById('sigUploadPanel').style.display = mode==='upload'?'block':'none';
+}
+
+// CANVAS
+function initCanvas(){
+  const canvas = document.getElementById('sigCanvas');
+  const ctx = canvas.getContext('2d');
+  ctx.strokeStyle = '#D4AF37';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  function getPos(e){
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    if(e.touches) return {x:(e.touches[0].clientX-rect.left)*scaleX, y:(e.touches[0].clientY-rect.top)*scaleY};
+    return {x:(e.clientX-rect.left)*scaleX, y:(e.clientY-rect.top)*scaleY};
+  }
+
+  function start(e){ e.preventDefault(); isDrawing=true; const p=getPos(e); lastX=p.x; lastY=p.y; canvasHistory.push(ctx.getImageData(0,0,canvas.width,canvas.height)); }
+  function draw(e){ if(!isDrawing) return; e.preventDefault(); const p=getPos(e); ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(p.x,p.y); ctx.stroke(); lastX=p.x; lastY=p.y; }
+  function stop(){ isDrawing=false; }
+
+  canvas.addEventListener('mousedown',start);
+  canvas.addEventListener('mousemove',draw);
+  canvas.addEventListener('mouseup',stop);
+  canvas.addEventListener('mouseleave',stop);
+  canvas.addEventListener('touchstart',start,{passive:false});
+  canvas.addEventListener('touchmove',draw,{passive:false});
+  canvas.addEventListener('touchend',stop);
+}
+
+function clearCanvas(){
+  const canvas = document.getElementById('sigCanvas');
+  canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
+  canvasHistory = [];
+}
+
+function undoCanvas(){
+  if(!canvasHistory.length) return;
+  const canvas = document.getElementById('sigCanvas');
+  canvas.getContext('2d').putImageData(canvasHistory.pop(),0,0);
+}
+
+function applyCanvasSig(){
+  const canvas = document.getElementById('sigCanvas');
+  const data = canvas.toDataURL('image/png');
+  if(sigDestination==='client') state.clientSig = data;
+  else state.freelancerSig = data;
+  renderPreview();
