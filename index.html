@@ -3,827 +3,1305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JK-MGMT Premium Quotation Builder</title>
-    <!-- Tailwind CSS -->
+    <title>JK-MGMT QUOTATION BUILDER PRO</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
-    <!-- html2pdf.js Bundle for Pixel Perfect Export -->
+    <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cinzel:wght@500;700&family=Dancing+Script:wght@500;700&family=Inter:wght@300;400;500;600;700&family=Parisienne&family=Great+Vibes&family=Sacramento&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/easyqrcodejs@4.4.1/dist/easy.qrcode.min.js"></script>
 
     <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        .glass-panel { background: rgba(28, 28, 28, 0.65); backdrop-filter: blur(12px); border: 1px solid rgba(212, 175, 55, 0.15); }
+        
+        /* A4 Perfect Dimension Canvas Rules */
         #renderTargetQuotation {
             width: 794px;
             min-width: 794px;
             max-width: 794px;
-            box-sizing: border-box;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-        }
-
-        .premium-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 11px;
-            margin-top: 8px;
-            border: 1px solid #262626;
-            background-color: transparent;
-        }
-
-        .premium-table th {
-            background-color: #111111;
-            color: #D4AF37;
-            text-transform: uppercase;
-            font-size: 9px;
-            letter-spacing: 0.12em;
-            font-weight: 700;
-            padding: 10px 14px;
-            text-align: left;
-            border-bottom: 2px solid #262626;
-        }
-
-        .premium-table td {
-            padding: 10px 14px;
-            border-bottom: 1px solid #1f1f1f;
-            vertical-align: top;
-            color: #ffffff;
-            line-height: 1.5;
-        }
-
-        .premium-table tbody tr:nth-child(even) {
-            background-color: #141414;
-        }
-
-        .pdf-page-container {
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
+            background-color: #0B0B0B;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8);
             box-sizing: border-box;
         }
 
-        #signatureCanvas {
-            cursor: crosshair;
-            background-color: #ffffff !important;
-            touch-action: none;
-        }
+        .theme-jk-gold { --primary: #D4AF37; --secondary: #C9A227; --bg: #0B0B0B; }
+        .theme-royal-blue { --primary: #3B82F6; --secondary: #1D4ED8; --bg: #0F172A; }
+        .theme-emerald { --primary: #10B981; --secondary: #047857; --bg: #064E3B; }
+        .theme-platinum { --primary: #E2E8F0; --secondary: #94A3B8; --bg: #1E293B; }
+
+        .premium-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 8px; border: 1px solid rgba(255,255,255,0.08); }
+        .premium-table th { background-color: #111111; color: var(--primary, #D4AF37); text-transform: uppercase; font-size: 9px; letter-spacing: 0.12em; font-weight: 700; padding: 10px 14px; text-align: left; border-bottom: 2px solid rgba(255,255,255,0.08); }
+        .premium-table td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; color: #ffffff; line-height: 1.5; }
+        .premium-table tbody tr:nth-child(even) { background-color: rgba(255,255,255,0.02); }
+
+        .pdf-page-container { page-break-inside: avoid !important; break-inside: avoid !important; box-sizing: border-box; min-h-[1040px]; }
+        #signatureCanvas { cursor: crosshair; background-color: #ffffff !important; touch-action: none; }
+        
+        /* Draggable Resizable Stamp Component Styles */
+        .movable-stamp-wrapper { position: absolute; cursor: move; user-select: none; z-index: 50; top: 750px; left: 450px; }
+        .stamp-rotate-handle { position: absolute; top: -12px; right: -12px; cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="gold" d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6c0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6c0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4l-4-4v3z"/></svg>'), auto; width: 18px; height: 18px; background: #000; border: 1px solid #D4AF37; border-radius: 50%; }
+        .stamp-resize-handle { position: absolute; bottom: -6px; right: -6px; cursor: se-resize; width: 12px; height: 12px; background: #D4AF37; border-radius: 2px; }
     </style>
 </head>
-<body class="bg-[#121212] text-gray-200 font-['Inter'] antialiased min-h-screen">
+<body class="bg-[#090909] text-gray-200 antialiased min-h-screen selection:bg-[#D4AF37] selection:text-black">
 
-    <!-- Top Action Bar -->
-    <header class="bg-[#1c1c1c] border-b border-[#333] px-6 py-4 flex justify-between items-center sticky top-0 z-50">
-        <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 rounded bg-gradient-to-tr from-[#C9A227] to-[#D4AF37] flex items-center justify-center text-black font-bold">Q</div>
-            <div>
-                <h1 class="text-lg font-bold text-white tracking-wide">JK-MGMT <span class="text-[#D4AF37] font-light">Studio Pro</span></h1>
-                <p class="text-xs text-gray-400">Fixed Multi-Block Interactive Routing Engine</p>
-            </div>
-        </div>
+    <div class="flex flex-col h-screen overflow-hidden">
         
-        <div class="flex items-center space-x-3">
-            <button id="btnSaveDraft" class="bg-[#252525] hover:bg-[#333] border border-[#444] text-white px-4 py-2 text-sm rounded transition flex items-center gap-2">
-                <i class="fa-solid fa-floppy-disk"></i> Save Draft
-            </button>
-            <button id="btnLoadDraft" class="bg-[#252525] hover:bg-[#333] border border-[#444] text-white px-4 py-2 text-sm rounded transition flex items-center gap-2">
-                <i class="fa-solid fa-folder-open"></i> Load Draft
-            </button>
-            <button id="btnExportPDF" class="bg-gradient-to-r from-[#C9A227] to-[#D4AF37] hover:from-[#D4AF37] hover:to-[#E5C158] text-black font-bold px-6 py-2 text-sm rounded transition shadow-lg flex items-center gap-2">
-                <i class="fa-solid fa-download"></i> Download Quotation PDF
-            </button>
-        </div>
-    </header>
-
-    <!-- Workspace Grid Layout -->
-    <div class="grid grid-cols-1 xl:grid-cols-2 h-[calc(100vh-73px)] overflow-hidden">
-        
-        <!-- LEFT CONTROL BOARD (INPUT PANELS) -->
-        <main class="overflow-y-auto p-6 space-y-6 border-r border-[#262626] bg-[#161616]">
+        <header class="bg-[#141414] border-b border-[#262626] px-6 py-3 flex justify-between items-center z-50 shrink-0">
+            <div class="flex items-center space-x-4">
+                <div class="w-9 h-9 rounded bg-gradient-to-tr from-[#C9A227] to-[#D4AF37] flex items-center justify-center text-black font-extrabold text-lg tracking-wider font-cinzel shadow-lg shadow-yellow-500/10">JK</div>
+                <div>
+                    <h1 class="text-md font-bold tracking-wide text-white font-cinzel">QUOTATION BUILDER <span class="text-[#D4AF37] font-light">PRO</span></h1>
+                    <p class="text-[11px] text-gray-400">Production-Ready Enterprise Pipeline Framework</p>
+                </div>
+            </div>
             
-            <!-- Document Meta Details Block -->
-            <div class="bg-[#1c1c1c] p-5 rounded-lg border border-[#2d2d2d] space-y-4">
-                <h2 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-2"><i class="fa-solid fa-file-invoice mr-2"></i> Document Reference & Metadata</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-400 mb-1">Quote Reference Number</label>
-                        <input type="text" id="metaRef" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-2 text-sm text-white focus:border-[#D4AF37] outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-400 mb-1">Document Date</label>
-                        <input type="text" id="metaDate" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-2 text-sm text-white focus:border-[#D4AF37] outline-none">
-                    </div>
+            <div class="flex items-center space-x-3">
+                <div class="bg-[#1c1c1c] border border-[#2d2d2d] rounded px-3 py-1 flex items-center space-x-2">
+                    <label class="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">System State:</label>
+                    <select id="docStatus" class="bg-transparent text-xs font-bold text-[#D4AF37] outline-none cursor-pointer">
+                        <option value="Draft" class="bg-[#141414]">Draft</option>
+                        <option value="Sent" class="bg-[#141414]">Sent</option>
+                        <option value="Viewed" class="bg-[#141414]">Viewed</option>
+                        <option value="Accepted" class="bg-[#141414]">Accepted</option>
+                        <option value="Rejected" class="bg-[#141414]">Rejected</option>
+                        <option value="Paid" class="bg-[#141414]">Paid</option>
+                    </select>
                 </div>
+
+                <div class="bg-[#1c1c1c] border border-[#2d2d2d] rounded px-3 py-1 flex items-center space-x-2">
+                    <label class="text-[11px] text-gray-400 uppercase tracking-wider font-semibold">Engine Theme:</label>
+                    <select id="appTheme" class="bg-transparent text-xs font-bold text-white outline-none cursor-pointer">
+                        <option value="theme-jk-gold" class="bg-[#141414]">JK Gold Premium</option>
+                        <option value="theme-royal-blue" class="bg-[#141414]">Royal Blue Corporate</option>
+                        <option value="theme-emerald" class="bg-[#141414]">Emerald Financial</option>
+                        <option value="theme-platinum" class="bg-[#141414]">Platinum Luxury</option>
+                    </select>
+                </div>
+
+                <button id="btnSaveDraft" class="bg-[#1f1f1f] hover:bg-[#2b2b2b] border border-[#333] text-white px-3 py-1.5 text-xs rounded transition flex items-center gap-2 font-medium">
+                    <i class="fa-solid fa-floppy-disk text-[#D4AF37]"></i> Save State
+                </button>
+                <button id="btnLoadDraft" class="bg-[#1f1f1f] hover:bg-[#2b2b2b] border border-[#333] text-white px-3 py-1.5 text-xs rounded transition flex items-center gap-2 font-medium">
+                    <i class="fa-solid fa-folder-open text-[#D4AF37]"></i> Load Last
+                </button>
+                <button id="btnExportPDF" class="bg-gradient-to-r from-[#C9A227] to-[#D4AF37] hover:from-[#D4AF37] hover:to-[#E5C158] text-black font-bold px-4 py-1.5 text-xs rounded transition shadow-lg flex items-center gap-2">
+                    <i class="fa-solid fa-file-pdf"></i> Download Document
+                </button>
             </div>
+        </header>
 
-            <!-- Stakeholders Form Block -->
-            <div class="bg-[#1c1c1c] p-5 rounded-lg border border-[#2d2d2d] space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Freelancer Details -->
-                    <div class="space-y-3">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-2"><i class="fa-solid fa-user-tie mr-2"></i> Freelancer Details</h3>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Name</label>
-                            <input type="text" id="byName" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Professional Role</label>
-                            <input type="text" id="byRole" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Extra Credentials</label>
-                            <input type="text" id="byExtra" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
-                        </div>
-                    </div>
-
-                    <!-- Client Profile -->
-                    <div class="space-y-3">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-2"><i class="fa-solid fa-building-user mr-2"></i> Client Details</h3>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Client Name</label>
-                            <input type="text" id="forName" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Company / Website</label>
-                            <input type="text" id="forCompany" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Phone Number</label>
-                            <input type="text" id="forPhone" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Location / Country</label>
-                            <input type="text" id="forCountry" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Custom Service / Section Builder -->
-            <div class="bg-[#1c1c1c] p-5 rounded-lg border border-[#2d2d2d] space-y-4">
-                <div class="flex justify-between items-center border-b border-[#2d2d2d] pb-2">
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37]"><i class="fa-solid fa-cubes mr-2"></i> Service Builder Matrix</h2>
-                    <button type="button" id="btnAddSection" class="bg-[#2d2d2d] hover:bg-[#3d3d3d] text-[#D4AF37] border border-[#D4AF37]/30 text-xs px-3 py-1.5 rounded transition flex items-center gap-1">
-                        <i class="fa-solid fa-folder-plus"></i> Add Section Category
-                    </button>
-                </div>
-                <!-- Injected Interactive Service Rows Wrapper Target -->
-                <div id="dynamicSectionsContainer" class="space-y-4"></div>
-            </div>
-
-            <!-- Contract Clauses Engine -->
-            <div class="bg-[#1c1c1c] p-5 rounded-lg border border-[#2d2d2d] space-y-4">
-                <div class="flex justify-between items-center border-b border-[#2d2d2d] pb-2">
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37]"><i class="fa-solid fa-gavel mr-2"></i> Terms & Conditions Clauses</h2>
-                    <button type="button" id="btnAddClause" class="bg-[#2d2d2d] hover:bg-[#3d3d3d] text-[#D4AF37] border border-[#D4AF37]/30 text-xs px-3 py-1.5 rounded transition flex items-center gap-1">
-                        <i class="fa-solid fa-plus"></i> Add Clause
-                    </button>
-                </div>
-                <div id="clausesContainer" class="space-y-3"></div>
-            </div>
-
-            <!-- TRIPLE-METHOD SIGNATURE MATRIX WITH TARGET ROUTING SYSTEM -->
-            <div class="bg-[#1c1c1c] p-5 rounded-lg border border-[#2d2d2d] space-y-4">
-                <h2 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-2">
-                    <i class="fa-solid fa-signature mr-2"></i> Advanced Signature Routing Module
-                </h2>
-
-                <!-- STEP 1: Select Target Block -->
-                <div class="space-y-1.5 bg-[#222] p-3 rounded border border-[#333]">
-                    <span class="block text-xs font-semibold text-gray-400">1. Select Target Block Destination:</span>
-                    <div class="flex space-x-4 mt-1">
-                        <label class="flex items-center text-xs text-white cursor-pointer space-x-2">
-                            <input type="radio" name="sigTarget" value="freelancer" checked class="accent-[#D4AF37] w-4 h-4">
-                            <span>Freelancer / Consultant Block (Right Side)</span>
-                        </label>
-                        <label class="flex items-center text-xs text-white cursor-pointer space-x-2">
-                            <input type="radio" name="sigTarget" value="client" class="accent-[#D4AF37] w-4 h-4">
-                            <span>Client Block (Left Side)</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- STEP 2: Select Method Tab Router -->
-                <div class="flex space-x-2 bg-[#252525] p-1 rounded border border-[#333]">
-                    <button type="button" data-tab="draw" class="sig-tab-btn flex-1 py-1.5 text-xs text-center rounded bg-[#1c1c1c] text-[#D4AF37] font-semibold border border-[#D4AF37]/30">Option 1: Draw Pad</button>
-                    <button type="button" data-tab="type" class="sig-tab-btn flex-1 py-1.5 text-xs text-center rounded text-gray-400">Option 2: Text Box Type</button>
-                    <button type="button" data-tab="upload" class="sig-tab-btn flex-1 py-1.5 text-xs text-center rounded text-gray-400">Option 3: File Upload</button>
-                </div>
-
-                <!-- Tab Panel 1: Interactive Drawing Canvas -->
-                <div id="sigPanelDraw" class="sig-tab-panel space-y-2">
-                    <div class="bg-white rounded border border-[#444] overflow-hidden h-36 relative">
-                        <canvas id="signatureCanvas" width="600" height="150" class="block w-full h-full bg-white touch-none"></canvas>
-                    </div>
-                    <div class="flex justify-end space-x-2">
-                        <button type="button" id="btnClearCanvas" class="bg-[#333] hover:bg-[#444] text-gray-300 text-xs px-3 py-1.5 rounded">Reset Pad</button>
-                        <button type="button" id="btnApplyDrawSig" class="bg-[#D4AF37] text-black text-xs px-4 py-1.5 font-bold rounded shadow transition">Apply Drawn Signature</button>
-                    </div>
-                </div>
-
-                <!-- Tab Panel 2: Styled Typography Input Text Box -->
-                <div id="sigPanelType" class="sig-tab-panel hidden space-y-2">
-                    <label class="block text-xs text-gray-400">Type Name to Generate Signature Text:</label>
-                    <div class="flex space-x-2">
-                        <input type="text" id="sigTextInput" value="J. m. KamLi" placeholder="Type here..." class="flex-1 bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
-                        <button type="button" id="btnApplyTypeSig" class="bg-[#D4AF37] text-black text-xs px-4 py-1.5 font-bold rounded shadow transition">Apply Type Signature</button>
-                    </div>
-                </div>
-
-                <!-- Tab Panel 3: File Manager System Upload Module -->
-                <div id="sigPanelUpload" class="sig-tab-panel hidden space-y-2">
-                    <label class="block text-xs text-gray-400">Select Signature Image from Device Explorer:</label>
-                    <input type="file" id="sigFileInput" accept="image/*" class="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-[#333] file:text-white hover:file:bg-[#444] cursor-pointer">
-                </div>
-            </div>
-
-            <!-- Financial Calculation Settings -->
-            <div class="bg-[#1c1c1c] p-5 rounded-lg border border-[#2d2d2d] space-y-4">
-                <h2 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-2"><i class="fa-solid fa-coins mr-2"></i> Financial Calculation Matrices</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs text-gray-400 mb-1">Tax Multiplier Rate (%)</label>
-                        <input type="number" id="globalTaxRate" value="0" min="0" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-2 text-sm text-white focus:border-[#D4AF37] outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-gray-400 mb-1">Advance Allocation Milestone (%)</label>
-                        <input type="number" id="advancePercent" value="50" min="0" max="100" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-2 text-sm text-white focus:border-[#D4AF37] outline-none">
-                    </div>
-                </div>
-            </div>
-
-        </main>
-
-        <!-- RIGHT SIDE: REAL-TIME PRODUCTION HIGH-FIDELITY PREVIEW SHEET -->
-        <section class="overflow-y-auto p-8 bg-[#2d2d2d] flex justify-center items-start">
+        <div class="flex flex-1 overflow-hidden grid grid-cols-1 xl:grid-cols-10">
             
-            <!-- Hardbound Global Document Target Dimensions -->
-            <div id="renderTargetQuotation" class="bg-[#0B0B0B] text-white p-[2.5rem] relative">
+            <main class="xl:col-span-4 overflow-y-auto p-5 space-y-6 bg-[#111111] border-r border-[#222]">
                 
-                <!-- PAGE 1: REPLICA IDENTITY SHEET -->
-                <div class="pdf-page-container flex flex-col justify-between min-h-[1040px] pb-8 border-b border-[#2d2d2d]/30 mb-8">
-                    <div>
-                        <div class="h-1.5 w-full bg-gradient-to-r from-[#C9A227] via-[#D4AF37] to-[#C9A227] mb-12"></div>
-                        <div class="flex justify-between items-start mb-16">
-                            <div>
-                                <h1 class="text-4xl font-bold tracking-widest uppercase font-['Cinzel'] text-white mb-2">Quotation</h1>
-                                <p class="text-[#D4AF37] uppercase text-xs font-semibold tracking-widest">E-Commerce & Quick Commerce Growth Services[span_0](start_span)[span_0](end_span)</p>
-                            </div>
-                            <div class="text-right font-mono text-xs text-gray-400 space-y-1">
-                                <p><span class="text-gray-500">REF:</span> <span id="pviewRef" class="text-white font-semibold">-</span></p>
-                                <p><span class="text-gray-500">DATE:</span> <span id="pviewDate" class="text-white font-semibold">-</span></p>
-                            </div>
+                <div class="glass-panel p-4 rounded-lg space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-1.5"><i class="fa-solid fa-chart-pie mr-2"></i> Pipeline Analytics Engine</h3>
+                    <div class="grid grid-cols-3 gap-3 text-center">
+                        <div class="bg-[#1c1c1c] p-2 rounded border border-[#2c2c2c]">
+                            <span class="block text-[10px] uppercase text-gray-400">Total Pipeline</span>
+                            <span id="analyticsTotalCount" class="text-md font-bold font-mono text-white">1</span>
                         </div>
-
-                        <!-- Stakeholder Verification Grid Profile Layout -->
-                        <div class="grid grid-cols-2 gap-12 border-t border-b border-[#262626] py-10 mb-16">
-                            <div class="space-y-3">
-                                <span class="text-[10px] uppercase text-[#D4AF37] font-bold tracking-widest block">Prepared By</span>
-                                <div>
-                                    <h3 id="pviewByName" class="text-lg font-bold text-white tracking-wide">Jenish Kamli[span_1](start_span)[span_1](end_span)</h3>
-                                    <p id="pviewByRole" class="text-xs text-gray-400 mt-1">Freelance E-Commerce Growth Manager[span_2](start_span)[span_2](end_span)</p>
-                                    <p id="pviewByExtra" class="text-[11px] text-gray-500 mt-0.5">Marketplace Specialist, Independent Consultant[span_3](start_span)[span_3](end_span)</p>
-                                </div>
-                            </div>
-                            <div class="space-y-3 border-l border-[#262626] pl-10">
-                                <span class="text-[10px] uppercase text-[#D4AF37] font-bold tracking-widest block">Prepared For</span>
-                                <div>
-                                    <h3 id="pviewForName" class="text-lg font-bold text-white tracking-wide">Abhiral Jain[span_4](start_span)[span_4](end_span)</h3>
-                                    <p id="pviewForCompany" class="text-xs text-gray-400 mt-1">Writease.in[span_5](start_span)[span_5](end_span)</p>
-                                    <p id="pviewForPhone" class="text-[11px] text-gray-400 mt-0.5 font-mono">+91 88306 93895[span_6](start_span)[span_6](end_span)</p>
-                                    <p id="pviewForCountry" class="text-[11px] text-gray-500 mt-0.5">India[span_7](start_span)[span_7](end_span)</p>
-                                </div>
-                            </div>
+                        <div class="bg-[#1c1c1c] p-2 rounded border border-[#2c2c2c]">
+                            <span class="block text-[10px] uppercase text-gray-400">Revenue Booked</span>
+                            <span id="analyticsTotalRevenue" class="text-md font-bold font-mono text-[#D4AF37]">₹0</span>
                         </div>
-
-                        <div class="py-6 px-8 bg-[#111] border-l-2 border-[#D4AF37] rounded-r">
-                            <p class="text-xs text-gray-300 leading-relaxed font-sans italic">
-                                "Prepared with precision | Built for growth | Designed for success[span_8](start_span)"[span_8](end_span)
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Footer Sheet 1 -->
-                    <div>
-                        <div class="grid grid-cols-5 gap-3 border-t border-[#262626] pt-8 text-center text-[10px] tracking-widest uppercase font-semibold text-gray-400">
-                            <div class="py-2 border border-[#222] bg-[#111]/40 rounded"><i class="fa-solid fa-store text-[#D4AF37] block mb-1.5 text-xs"></i> Marketplace</div>
-                            <div class="py-2 border border-[#222] bg-[#111]/40 rounded"><i class="fa-solid fa-shield-halved text-[#D4AF37] block mb-1.5 text-xs"></i> Brand Registry</div>
-                            <div class="py-2 border border-[#222] bg-[#111]/40 rounded"><i class="fa-solid fa-list-check text-[#D4AF37] block mb-1.5 text-xs"></i> Listings</div>
-                            <div class="py-2 border border-[#222] bg-[#111]/40 rounded"><i class="fa-solid fa-bolt text-[#D4AF37] block mb-1.5 text-xs"></i> Quick Comm</div>
-                            <div class="grid py-2 border border-[#222] bg-[#111]/40 rounded content-center justify-center"><i class="fa-solid fa-chart-line text-[#D4AF37] block mb-1.5 text-xs"></i> Ad Strategy</div>
-                        </div>
-                        <div class="flex justify-between items-center text-[9px] text-gray-500 font-mono mt-8">
-                            <span>JK-MGMT DUPLICATE DESIGN SYSTEM COMPILER</span>
-                            <span>Page 1 of 3</span>
+                        <div class="bg-[#1c1c1c] p-2 rounded border border-[#2c2c2c]">
+                            <span class="block text-[10px] uppercase text-gray-400">Avg Deal Matrix</span>
+                            <span id="analyticsAvgDealSize" class="text-md font-bold font-mono text-white">₹0</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- PAGE 2: SERVICES MATRIX PRICING SHEET TABLE FORMAT -->
-                <div class="pdf-page-container flex flex-col justify-between min-h-[1040px] pb-8 border-b border-[#2d2d2d]/30 mb-8">
-                    <div>
-                        <div class="flex items-center justify-between border-b border-[#262626] pb-3 mb-6">
-                            <h2 class="text-sm font-bold uppercase tracking-widest font-['Cinzel'] text-[#D4AF37]">01 Services & Line Item Pricing</h2>
-                            <span class="text-xs font-mono text-gray-500 id-header-ref-span">REF: -</span>
-                        </div>
-
-                        <!-- Target Dynamic Service Injections Layout Holder -->
-                        <div id="pviewDynamicSectionsRender" class="space-y-8"></div>
+                <div class="glass-panel p-4 rounded-lg space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-1.5"><i class="fa-solid fa-shuffle mr-2"></i> Document IO Core Registry</h3>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button id="btnDuplicateDoc" class="bg-[#1c1c1c] hover:bg-[#252525] border border-[#333] text-[11px] p-2 rounded transition text-white">
+                            <i class="fa-solid fa-copy text-[#D4AF37] mr-1"></i> Duplicate
+                        </button>
+                        <button id="btnExportJSON" class="bg-[#1c1c1c] hover:bg-[#252525] border border-[#333] text-[11px] p-2 rounded transition text-white">
+                            <i class="fa-solid fa-file-export text-[#D4AF37] mr-1"></i> Export Data
+                        </button>
+                        <label class="bg-[#1c1c1c] hover:bg-[#252525] border border-[#333] text-[11px] p-2 rounded transition text-white text-center cursor-pointer block">
+                            <i class="fa-solid fa-file-import text-[#D4AF37] mr-1"></i> Import JSON
+                            <input type="file" id="btnImportJSON" accept=".json" class="hidden">
+                        </label>
                     </div>
+                    <div class="relative mt-2">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-gray-500"></i>
+                        <input type="text" id="globalSearchInput" placeholder="Global filter query lines across items/clients..." class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded pl-8 pr-3 py-1.5 text-xs text-white outline-none focus:border-[#D4AF37]">
+                    </div>
+                </div>
 
-                    <!-- Footer Sheet 2 -->
-                    <div class="pt-4">
-                        <div class="flex justify-between items-center text-[9px] text-gray-500 font-mono">
-                            <span>CONFIDENTIAL & PROPRIETARY VALUATION INTEGRITY</span>
-                            <span>Page 2 of 3</span>
+                <div class="glass-panel p-4 rounded-lg space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-1.5"><i class="fa-solid fa-id-card-clip mr-2"></i> Freelancer Identity Master Block</h3>
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Freelancer Name</label>
+                            <input type="text" id="fName" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Corporate Role Title</label>
+                            <input type="text" id="fRole" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Contact Reference Wire</label>
+                            <input type="text" id="fPhone" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Corporate Registry GSTIN</label>
+                            <input type="text" id="fGst" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Registered Logistics Office Address</label>
+                            <input type="text" id="fAddress" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
                         </div>
                     </div>
                 </div>
 
-                <!-- PAGE 3: CONTRACT CLOSINGS & ADVANCED SIGNATURE DISPLAY LAYOUT -->
-                <div class="pdf-page-container flex flex-col justify-between min-h-[1040px]">
-                    <div class="space-y-6">
-                        
-                        <!-- Valuation Aggregate Card Summary -->
+                <div class="glass-panel p-4 rounded-lg space-y-3">
+                    <div class="flex justify-between items-center border-b border-[#2d2d2d] pb-1.5">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37]"><i class="fa-solid fa-user-group mr-2"></i> Client Directory Hub</h3>
+                        <div class="flex space-x-1.5">
+                            <button id="btnClientSave" class="text-[10px] bg-[#222] border border-[#444] text-[#D4AF37] px-2 py-0.5 rounded transition hover:bg-[#333]">Save Current</button>
+                            <button id="btnClientDelete" class="text-[10px] bg-red-950/40 border border-red-800 text-red-400 px-2 py-0.5 rounded transition hover:bg-red-900/40">Delete</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div class="col-span-2">
+                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Select / Load Stored Client Context Profile</label>
+                            <select id="clientDirectorySelector" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2 py-1.5 text-white outline-none text-xs cursor-pointer focus:border-[#D4AF37]"></select>
+                        </div>
                         <div>
-                            <div class="flex items-center justify-between border-b border-[#262626] pb-2 mb-4">
-                                <h2 class="text-sm font-bold uppercase tracking-widest font-['Cinzel'] text-[#D4AF37]">02 Financial Breakdown Valuation</h2>
+                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Client Authority Name</label>
+                            <input type="text" id="cName" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Enterprise Domain Name</label>
+                            <input type="text" id="cCompany" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 rounded-lg space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-1.5"><i class="fa-solid fa-clock-rotate-left mr-2"></i> Document Identity Sequence</h3>
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Document Index Reference</label>
+                            <input type="text" id="metaRef" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Sequence Issue Date Timestamp</label>
+                            <input type="text" id="metaDate" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 rounded-lg space-y-4">
+                    <div class="flex justify-between items-center border-b border-[#2d2d2d] pb-1.5">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37]"><i class="fa-solid fa-cubes-stacked mr-2"></i> Line Item Matrix Framework</h3>
+                        <div class="flex space-x-1.5">
+                            <select id="serviceTemplateLibraryDropdown" class="bg-[#1c1c1c] border border-[#333] text-[10px] text-white px-2 py-0.5 rounded outline-none cursor-pointer">
+                                <option value="">-- Inject Library Template Block --</option>
+                                <option value="Amazon Listing">Amazon Listing Suite</option>
+                                <option value="Flipkart Listing">Flipkart Listing Pack</option>
+                                <option value="Brand Registry">Brand Registry Lock</option>
+                                <option value="A+ Content">A+ High-Conversion Creative</option>
+                                <option value="PPC Management">PPC & Ad Optimization</option>
+                                <option value="Blinkit Setup">Blinkit Darkstore Map</option>
+                                <option value="Zepto Setup">Zepto Hyperlocal Operational</option>
+                                <option value="Instamart Setup">Swiggy Instamart Map</option>
+                                <option value="Monthly Retainer">Standard Management Retainer</option>
+                            </select>
+                            <button type="button" id="btnAddSectionCategory" class="text-[10px] bg-[#1c1c1c] border border-[#D4AF37]/30 text-[#D4AF37] px-2.5 py-0.5 rounded hover:bg-[#252525] transition font-bold">
+                                <i class="fa-solid fa-folder-plus"></i> Add Section Group
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="builderSectionsControlWrapper" class="space-y-4 max-h-[500px] overflow-y-auto pr-1"></div>
+                </div>
+
+                <div class="glass-panel p-4 rounded-lg space-y-3">
+                    <div class="flex justify-between items-center border-b border-[#2d2d2d] pb-1.5">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37]"><i class="fa-solid fa-calendar-check mr-2"></i> Payment Milestone Configuration Layer</h3>
+                        <button type="button" id="btnAddNewMilestoneRow" class="text-[10px] bg-[#1c1c1c] text-white border border-[#333] px-2 py-0.5 rounded hover:bg-[#252525] transition"><i class="fa-solid fa-plus text-[#D4AF37]"></i> Add Milestone Break</button>
+                    </div>
+                    <div id="milestonesControlsAreaWrapper" class="space-y-2 text-xs"></div>
+                </div>
+
+                <div class="glass-panel p-4 rounded-lg space-y-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-1.5"><i class="fa-solid fa-building-columns mr-2"></i> Clear Remittance Infrastructure Routing</h3>
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Virtual Private UPI Handle</label>
+                            <input type="text" id="pUpi" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Beneficiary Legal Corporate Name</label>
+                            <input type="text" id="pBeneficiary" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Financial Clearing Institution Name</label>
+                            <input type="text" id="pBank" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Settlement Account Balance Number</label>
+                            <input type="text" id="pAccount" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-[10px] uppercase text-gray-400 mb-1">Settlement Branch Routing IFS Code</label>
+                            <input type="text" id="pIfsc" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-2.5 py-1.5 text-white outline-none focus:border-[#D4AF37]">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 rounded-lg space-y-3">
+                    <div class="flex justify-between items-center border-b border-[#2d2d2d] pb-1.5">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37]"><i class="fa-solid fa-gavel mr-2"></i> Contract Compliance & Safeguards</h3>
+                        <button type="button" id="btnAddNewClauseLine" class="text-[10px] bg-[#1c1c1c] text-white border border-[#333] px-2 py-0.5 rounded hover:bg-[#252525] transition"><i class="fa-solid fa-plus text-[#D4AF37]"></i> Add Scope Clause</button>
+                    </div>
+                    <div id="clausesInterfaceBoxWrapper" class="space-y-2 text-xs"></div>
+                </div>
+
+                <div class="glass-panel p-4 rounded-lg space-y-4">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-1.5"><i class="fa-solid fa-fingerprint mr-2"></i> Dual-Authorization Integrity Router</h3>
+                    
+                    <div class="bg-[#1a1a1a] p-2.5 rounded border border-[#2d2d2d] text-xs space-y-2">
+                        <span class="block text-[10px] uppercase tracking-wider text-gray-400 font-bold">1. Select Destination Endpoint Target Block:</span>
+                        <div class="flex space-x-6 items-center">
+                            <label class="flex items-center space-x-2 text-white cursor-pointer select-none">
+                                <input type="radio" name="sigPlacementSelector" value="freelancer" checked class="accent-[#D4AF37] w-4 h-4">
+                                <span>Freelancer Validator (Right Side)</span>
+                            </label>
+                            <label class="flex items-center space-x-2 text-white cursor-pointer select-none">
+                                <input type="radio" name="sigPlacementSelector" value="client" class="accent-[#D4AF37] w-4 h-4">
+                                <span>Client Authorizer (Left Side)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-1.5 bg-[#141414] p-1 rounded border border-[#2b2b2b]">
+                        <button type="button" data-tab="draw" class="sig-tab-toggle-btn flex-1 py-1 text-[11px] text-center rounded bg-[#1c1c1c] text-[#D4AF37] border border-[#D4AF37]/20 font-medium">Draw Signature Trace</button>
+                        <button type="button" data-tab="type" class="sig-tab-toggle-btn flex-1 py-1 text-[11px] text-center rounded text-gray-400 font-medium">Typography Engine</button>
+                        <button type="button" data-tab="upload" class="sig-tab-toggle-btn flex-1 py-1 text-[11px] text-center rounded text-gray-400 font-medium">Image Upload</button>
+                    </div>
+
+                    <div id="sigPanelDraw" class="sig-tab-content-panel space-y-2">
+                        <div class="bg-white rounded border border-[#444] overflow-hidden h-32 relative">
+                            <canvas id="signatureCanvas" width="500" height="128" class="block w-full h-full bg-white"></canvas>
+                        </div>
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" id="btnResetCanvasPad" class="bg-[#1c1c1c] hover:bg-[#252525] border border-[#333] text-gray-300 text-[10px] px-2.5 py-1 rounded">Reset Trace</button>
+                            <button type="button" id="btnCommitCanvasStroke" class="bg-[#D4AF37] text-black text-[10px] px-3 py-1 font-bold rounded shadow transition">Apply Drawn Signature Block</button>
+                        </div>
+                    </div>
+
+                    <div id="sigPanelType" class="sig-tab-content-panel hidden space-y-2 text-xs">
+                        <label class="block text-[10px] uppercase text-gray-400">Enter Legal Authorizing Verification Text Line Strings</label>
+                        <input type="text" id="typeSigTextInput" value="J. m. KamLi" class="w-full bg-[#1c1c1c] border border-[#2d2d2d] rounded px-3 py-1.5 text-white outline-none focus:border-[#D4AF37]">
+                        <div class="grid grid-cols-2 gap-2 mt-1">
+                            <button type="button" data-font="font-['Great_Vibes']" class="font-selector-btn text-left p-1.5 border border-[#D4AF37] bg-[#1c1c1c] rounded font-['Great_Vibes'] text-lg text-white">Great Vibes Cursive</button>
+                            <button type="button" data-font="font-['Dancing_Script']" class="font-selector-btn text-left p-1.5 border border-[#333] bg-[#1c1c1c] rounded font-['Dancing_Script'] text-xs text-white">Dancing Script</button>
+                            <button type="button" data-font="font-['Parisienne']" class="font-selector-btn text-left p-1.5 border border-[#333] bg-[#1c1c1c] rounded font-['Parisienne'] text-lg text-white">Parisienne Font</button>
+                            <button type="button" data-font="font-['Allura']" class="font-selector-btn text-left p-1.5 border border-[#333] bg-[#1c1c1c] rounded font-['Allura'] text-xl text-white">Allura Layout</button>
+                        </div>
+                        <button type="button" id="btnCommitTypeSig" class="w-full bg-[#1c1c1c] hover:bg-[#252525] border border-[#D4AF37]/30 text-[#D4AF37] font-bold text-[10px] py-1.5 rounded transition mt-1">Bind Selected Calligraphy To Destination Target</button>
+                    </div>
+
+                    <div id="sigPanelUpload" class="sig-tab-content-panel hidden space-y-2 text-xs">
+                        <label class="block text-[10px] uppercase text-gray-400">Upload Transparent Background Verification Signature Token PNG</label>
+                        <input type="file" id="sigImageFileInput" accept="image/*" class="block w-full text-xs text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-[#1c1c1c] file:text-white file:border file:file:border-[#333] hover:file:bg-[#222] cursor-pointer">
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 rounded-lg space-y-3 text-xs">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-1.5"><i class="fa-solid fa-stamp mr-2"></i> Corporate Seal & Stamp Security Layer</h3>
+                    <label class="block text-[10px] uppercase text-gray-400 mb-1">Inject Seal Image File (Draggable, Rotatable, Resizable inside sheet space)</label>
+                    <input type="file" id="stampImgFileInput" accept="image/*" class="block w-full text-xs text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-[#1c1c1c] file:text-white cursor-pointer">
+                    <div class="flex items-center space-x-3 bg-[#161616] p-2 rounded border border-[#2d2d2d] mt-2">
+                        <label class="text-[10px] text-gray-400 uppercase tracking-wider font-medium">Rotation Control Wheel:</label>
+                        <input type="range" id="stampRotationWheel" min="0" max="360" value="0" class="flex-1 accent-[#D4AF37] cursor-pointer">
+                        <span id="stampAngleTextIndicator" class="font-mono text-[10px] text-white">0°</span>
+                    </div>
+                </div>
+
+            </main>
+
+            <section class="xl:col-span-6 overflow-y-auto p-6 bg-[#1f1f1f] flex justify-center items-start border-l border-[#000]">
+                
+                <div id="renderTargetQuotation" class="theme-jk-gold relative p-[2.5rem] text-white select-none box-border shadow-2xl">
+                    
+                    <div id="movableStampContainerWrapper" class="movable-stamp-wrapper hidden">
+                        <img id="pviewStampImgLayer" src="" alt="Corporate Seal Identity Verification Layer Line" class="w-24 h-24 object-contain opacity-80 filter drop-shadow-md pointer-events-none">
+                        <div class="stamp-rotate-handle hidden"></div>
+                        <div class="stamp-resize-handle"></div>
+                    </div>
+
+                    <div class="pdf-page-container flex flex-col justify-between h-[1035px] relative z-10 pb-8 border-b border-dashed border-gray-800/40 mb-8">
+                        <div>
+                            <div class="h-1.5 w-full bg-gradient-to-r from-[var(--secondary)] via-[var(--primary)] to-[var(--secondary)] mb-12"></div>
+                            <div class="flex justify-between items-start mb-16">
+                                <div>
+                                    <h1 class="text-4xl font-bold tracking-widest uppercase font-cinzel text-white mb-2">Quotation</h1>
+                                    <p class="text-[var(--primary)] uppercase text-[10px] font-bold tracking-widest font-cinzel opacity-90">E-Commerce & Quick Commerce Growth Services</p>
+                                </div>
+                                <div class="text-right font-mono text-[11px] text-gray-400 space-y-1">
+                                    <p><span class="text-gray-500 font-sans uppercase text-[10px] tracking-wider">REF NO:</span> <span id="pviewRef" class="text-white font-semibold">-</span></p>
+                                    <p><span class="text-gray-500 font-sans uppercase text-[10px] tracking-wider">ISSUE DATE:</span> <span id="pviewDate" class="text-white font-semibold">-</span></p>
+                                    <p><span class="text-gray-500 font-sans uppercase text-[10px] tracking-wider">PIPELINE STATUS:</span> <span id="pviewStatusBadge" class="text-[#D4AF37] font-bold uppercase tracking-wider">DRAFT</span></p>
+                                </div>
                             </div>
-                            <div class="bg-[#111] border border-[#222] rounded p-5 flex justify-between items-center">
-                                <div class="space-y-1">
-                                    <div class="text-xs text-gray-400">Total Contract Value (Aggregate combined with tax models):</div>
-                                    <div class="text-2xl font-bold font-mono text-white">₹ <span id="pviewGrandTotal">0.00</span></div>
-                                </div>
-                                <div class="grid grid-cols-2 gap-6 border-l border-[#333] pl-6 text-xs">
+
+                            <div class="grid grid-cols-2 gap-12 border-t border-b border-gray-800/60 py-10 mb-16">
+                                <div class="space-y-3">
+                                    <span class="text-[9px] uppercase text-[var(--primary)] font-bold tracking-widest block">Prepared & Issued By</span>
                                     <div>
-                                        <span class="text-gray-500 uppercase block text-[10px] font-semibold tracking-wider">Advance Milestone</span>
-                                        <span class="font-bold font-mono text-[#D4AF37]">₹ <span id="pviewAdvanceAmount">0.00</span></span>
-                                    </div>
-                                    <div>
-                                        <span class="text-gray-500 uppercase block text-[10px] font-semibold tracking-wider">Balance Due Delivery</span>
-                                        <span class="font-bold font-mono text-white">₹ <span id="pviewBalanceAmount">0.00</span></span>
+                                        <h3 id="pviewByName" class="text-md font-bold text-white tracking-wide">-</h3>
+                                        <p id="pviewByRole" class="text-xs text-gray-400 mt-1 font-medium">-</p>
+                                        <p id="pviewByExtra" class="text-[10px] text-gray-500 mt-0.5 leading-relaxed">-</p>
+                                        <div class="text-[10px] text-gray-400 font-mono mt-3 pt-2 border-t border-gray-900/40 space-y-0.5">
+                                            <p><span class="text-gray-600">GSTIN:</span> <span id="pviewByGst" class="text-gray-300 font-semibold">-</span></p>
+                                            <p><span class="text-gray-600">ADDR:</span> <span id="pviewByAddress" class="text-gray-400">-</span></p>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="space-y-3 border-l border-gray-800/60 pl-10">
+                                    <span class="text-[9px] uppercase text-[var(--primary)] font-bold tracking-widest block">Prepared & Presented For</span>
+                                    <div>
+                                        <h3 id="pviewForName" class="text-md font-bold text-white tracking-wide">-</h3>
+                                        <p id="pviewForCompany" class="text-xs text-gray-400 mt-1 font-medium">-</p>
+                                        <p id="pviewForPhone" class="text-[11px] text-gray-400 mt-0.5 font-mono">-</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="py-5 px-6 bg-[#111] border-l-2 border-[var(--primary)] rounded-r">
+                                <p class="text-[11px] text-gray-300 leading-relaxed font-sans italic opacity-80">
+                                    "Prepared with precision | Built for growth | Designed for success"
+                                </p>
                             </div>
                         </div>
 
-                        <!-- Contract Terms Paragraphs Injections Frame -->
                         <div>
-                            <div class="flex items-center justify-between border-b border-[#262626] pb-2 mb-4">
-                                <h2 class="text-sm font-bold uppercase tracking-widest font-['Cinzel'] text-[#D4AF37]">03 Legal Clauses & Delivery Alignment</h2>
+                            <div class="grid grid-cols-5 gap-3 border-t border-gray-800/50 pt-8 text-center text-[9px] tracking-widest uppercase font-semibold text-gray-400">
+                                <div class="py-2 border border-gray-900 bg-[#111]/40 rounded"><i class="fa-solid fa-store text-[var(--primary)] block mb-1.5 text-xs"></i> Marketplace</div>
+                                <div class="py-2 border border-gray-900 bg-[#111]/40 rounded"><i class="fa-solid fa-shield-halved text-[var(--primary)] block mb-1.5 text-xs"></i> Brand Lock</div>
+                                <div class="py-2 border border-gray-900 bg-[#111]/40 rounded"><i class="fa-solid fa-list-check text-[var(--primary)] block mb-1.5 text-xs"></i> Optimization</div>
+                                <div class="py-2 border border-gray-900 bg-[#111]/40 rounded"><i class="fa-solid fa-bolt text-[var(--primary)] block mb-1.5 text-xs"></i> Hyperlocal</div>
+                                <div class="grid py-2 border border-gray-900 bg-[#111]/40 rounded content-center justify-center"><i class="fa-solid fa-chart-line text-[var(--primary)] block mb-1.5 text-xs"></i> Ad Strategies</div>
                             </div>
-                            <div id="pviewClausesRender" class="space-y-3"></div>
+                            <div class="flex justify-between items-center text-[9px] text-gray-600 font-mono mt-8 border-t border-gray-900/40 pt-4">
+                                <span>JK-MGMT ENGINE CONFIGURATION CLOUD PLATFORM VIA DOM</span>
+                                <span>Page 1 of 3</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pdf-page-container flex flex-col justify-between min-h-[1030px] pb-8 border-b border-dashed border-gray-800/40 mb-8 pt-4">
+                        <div>
+                            <div class="flex items-center justify-between border-b border-gray-800/80 pb-3 mb-6">
+                                <h2 class="text-xs font-bold uppercase tracking-widest font-cinzel text-[var(--primary)]">01 Services & Line Item Pricing</h2>
+                                <span class="text-[10px] font-mono text-gray-500 id-header-ref-span">REF: -</span>
+                            </div>
+
+                            <div id="pviewDynamicSectionsRender" class="space-y-6"></div>
                         </div>
 
-                        <!-- TWO-COLUMN SIGNATURE BLOCK SYSTEM -->
                         <div class="pt-4">
-                            <div class="grid grid-cols-2 gap-0 border border-[#262626] bg-[#111]/20 rounded overflow-hidden">
-                                
-                                <!-- LEFT COLUMN CELL: CLIENT SPECIFIC BLOCK SIGNATURE -->
-                                <div class="p-6 space-y-6">
-                                    <div>
-                                        <span class="text-[9px] uppercase text-gray-500 font-mono tracking-widest block mb-1">CLIENT AUTHORIZATION[span_9](start_span)[span_9](end_span)</span>
-                                        <h4 id="pviewSigClientName" class="text-sm font-bold text-white tracking-wide">-</h4>
-                                        <p id="pviewSigClientComp" class="text-xs text-gray-400 font-mono">-</p>
-                                    </div>
-                                    <div class="h-16 border-b border-dashed border-[#444] flex items-center justify-center relative bg-[#111]/30">
-                                        <span class="text-[9px] text-gray-600 font-serif tracking-widest absolute top-1 left-1">SIGNATURE BLOCK[span_10](start_span)[span_10](end_span)</span>
-                                        <div id="clientSigOutputWrapper" class="w-full h-full flex items-center justify-center px-4">
-                                            <span class="text-gray-600 font-mono text-xs italic opacity-40">[Awaiting Verification Signature...]</span>
-                                        </div>
-                                    </div>
-                                    <div class="text-[10px] text-gray-500 font-mono">DATE: _____________________[span_11](start_span)[span_11](end_span)</div>
-                                </div>
-
-                                <!-- RIGHT COLUMN CELL: CONSULTANT/FREELANCER VALIDATION LAYER -->
-                                <div class="p-6 space-y-6 border-l border-[#262626] bg-[#111]/40">
-                                    <div>
-                                        <span class="text-[9px] uppercase text-[#D4AF37] font-mono tracking-widest block mb-1">FREELANCER VALIDATION[span_12](start_span)[span_12](end_span)</span>
-                                        <h4 id="pviewSigByName" class="text-sm font-bold text-white tracking-wide">-</h4>
-                                        <p id="pviewSigByRole" class="text-xs text-gray-400">-</p>
-                                    </div>
-                                    <div class="h-16 border-b border-dashed border-[#D4AF37]/30 flex items-center justify-center relative bg-[#111]/30">
-                                        <span class="text-[9px] text-gray-600 font-serif tracking-widest absolute top-1 left-1">SIGNATURE[span_13](start_span)[span_13](end_span)</span>
-                                        <div id="freelancerSigOutputWrapper" class="w-full h-full flex items-center justify-center px-4">
-                                            <span class="text-gray-600 font-mono text-xs italic opacity-40">[Awaiting Verification Signature...]</span>
-                                        </div>
-                                    </div>
-                                    <div class="text-[10px] text-[#D4AF37]/80 font-mono">DATE: <span id="pviewSigDate" class="font-semibold">-</span>[span_14](start_span)[span_14](end_span)</div>
-                                </div>
-
+                            <div class="flex justify-between items-center text-[9px] text-gray-600 font-mono border-t border-gray-900/40 pt-4">
+                                <span>CONFIDENTIAL SYSTEM AGGREGATE LEDGERS INTEGRITY PROFILE</span>
+                                <span>Page 2 of 3</span>
                             </div>
-                            <p class="text-center text-[10px] text-gray-500 italic mt-6">
-                                "This document confirms mutual agreement on the selected scope variants, itemized pricing ledgers, and attached contractual execution stipulations.[span_15](start_span)"[span_15](end_span)
-                            </p>
-                        </div>
-
-                    </div>
-
-                    <!-- Footer Sheet 3 -->
-                    <div class="pt-4">
-                        <div class="flex justify-between items-center text-[9px] text-gray-500 font-mono">
-                            <span>JK-MGMT STABLE PRODUCTION WEB PLATFORM MAPPING</span>
-                            <span>Page 3 of 3</span>
                         </div>
                     </div>
+
+                    <div class="pdf-page-container flex flex-col justify-between min-h-[1030px] pt-4">
+                        <div class="space-y-6">
+                            
+                            <div>
+                                <div class="flex items-center justify-between border-b border-gray-800/80 pb-2 mb-4">
+                                    <h2 class="text-xs font-bold uppercase tracking-widest font-cinzel text-[var(--primary)]">02 Financial Breakdown Valuation</h2>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-10 border border-gray-800 bg-[#111]/30 rounded overflow-hidden">
+                                    <div class="md:col-span-4 p-4 bg-[#111]/60 flex flex-col justify-center">
+                                        <span class="text-[10px] uppercase text-gray-400 font-semibold tracking-wider">Total Final Contract Value:</span>
+                                        <span class="text-xl font-bold font-mono text-white mt-1">₹ <span id="pviewGrandTotal">0.00</span></span>
+                                        <span id="pviewRoundedTextIndicator" class="text-[9px] font-mono text-gray-500 mt-0.5">(Exact Adjusted Round-off Value)</span>
+                                    </div>
+                                    <div class="md:col-span-6 p-4 grid grid-cols-2 gap-4 text-[11px] border-t md:border-t-0 md:border-l border-gray-800">
+                                        <div class="space-y-1 font-mono text-gray-300">
+                                            <p class="flex justify-between"><span class="text-gray-500 font-sans uppercase text-[9px] tracking-wider">Gross Items Subtotal:</span> <span>₹<span id="pviewSubtotal">0.00</span></span></p>
+                                            <p class="flex justify-between"><span class="text-gray-500 font-sans uppercase text-[9px] tracking-wider">Cumulative Trade Discount:</span> <span class="text-red-400">-₹<span id="pviewDiscount">0.00</span></span></p>
+                                            <p class="flex justify-between"><span class="text-gray-500 font-sans uppercase text-[9px] tracking-wider">Calculated GST Output:</span> <span>₹<span id="pviewTax">0.00</span></span></p>
+                                        </div>
+                                        <div class="space-y-1 font-mono text-gray-300 border-l border-gray-900 pl-4">
+                                            <p class="flex justify-between"><span class="text-gray-500 font-sans uppercase text-[9px] tracking-wider">Withholding TDS Offset:</span> <span class="text-blue-400">-₹<span id="pviewTds">0.00</span></span></p>
+                                            <p class="flex justify-between font-bold text-white pt-1 border-t border-gray-900"><span class="text-gray-400 font-sans uppercase text-[9px] tracking-wider">Net Payable Capital:</span> <span>₹<span id="pviewNetTotal">0.00</span></span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-2 bg-[#141414] border border-gray-900 rounded px-3 py-1.5 text-[10px] font-mono text-gray-400 flex items-start">
+                                    <span class="text-gray-600 uppercase font-sans tracking-wider text-[9px] shrink-0 mt-0.5 mr-2">In Words (INR):</span>
+                                    <span id="pviewAmountInWords" class="text-gray-300 font-medium capitalize">Zero Rupees Only</span>
+                                </div>
+                            </div>
+
+                            <div id="pviewMilestonesDocumentOutputWrapper" class="space-y-2 hidden">
+                                <div class="border-b border-gray-800 pb-1">
+                                    <span class="text-[10px] uppercase font-bold text-[var(--primary)] tracking-widest block font-cinzel">02. b Allocation Schedule Breaks</span>
+                                </div>
+                                <div id="pviewMilestonesTargetContainer" class="grid grid-cols-3 gap-3 text-xs"></div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-10 border border-gray-800 bg-[#111]/20 rounded overflow-hidden mt-4">
+                                <div class="md:col-span-7 p-4 space-y-2 text-[10px] font-mono text-gray-400">
+                                    <span class="block text-[9px] font-sans font-bold uppercase tracking-widest text-[var(--primary)] mb-1">Settlement Wire Parameters</span>
+                                    <div class="grid grid-cols-2 gap-x-4 gap-y-1">
+                                        <p><span class="text-gray-600">BENEFICIARY:</span> <span id="pviewPBeneficiary" class="text-white font-sans font-semibold">-</span></p>
+                                        <p><span class="text-gray-600">BANKING INST:</span> <span id="pviewPBank" class="text-gray-300">-</span></p>
+                                        <p><span class="text-gray-600">ACCOUNT LINE:</span> <span id="pviewPAccount" class="text-white font-bold">-</span></p>
+                                        <p><span class="text-gray-600">IFS ROUTING:</span> <span id="pviewPIfsc" class="text-white font-bold">-</span></p>
+                                    </div>
+                                    <p class="text-[9px] text-gray-500 pt-1 border-t border-gray-900 mt-2 font-sans italic">Routing UPI ID: <span id="pviewPUpi" class="font-mono text-gray-400 not-italic font-semibold">-</span></p>
+                                </div>
+                                <div class="md:col-span-3 bg-[#161616] border-t md:border-t-0 md:border-l border-gray-800 flex flex-col items-center justify-center p-3 relative min-h-[100px]">
+                                    <div id="pviewRemittanceQrContainer" class="w-20 h-20 bg-white p-1 rounded flex items-center justify-center"></div>
+                                    <span class="text-[8px] font-mono text-gray-500 mt-1 uppercase tracking-wider font-semibold">Scan to Route Funds</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between border-b border-gray-800/80 pb-2 mb-3">
+                                    <h2 class="text-xs font-bold uppercase tracking-widest font-cinzel text-[var(--primary)]">03 Legal Clauses & Delivery Alignment</h2>
+                                </div>
+                                <div id="pviewClausesRender" class="space-y-2 max-h-[220px] overflow-hidden"></div>
+                            </div>
+
+                            <div class="pt-2">
+                                <div class="grid grid-cols-2 gap-0 border border-gray-800/80 bg-[#111]/10 rounded overflow-hidden">
+                                    
+                                    <div class="p-5 space-y-5">
+                                        <div>
+                                            <span class="text-[9px] uppercase text-gray-500 font-mono tracking-widest block mb-0.5">CLIENT AUTHORIZATION</span>
+                                            <h4 id="pviewSigClientName" class="text-xs font-bold text-white tracking-wide">-</h4>
+                                            <p id="pviewSigClientComp" class="text-[10px] text-gray-400 font-mono">-</p>
+                                        </div>
+                                        <div class="h-14 border-b border-dashed border-gray-800 flex items-center justify-center relative bg-[#111]/30 rounded-sm overflow-hidden">
+                                            <span class="text-[8px] text-gray-700 font-serif tracking-widest absolute top-1 left-1 select-none">VALIDATION ENDPOINT</span>
+                                            <div id="targetPlacementClientSigWrapper" class="w-full h-full flex items-center justify-center px-4">
+                                                <span class="text-gray-700 font-mono text-[10px] italic opacity-30">[Awaiting Execution Signature Token...]</span>
+                                            </div>
+                                        </div>
+                                        <div class="text-[10px] text-gray-500 font-mono">DATE DECLARED: _____________________</div>
+                                    </div>
+
+                                    <div class="p-5 space-y-5 border-l border-gray-800/80 bg-[#111]/30">
+                                        <div>
+                                            <span class="text-[9px] uppercase text-[var(--primary)] font-mono tracking-widest block mb-0.5">FREELANCER VALIDATION</span>
+                                            <h4 id="pviewSigByName" class="text-xs font-bold text-white tracking-wide">-</h4>
+                                            <p id="pviewSigByRole" class="text-[10px] text-gray-400">-</p>
+                                        </div>
+                                        <div class="h-14 border-b border-dashed border-gray-800/60 flex items-center justify-center relative bg-[#111]/30 rounded-sm overflow-hidden">
+                                            <span class="text-[8px] text-gray-700 font-serif tracking-widest absolute top-1 left-1 select-none">VALIDATION ENDPOINT</span>
+                                            <div id="targetPlacementFreelancerSigWrapper" class="w-full h-full flex items-center justify-center px-4">
+                                                <span class="text-gray-700 font-mono text-[10px] italic opacity-30">[Awaiting Execution Signature Token...]</span>
+                                            </div>
+                                        </div>
+                                        <div class="text-[10px] text-[var(--primary)]/70 font-mono">DATE SIGNED: <span id="pviewSigDate" class="font-semibold">-</span></div>
+                                    </div>
+
+                                </div>
+                                <p class="text-center text-[9px] text-gray-600 italic mt-5">
+                                    "This document confirms mutual alignment on the selected itemized matrices, pricing ledgers, and attached execution stipulations."
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="pt-4">
+                            <div class="flex justify-between items-center text-[9px] text-gray-600 font-mono border-t border-gray-900/40 pt-4">
+                                <span>JK-MGMT PRODUCTION ENGINE REPLICA STACK</span>
+                                <span>Page 3 of 3</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
+            </section>
 
-            </div>
-        </section>
-
+        </div>
     </div>
 
-    <!-- Script Logic Inside Same File -->
     <script>
-        let state = {
-            meta: { ref: "JK-MGMT-2026-004-WRITEASE", date: "20/05/2026" },
-            preparedBy: {
-                name: "Jenish Kamli",
-                role: "Freelance E-Commerce Growth Manager",
-                extra: "Marketplace Specialist, Independent Consultant"
-            },
-            preparedFor: {
-                name: "Abhiral Jain",
-                company: "Writease.in",
-                phone: "+91 88306 93895",
-                country: "India"
-            },
-            sections: [
-                {
-                    id: "sec_1",
-                    indexStr: "01",
-                    title: "One-Time Setup & Onboarding",
-                    items: [
-                        { id: "item_1", name: "Marketplace Onboarding", desc: "Full account setup on Amazon, Flipkart, Meesho including GST, bank verification & shipping configuration", price: 1500, qty: 3 }
-                    ]
-                }
-            ],
-            clauses: [
-                { id: "cl_1", title: "Payment Milestones", text: "50% non-refundable advance required to commence onboarding/listing work. The remaining 50% is due immediately upon completion of the agreed scope, prior to live-launch or final asset handover." }
-            ],
-            financials: { globalTaxRate: 0, advancePercent: 50 },
-            signatures: {
-                freelancer: { type: "text", value: "J. m. KamLi" },
-                client: { type: "empty", value: "" }
-            }
-        };
-
-        let canvas, ctx, isDrawing = false;
-
-        function initEngine() {
-            canvas = document.getElementById("signatureCanvas");
-            if (canvas) {
-                ctx = canvas.getContext("2d");
-                setupCanvasSignatureEvents();
-            }
-            bindStaticListeners();
-            loadInputDefaults();
-            executeRenderLoop();
-        }
-
-        function setupCanvasSignatureEvents() {
-            ctx.strokeStyle = "#111111";
-            ctx.lineWidth = 3.0;
-            ctx.lineCap = "round";
-            
-            const getCoordinates = (e) => {
-                const rect = canvas.getBoundingClientRect();
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                return {
-                    x: (clientX - rect.left) * (canvas.width / rect.width),
-                    y: (clientY - rect.top) * (canvas.height / rect.height)
+        class QuotationStateEngine {
+            constructor() {
+                this.state = {
+                    meta: { ref: "JK-MGMT-2026-0001", date: "24/06/2026", status: "Draft" },
+                    preparedBy: { name: "Jenish Kamli", role: "E-Commerce Growth Manager", extra: "Marketplace Specialist, Independent Consultant", phone: "+91 99999 88888", address: "Umbergaon, Gujarat, India", gst: "24AAAAA1111A1Z1" },
+                    preparedFor: { name: "Abhiral Jain", company: "Writease.in", phone: "+91 88306 93895" },
+                    sections: [],
+                    milestones: [
+                        { id: "m1", label: "50% Advance Commitment Allocation", percent: 50 },
+                        { id: "m2", label: "50% Final Project Handover Settlement", percent: 50 }
+                    ],
+                    clauses: [
+                        { id: "c1", title: "Payment Milestones Scope", text: "50% non-refundable advance required to commence onboarding/listing work. The remaining 50% is due immediately upon completion of the agreed scope prior to live-launch asset handover." },
+                        { id: "c2", title: "Corporate Late Fees", text: "Work operations will pause immediately if milestone payments clear with extensions beyond 7 business days. A late penalty rate fee of 2% monthly aggregates applies." }
+                    ],
+                    remittance: { upi: "jenish@upi", beneficiary: "Jenish Maheshbhai Kamli", bank: "HDFC Bank Ltd", account: "50100234567890", ifsc: "HDFC0000123" },
+                    signatures: { freelancer: { type: "text", value: "J. m. KamLi", styleClass: "font-['Great_Vibes']" }, client: { type: "empty", value: "" } },
+                    themeClass: "theme-jk-gold",
+                    stamp: { dataUri: "", angle: 0, scale: 1.0, top: 750, left: 450 }
                 };
-            };
 
-            const startDraw = (e) => {
-                isDrawing = true;
-                ctx.beginPath();
-                const pos = getCoordinates(e);
-                ctx.moveTo(pos.x, pos.y);
-            };
+                this.clientRegistry = [];
+                this.canvasElement = null;
+                this.canvasContext = null;
+                this.isDrawingTrace = false;
+                this.easyQrInstance = null;
+                
+                this.libraryTemplates = {
+                    "Amazon Listing": { name: "Amazon Listing Suite", desc: "SEO Title optimization, bullet points mapping, backend keywords indexing, description layout formatting sync", price: 1500, qty: 1 },
+                    "Flipkart Listing": { name: "Flipkart Seller Grid Optimization", desc: "Flipkart catalog mapping, optimized 1:1 square media format check, fee structures tier calculation rules mapping", price: 1200, qty: 1 },
+                    "Brand Registry": { name: "Brand Registry Support Allocation", desc: "Trademark protection alignment, IP accelerator program sync, automated counterfeit removals workflow initiation", price: 2500, qty: 1 },
+                    "A+ Content": { name: "Premium A+ Layout Graphics Design", desc: "High-conversion banner placements modules creation, clear typography typography hierarchy grid maps composition", price: 1999, qty: 1 },
+                    "PPC Management": { name: "Performance Marketing & Sponsored Ads Strategy", desc: "Targeted product keywords match types audits execution, negative target lists mapping, target ACoS threshold preservation", price: 5000, qty: 1 },
+                    "Blinkit Setup": { name: "Blinkit Darkstore Inventory Mapping", desc: "Hyperlocal fulfillment center catalog orchestration, instant onboarding approvals document verification mapping", price: 6000, qty: 1 },
+                    "Zepto Setup": { name: "Zepto Hyperlocal Onboarding Suite", desc: "10-minute micro-warehouse delivery configuration, stock ledger assignment framework integration", price: 6000, qty: 1 },
+                    "Instamart Setup": { name: "Swiggy Instamart Brand Integration", desc: "Instamart digital catalog placement, continuous availability tracking mechanisms deployment", price: 5500, qty: 1 },
+                    "Monthly Retainer": { name: "Full-Scale Marketplace Growth Retainer", desc: "Daily dashboard account health tracking monitors, SPF claims administration, high velocity strategy execution reporting", price: 15000, qty: 1 }
+                };
+            }
 
-            const drawMove = (e) => {
-                if (!isDrawing) return;
-                if(e.cancelable) e.preventDefault();
-                const pos = getCoordinates(e);
-                ctx.lineTo(pos.x, pos.y);
-                ctx.stroke();
-            };
+            bootUp() {
+                this.restorePersistentRegistryCache();
+                this.initializeDOMHooksCache();
+                this.wireInteractiveEventListeners();
+                this.renderClientSelectionDropdown();
+                this.executeReactiveEvaluationLoop();
+                this.refreshAnalyticsPanel();
+            }
 
-            canvas.addEventListener("mousedown", startDraw);
-            canvas.addEventListener("mousemove", drawMove);
-            canvas.addEventListener("mouseup", () => isDrawing = false);
-            
-            canvas.addEventListener("touchstart", startDraw);
-            canvas.addEventListener("touchmove", drawMove);
-            canvas.addEventListener("touchend", () => isDrawing = false);
-        }
+            restorePersistentRegistryCache() {
+                const storedState = localStorage.getItem("JK_MGMT_PRO_STATE_SYS");
+                if (storedState) {
+                    try { this.state = JSON.parse(storedState); } catch(e) { console.error("System structural data trace collision reset default", e); }
+                }
+                const storedClients = localStorage.getItem("JK_MGMT_PRO_CLIENTS_REG");
+                if (storedClients) {
+                    try { this.clientRegistry = JSON.parse(storedClients); } catch(e) { console.error(e); }
+                }
+                if (this.state.sections.length === 0) {
+                    this.state.sections.push({
+                        id: "sec_init",
+                        indexStr: "01",
+                        title: "One-Time Onboarding Core Framework Scopes",
+                        items: [
+                            { id: "it_init1", name: "Marketplace Multi-Platform Setup", desc: "Account onboarding alignment across Amazon and Flipkart networks including verification routing rules checks", price: 1500, qty: 2, discount: 200, taxOverride: 18 }
+                        ]
+                    });
+                }
+            }
 
-        function bindStaticListeners() {
-            const bindIds = {
-                "metaRef": ["meta", "ref"], "metaDate": ["meta", "date"],
-                "byName": ["preparedBy", "name"], "byRole": ["preparedBy", "role"], "byExtra": ["preparedBy", "extra"],
-                "forName": ["preparedFor", "name"], "forCompany": ["preparedFor", "company"],
-                "forPhone": ["preparedFor", "phone"], "forCountry": ["preparedFor", "country"],
-                "globalTaxRate": ["financials", "globalTaxRate"], "advancePercent": ["financials", "advancePercent"]
-            };
+            initializeDOMHooksCache() {
+                this.canvasElement = document.getElementById("signatureCanvas");
+                if (this.canvasElement) this.canvasContext = this.canvasElement.getContext("2d");
+                
+                // Set form input fields default configurations elements
+                document.getElementById("metaRef").value = this.state.meta.ref;
+                document.getElementById("metaDate").value = this.state.meta.date;
+                document.getElementById("docStatus").value = this.state.meta.status;
+                document.getElementById("appTheme").value = this.state.themeClass;
+                
+                document.getElementById("fName").value = this.state.preparedBy.name;
+                document.getElementById("fRole").value = this.state.preparedBy.role;
+                document.getElementById("fPhone").value = this.state.preparedBy.phone;
+                document.getElementById("fGst").value = this.state.preparedBy.gst;
+                document.getElementById("fAddress").value = this.state.preparedBy.address;
+                
+                document.getElementById("cName").value = this.state.preparedFor.name;
+                document.getElementById("cCompany").value = this.state.preparedFor.company;
+                document.getElementById("forPhone").value = this.state.preparedFor.phone;
+                
+                document.getElementById("pUpi").value = this.state.remittance.upi;
+                document.getElementById("pBeneficiary").value = this.state.remittance.beneficiary;
+                document.getElementById("pBank").value = this.state.remittance.bank;
+                document.getElementById("pAccount").value = this.state.remittance.account;
+                document.getElementById("pIfsc").value = this.state.remittance.ifsc;
+                
+                // Initialize canvas dimensions
+                this.canvasElement.width = this.canvasElement.offsetWidth;
+                this.canvasElement.height = this.canvasElement.offsetHeight;
+            }
 
-            Object.entries(bindIds).forEach(([id, path]) => {
-                document.getElementById(id)?.addEventListener("input", (e) => {
-                    let val = e.target.value;
-                    if (id === "globalTaxRate" || id === "advancePercent") val = parseFloat(val) || 0;
-                    state[path[0]][path[1]] = val;
-                    executeRenderLoop();
+            wireInteractiveEventListeners() {
+                // Multi-Tab routing logic mechanism capture
+                document.querySelectorAll(".sig-tab-toggle-btn").forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        document.querySelectorAll(".sig-tab-toggle-btn").forEach(b => b.className = "sig-tab-toggle-btn flex-1 py-1 text-[11px] text-center rounded text-gray-400 font-medium");
+                        e.target.className = "sig-tab-toggle-btn flex-1 py-1 text-[11px] text-center rounded bg-[#1c1c1c] text-[#D4AF37] border border-[#D4AF37]/20 font-medium";
+                        document.querySelectorAll(".sig-tab-content-panel").forEach(p => p.classList.add("hidden"));
+                        document.getElementById("sigPanel" + e.target.dataset.tab.charAt(0).toUpperCase() + e.target.dataset.tab.slice(1)).classList.remove("hidden");
+                    });
                 });
-            });
 
-            document.getElementById("btnAddSection").addEventListener("click", () => {
-                const num = state.sections.length + 1;
-                const pad = num < 10 ? "0" + num : num;
-                state.sections.push({
-                    id: "sec_" + Date.now(),
-                    indexStr: pad.toString(),
-                    title: "Custom Service Category",
-                    items: [{ id: "it_" + Date.now(), name: "Service Item Name", desc: "Service description details price", price: 0, qty: 1 }]
-                });
-                executeRenderLoop();
-            });
-
-            document.getElementById("btnAddClause").addEventListener("click", () => {
-                state.clauses.push({
-                    id: "cl_" + Date.now(),
-                    title: "Custom Clause Title",
-                    text: "Terms and condition statement goes here placeholder text body framework rules."
-                });
-                executeRenderLoop();
-            });
-
-            document.querySelectorAll(".sig-tab-btn").forEach(btn => {
-                btn.addEventListener("click", (e) => {
-                    document.querySelectorAll(".sig-tab-btn").forEach(b => b.className = "sig-tab-btn flex-1 py-1.5 text-xs text-center rounded text-gray-400");
-                    e.target.className = "sig-tab-btn flex-1 py-1.5 text-xs text-center rounded bg-[#1c1c1c] text-[#D4AF37] font-semibold border border-[#D4AF37]/30";
-                    document.querySelectorAll(".sig-tab-panel").forEach(p => p.classList.add("hidden"));
-                    document.getElementById("sigPanel" + e.target.dataset.tab.charAt(0).toUpperCase() + e.target.dataset.tab.slice(1)).classList.remove("hidden");
-                });
-            });
-
-            document.getElementById("btnApplyDrawSig").addEventListener("click", () => {
-                const target = document.querySelector('input[name="sigTarget"]:checked').value;
-                state.signatures[target].type = "image";
-                state.signatures[target].value = canvas.toDataURL("image/png");
-                executeRenderLoop();
-            });
-
-            document.getElementById("btnClearCanvas").addEventListener("click", () => {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-            });
-
-            document.getElementById("btnApplyTypeSig").addEventListener("click", () => {
-                const target = document.querySelector('input[name="sigTarget"]:checked').value;
-                state.signatures[target].type = "text";
-                state.signatures[target].value = document.getElementById("sigTextInput").value || "Authorized Sign";
-                executeRenderLoop();
-            });
-
-            document.getElementById("sigFileInput").addEventListener("change", (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        const target = document.querySelector('input[name="sigTarget"]:checked').value;
-                        state.signatures[target].type = "image";
-                        state.signatures[target].value = event.target.result;
-                        executeRenderLoop();
+                // Canvas coordinates trajectory trace listeners bindings
+                const fetchCoords = (e) => {
+                    const box = this.canvasElement.getBoundingClientRect();
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                    return {
+                        x: (clientX - box.left) * (this.canvasElement.width / box.width),
+                        y: (clientY - box.top) * (this.canvasElement.height / box.height)
                     };
-                    reader.readAsDataURL(file);
+                };
+
+                this.canvasElement.addEventListener("mousedown", (e) => { this.isDrawingTrace = true; this.canvasContext.beginPath(); const p = fetchCoords(e); this.canvasContext.moveTo(p.x, p.y); });
+                this.canvasElement.addEventListener("mousemove", (e) => { if (!this.isDrawingTrace) return; const p = fetchCoords(e); this.canvasContext.lineTo(p.x, p.y); this.canvasContext.stroke(); });
+                this.canvasElement.addEventListener("mouseup", () => this.isDrawingTrace = false);
+                
+                this.canvasElement.addEventListener("touchstart", (e) => { this.isDrawingTrace = true; this.canvasContext.beginPath(); const p = fetchCoords(e); this.canvasContext.moveTo(p.x, p.y); });
+                this.canvasElement.addEventListener("touchmove", (e) => { if (!this.isDrawingTrace) return; if(e.cancelable) e.preventDefault(); const p = fetchCoords(e); this.canvasContext.lineTo(p.x, p.y); this.canvasContext.stroke(); });
+                this.canvasElement.addEventListener("touchend", () => this.isDrawingTrace = false);
+
+                document.getElementById("btnResetCanvasPad").addEventListener("click", () => this.canvasContext.clearRect(0,0,this.canvasElement.width,this.canvasElement.height));
+                
+                document.getElementById("btnCommitCanvasStroke").addEventListener("click", () => {
+                    const dest = document.querySelector('input[name="sigPlacementSelector"]:checked').value;
+                    this.state.signatures[dest].type = "image";
+                    this.state.signatures[dest].value = this.canvasElement.toDataURL("image/png");
+                    this.executeReactiveEvaluationLoop();
+                });
+
+                document.getElementById("btnCommitTypeSig").addEventListener("click", () => {
+                    const dest = document.querySelector('input[name="sigPlacementSelector"]:checked').value;
+                    const font = document.querySelector(".font-selector-btn.border-\\[\\#D4AF37\\]\")")?.dataset.font || "font-['Great_Vibes']";
+                    this.state.signatures[dest].type = "text";
+                    this.state.signatures[dest].value = document.getElementById("typeSigTextInput").value || "Authorized Authorized";
+                    this.state.signatures[dest].styleClass = font;
+                    this.executeReactiveEvaluationLoop();
+                });
+
+                document.querySelectorAll(".font-selector-btn").forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        document.querySelectorAll(".font-selector-btn").forEach(b => b.classList.replace("border-[#D4AF37]", "border-[#333]"));
+                        const curr = e.target.closest("button");
+                        curr.classList.replace("border-[#333]", "border-[#D4AF37]");
+                    });
+                });
+
+                // File Input stream base64 mappings converters loops
+                document.getElementById("sigImageFileInput").addEventListener("change", (e) => {
+                    const f = e.target.files[0];
+                    if (f) {
+                        const r = new FileReader();
+                        r.onload = (ev) => {
+                            const dest = document.querySelector('input[name="sigPlacementSelector"]:checked').value;
+                            this.state.signatures[dest].type = "image";
+                            this.state.signatures[dest].value = ev.target.result;
+                            this.executeReactiveEvaluationLoop();
+                        };
+                        r.readAsDataURL(f);
+                    }
+                });
+
+                // Stamp layer upload file logic mapper hooks
+                document.getElementById("stampImgFileInput").addEventListener("change", (e) => {
+                    const f = e.target.files[0];
+                    if (f) {
+                        const r = new FileReader();
+                        r.onload = (ev) => {
+                            this.state.stamp.dataUri = ev.target.result;
+                            const wrapper = document.getElementById("movableStampContainerWrapper");
+                            document.getElementById("pviewStampImgLayer").src = ev.target.result;
+                            wrapper.classList.remove("hidden");
+                            this.executeStampTransformPropertiesStyle();
+                        };
+                        r.readAsDataURL(f);
+                    }
+                });
+
+                document.getElementById("stampRotationWheel").addEventListener("input", (e) => {
+                    this.state.stamp.angle = parseInt(e.target.value);
+                    document.getElementById("stampAngleTextIndicator").innerText = this.state.stamp.angle + "°";
+                    this.executeStampTransformPropertiesStyle();
+                });
+
+                this.setupDraggableStampFrameworkEngine();
+
+                // Structural mappings event input delegations rules pipelines
+                const inputMappings = {
+                    "metaRef": ["meta", "ref"], "metaDate": ["meta", "date"], "docStatus": ["meta", "status"],
+                    "fName": ["preparedBy", "name"], "fRole": ["preparedBy", "role"], "fExtra": ["preparedBy", "extra"],
+                    "fPhone": ["preparedBy", "phone"], "fGst": ["preparedBy", "gst"], "fAddress": ["preparedBy", "address"],
+                    "cName": ["preparedFor", "name"], "cCompany": ["preparedFor", "company"], "forPhone": ["preparedFor", "phone"],
+                    "pUpi": ["remittance", "upi"], "pBeneficiary": ["remittance", "beneficiary"],
+                    "pBank": ["remittance", "bank"], "pAccount": ["remittance", "account"], "pIfsc": ["remittance", "ifsc"]
+                };
+
+                Object.entries(inputMappings).forEach(([id, path]) => {
+                    document.getElementById(id)?.addEventListener("input", (e) => {
+                        this.state[path[0]][path[1]] = e.target.value;
+                        this.executeReactiveEvaluationLoop();
+                    });
+                });
+
+                document.getElementById("appTheme").addEventListener("change", (e) => {
+                    this.state.themeClass = e.target.value;
+                    document.getElementById("renderTargetQuotation").className = `relative p-[2.5rem] text-white select-none box-border shadow-2xl ${e.target.value}`;
+                });
+
+                // Structural modifications buttons events link channels hooks
+                document.getElementById("btnAddSectionCategory").addEventListener("click", () => {
+                    const num = this.state.sections.length + 1;
+                    const pad = num < 10 ? "0" + num : num;
+                    this.state.sections.push({
+                        id: "sec_" + Date.now(), indexStr: pad.toString(), title: "Custom Targeted Scope Group Block", items: []
+                    });
+                    this.executeReactiveEvaluationLoop();
+                });
+
+                document.getElementById("btnAddNewMilestoneRow").addEventListener("click", () => {
+                    this.state.milestones.push({ id: "m_" + Date.now(), label: "Milestone Milestone Allocation Phase Line", percent: 0 });
+                    this.executeReactiveEvaluationLoop();
+                });
+
+                document.getElementById("btnAddNewClauseLine").addEventListener("click", () => {
+                    this.state.clauses.push({ id: "c_" + Date.now(), title: "Stipulation Title Clause", text: "Stipulation compliance execution framework details parameters mapping." });
+                    this.executeReactiveEvaluationLoop();
+                });
+
+                // Client Management Profile Actions Wire mapping registers
+                document.getElementById("btnClientSave").addEventListener("click", () => {
+                    const name = document.getElementById("cName").value.trim();
+                    if(!name) return;
+                    const profile = { name, company: document.getElementById("cCompany").value, phone: document.getElementById("forPhone").value };
+                    this.clientRegistry = this.clientRegistry.filter(c => c.name.toLowerCase() !== name.toLowerCase());
+                    this.clientRegistry.push(profile);
+                    localStorage.setItem("JK_MGMT_PRO_CLIENTS_REG", JSON.stringify(this.clientRegistry));
+                    this.renderClientSelectionDropdown();
+                    alert("Client profile saved successfully.");
+                });
+
+                document.getElementById("btnClientDelete").addEventListener("click", () => {
+                    const activeSelect = document.getElementById("clientDirectorySelector").value;
+                    if(!activeSelect) return;
+                    this.clientRegistry = this.clientRegistry.filter(c => c.name !== activeSelect);
+                    localStorage.setItem("JK_MGMT_PRO_CLIENTS_REG", JSON.stringify(this.clientRegistry));
+                    this.renderClientSelectionDropdown();
+                    this.executeReactiveEvaluationLoop();
+                });
+
+                document.getElementById("clientDirectorySelector").addEventListener("change", (e) => {
+                    const target = this.clientRegistry.find(c => c.name === e.target.value);
+                    if(target) {
+                        this.state.preparedFor.name = target.name;
+                        this.state.preparedFor.company = target.company;
+                        this.state.preparedFor.phone = target.phone;
+                        document.getElementById("cName").value = target.name;
+                        document.getElementById("cCompany").value = target.company;
+                        document.getElementById("forPhone").value = target.phone;
+                        this.executeReactiveEvaluationLoop();
+                    }
+                });
+
+                // Service Library Dropdown Insertion Selector
+                document.getElementById("serviceTemplateLibraryDropdown").addEventListener("change", (e) => {
+                    const tokenKey = e.target.value;
+                    if(!tokenKey || this.state.sections.length === 0) return;
+                    const matchedData = this.libraryTemplates[tokenKey];
+                    if(matchedData) {
+                        this.state.sections[this.state.sections.length - 1].items.push({
+                            id: "it_" + Date.now(), name: matchedData.name, desc: matchedData.desc, price: matchedData.price, qty: matchedData.qty, discount: 0, taxOverride: 18
+                        });
+                        e.target.value = "";
+                        this.executeReactiveEvaluationSweepAndPanelRebuild();
+                    }
+                });
+
+                // Save system configurations files triggers links
+                document.getElementById("btnSaveDraft").addEventListener("click", () => {
+                    localStorage.setItem("JK_MGMT_PRO_STATE_SYS", JSON.stringify(this.state));
+                    this.refreshAnalyticsPanel();
+                    alert("System core application snapshot state saved into secure local slots.");
+                });
+
+                document.getElementById("btnLoadDraft").addEventListener("click", () => {
+                    const data = localStorage.getItem("JK_MGMT_PRO_STATE_SYS");
+                    if(data) {
+                        this.state = JSON.parse(data);
+                        this.initializeDOMHooksCache();
+                        this.executeReactiveEvaluationSweepAndPanelRebuild();
+                    }
+                });
+
+                document.getElementById("btnDuplicateDoc").addEventListener("click", () => {
+                    const nextNum = parseInt(this.state.meta.ref.split("-").pop()) + 1 || Date.now();
+                    this.state.meta.ref = "JK-MGMT-2026-" + String(nextNum).padStart(4, '0');
+                    document.getElementById("metaRef").value = this.state.meta.ref;
+                    this.executeReactiveEvaluationLoop();
+                    alert("Quotation duplicated under updated tracking reference number.");
+                });
+
+                document.getElementById("btnExportJSON").addEventListener("click", () => {
+                    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.state));
+                    const link = document.createElement("a");
+                    link.setAttribute("href", dataStr);
+                    link.setAttribute("download", `${this.state.meta.ref}_state_data.json`);
+                    link.click();
+                });
+
+                document.getElementById("btnImportJSON").addEventListener("change", (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            try {
+                                this.state = JSON.parse(event.target.result);
+                                this.initializeDOMHooksCache();
+                                this.executeReactiveEvaluationSweepAndPanelRebuild();
+                            } catch(err) { alert("File parsing collision mismatch."); }
+                        };
+                        reader.readAsText(file);
+                    }
+                });
+
+                document.getElementById("globalSearchInput").addEventListener("input", (e) => {
+                    const query = e.target.value.toLowerCase().trim();
+                    document.querySelectorAll(".premium-table tbody tr").forEach(row => {
+                        const text = row.innerText.toLowerCase();
+                        row.style.display = text.includes(query) ? "" : "none";
+                    });
+                });
+
+                document.getElementById("btnExportPDF").addEventListener("click", () => this.generateHighFidelityPdfDownloaderPipeline());
+            }
+
+            renderClientSelectionDropdown() {
+                const node = document.getElementById("clientDirectorySelector");
+                node.innerHTML = `<option value="">-- Click to Load Existing Registry Profile --</option>`;
+                this.clientRegistry.forEach(c => {
+                    node.innerHTML += `<option value="${c.name}">${c.name} (${c.company})</option>`;
+                });
+            }
+
+            setupDraggableStampFrameworkEngine() {
+                const wrapper = document.getElementById("movableStampContainerWrapper");
+                let isDragging = false, currentX, currentY, initialX, initialY;
+
+                wrapper.addEventListener("mousedown", (e) => {
+                    if (e.target.classList.contains("stamp-resize-handle")) return;
+                    isDragging = true;
+                    initialX = e.clientX - this.state.stamp.left;
+                    initialY = e.clientY - this.state.stamp.top;
+                });
+
+                document.addEventListener("mousemove", (e) => {
+                    if (!isDragging) return;
+                    this.state.stamp.left = e.clientX - initialX;
+                    this.state.stamp.top = e.clientY - initialY;
+                    wrapper.style.left = this.state.stamp.left + "px";
+                    wrapper.style.top = this.state.stamp.top + "px";
+                });
+
+                document.addEventListener("mouseup", () => isDrawingTrace = isDragging = false);
+
+                // Handle aspect resizing mechanics overlay metrics
+                const resizeHandle = wrapper.querySelector(".stamp-resize-handle");
+                let isResizing = false, baseWidth;
+
+                resizeHandle.addEventListener("mousedown", (e) => {
+                    isResizing = true;
+                    e.preventDefault();
+                    baseWidth = e.clientX;
+                });
+
+                document.addEventListener("mousemove", (e) => {
+                    if (!isResizing) return;
+                    const img = document.getElementById("pviewStampImgLayer");
+                    const offset = e.clientX - baseWidth;
+                    const nextSize = Math.max(40, img.offsetWidth + offset);
+                    img.style.width = nextSize + "px";
+                    img.style.height = nextSize + "px";
+                    baseWidth = e.clientX;
+                });
+
+                document.addEventListener("mouseup", () => isResizing = false);
+            }
+
+            executeStampTransformPropertiesStyle() {
+                const wrapper = document.getElementById("movableStampContainerWrapper");
+                wrapper.style.transform = `rotate(${this.state.stamp.angle}deg)`;
+            }
+
+            executeReactiveEvaluationSweepAndPanelRebuild() {
+                this.executeReactiveEvaluationLoop(true);
+            }
+
+            executeReactiveEvaluationLoop(rebuildPanelsForceTrigger = false) {
+                // Static fields projection assignments pipelines
+                document.getElementById("pviewRef").innerText = this.state.meta.ref;
+                document.getElementById("pviewDate").innerText = this.state.meta.date;
+                document.querySelectorAll(".id-header-ref-span").forEach(el => el.innerText = "REF: " + this.state.meta.ref);
+                document.getElementById("pviewStatusBadge").innerText = this.state.meta.status.toUpperCase();
+                
+                document.getElementById("pviewByName").innerText = this.state.preparedBy.name;
+                document.getElementById("pviewByRole").innerText = this.state.preparedBy.role;
+                document.getElementById("pviewByExtra").innerText = this.state.preparedBy.extra;
+                document.getElementById("pviewByGst").innerText = this.state.preparedBy.gst;
+                document.getElementById("pviewByAddress").innerText = this.state.preparedBy.address;
+                
+                document.getElementById("pviewForName").innerText = this.state.preparedFor.name;
+                document.getElementById("pviewForCompany").innerText = this.state.preparedFor.company;
+                document.getElementById("pviewForPhone").innerText = this.state.preparedFor.phone;
+                
+                document.getElementById("pviewSigClientName").innerText = this.state.preparedFor.name;
+                document.getElementById("pviewSigClientComp").innerText = this.state.preparedFor.company;
+                document.getElementById("pviewSigByName").innerText = this.state.preparedBy.name;
+                document.getElementById("pviewSigByRole").innerText = this.state.preparedBy.role;
+                document.getElementById("pviewSigDate").innerText = this.state.meta.date;
+
+                document.getElementById("pviewPBeneficiary").innerText = this.state.remittance.beneficiary;
+                document.getElementById("pviewPBank").innerText = this.state.remittance.bank;
+                document.getElementById("pviewPAccount").innerText = this.state.remittance.account;
+                document.getElementById("pviewPIfsc").innerText = this.state.remittance.ifsc;
+                document.getElementById("pviewPUpi").innerText = this.state.remittance.upi;
+
+                // Loop metrics variables state monitoring definitions
+                let accumulativeSubtotal = 0, accumulativeDiscount = 0, accumulativeTax = 0;
+                
+                const leftContainerWrapperNode = document.getElementById("builderSectionsControlWrapper");
+                const rightDocumentWrapperNode = document.getElementById("pviewDynamicSectionsRender");
+
+                if (rebuildPanelsForceTrigger || leftContainerWrapperNode.children.length !== this.state.sections.length) {
+                    leftContainerWrapperNode.innerHTML = "";
                 }
-            });
+                rightDocumentWrapperNode.innerHTML = "";
 
-            document.getElementById("btnSaveDraft").addEventListener("click", () => {
-                localStorage.setItem("JK_PRO_STUDIO_STATE", JSON.stringify(state));
-                alert("Draft template state saved completely.");
-            });
+                this.state.sections.forEach((sec, sIdx) => {
+                    let sectionSumTotal = 0;
 
-            document.getElementById("btnLoadDraft").addEventListener("click", () => {
-                const data = localStorage.getItem("JK_PRO_STUDIO_STATE");
-                if(data) {
-                    state = JSON.parse(data); loadInputDefaults(); executeRenderLoop();
-                    alert("Draft state compiled back safely.");
-                }
-            });
+                    // Generate left input management card element context
+                    let secControlCard = document.getElementById(`ctrl-sec-${sec.id}`);
+                    if (!secControlCard) {
+                        secControlCard = document.createElement("div");
+                        secControlCard.id = `ctrl-sec-${sec.id}`;
+                        secControlCard.className = "bg-[#181818] p-3 rounded border border-[#2b2b2b] space-y-3";
+                        leftContainerWrapperNode.appendChild(secControlCard);
+                    }
 
-            document.getElementById("btnExportPDF").addEventListener("click", () => {
-                const element = document.getElementById("renderTargetQuotation");
-                html2pdf().set({
-                    margin: [0,0,0,0],
-                    filename: `${state.meta.ref}.pdf`,
-                    image: { type: 'jpeg', quality: 1.0 },
-                    html2canvas: { scale: 2, useCORS: true, backgroundColor: "#0B0B0B" },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'] }
-                }).from(element).save();
-            });
-        }
-
-        function loadInputDefaults() {
-            document.getElementById("metaRef").value = state.meta.ref;
-            document.getElementById("metaDate").value = state.meta.date;
-            document.getElementById("byName").value = state.preparedBy.name;
-            document.getElementById("byRole").value = state.preparedBy.role;
-            document.getElementById("byExtra").value = state.preparedBy.extra;
-            document.getElementById("forName").value = state.preparedFor.name;
-            document.getElementById("forCompany").value = state.preparedFor.company;
-            document.getElementById("forPhone").value = state.preparedFor.phone;
-            document.getElementById("forCountry").value = state.preparedFor.country;
-            document.getElementById("globalTaxRate").value = state.financials.globalTaxRate;
-            document.getElementById("advancePercent").value = state.financials.advancePercent;
-        }
-
-        function executeRenderLoop() {
-            document.getElementById("pviewRef").innerText = state.meta.ref;
-            document.getElementById("pviewDate").innerText = state.meta.date;
-            document.querySelectorAll(".id-header-ref-span").forEach(el => el.innerText = "REF: " + state.meta.ref);
-            document.getElementById("pviewByName").innerText = state.preparedBy.name;
-            document.getElementById("pviewByRole").innerText = state.preparedBy.role;
-            document.getElementById("pviewByExtra").innerText = state.preparedBy.extra;
-            document.getElementById("pviewForName").innerText = state.preparedFor.name;
-            document.getElementById("pviewForCompany").innerText = state.preparedFor.company;
-            document.getElementById("pviewForPhone").innerText = state.preparedFor.phone;
-            document.getElementById("pviewForCountry").innerText = state.preparedFor.country;
-            
-            document.getElementById("pviewSigClientName").innerText = state.preparedFor.name;
-            document.getElementById("pviewSigClientComp").innerText = state.preparedFor.company;
-            document.getElementById("pviewSigByName").innerText = state.preparedBy.name;
-            document.getElementById("pviewSigByRole").innerText = state.preparedBy.role;
-            document.getElementById("pviewSigDate").innerText = state.meta.date;
-
-            let grandTotal = 0;
-            const controlsNode = document.getElementById("dynamicSectionsContainer");
-            const previewNode = document.getElementById("pviewDynamicSectionsRender");
-            
-            controlsNode.innerHTML = "";
-            previewNode.innerHTML = "";
-
-            state.sections.forEach((sec) => {
-                let secSum = 0;
-                const secCard = document.createElement("div");
-                secCard.className = "bg-[#222] p-4 rounded border border-[#333] space-y-3";
-                secCard.innerHTML = `
-                    <div class="flex justify-between items-center bg-[#1a1a1a] p-2 rounded">
-                        <div class="flex items-center space-x-2 w-full">
-                            <span class="text-xs text-[#D4AF37] font-bold font-mono">${sec.indexStr}</span>
-                            <input type="text" value="${sec.title}" class="bg-transparent text-sm text-white font-bold outline-none w-full border-b border-transparent focus:border-[#D4AF37] sec-title">
-                        </div>
-                        <button type="button" class="text-red-400 hover:text-red-500 text-xs ml-2 sec-del"><i class="fa-solid fa-trash-can"></i></button>
-                    </div>
-                    <div class="space-y-2 sub-items-area"></div>
-                    <button type="button" class="bg-[#2a2a2a] hover:bg-[#333] text-[#D4AF37] text-xs px-3 py-1.5 rounded w-full text-center mt-1 add-item-row">
-                        <i class="fa-solid fa-plus mr-1"></i> Add Custom Service Pricing Row
-                    </button>
-                `;
-
-                secCard.querySelector(".sec-title").addEventListener("input", (e) => {
-                    sec.title = e.target.value;
-                    document.getElementById(`pview-hdr-${sec.id}`).innerText = `${sec.indexStr} ${sec.title}`;
-                });
-                secCard.querySelector(".sec-del").addEventListener("click", () => {
-                    state.sections = state.sections.filter(s => s.id !== sec.id); executeRenderLoop();
-                });
-                secCard.querySelector(".add-item-row").addEventListener("click", () => {
-                    sec.items.push({ id: "it_" + Date.now(), name: "Custom Service", desc: "Custom breakdown details", price: 0, qty: 1 });
-                    executeRenderLoop();
-                });
-
-                const subItemsArea = secCard.querySelector(".sub-items-area");
-
-                const tableFrame = document.createElement("div");
-                tableFrame.className = "space-y-1";
-                tableFrame.innerHTML = `
-                    <h3 id="pview-hdr-${sec.id}" class="text-xs font-bold uppercase tracking-widest font-['Cinzel'] text-[#D4AF37] mt-3">${sec.indexStr} ${sec.title}</h3>
-                    <table class="premium-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 28%;">Service Variant</th>
-                                <th style="width: 44%;">Scope Description</th>
-                                <th style="width: 10%; text-align: right;">Unit Rate</th>
-                                <th style="width: 6%; text-align: center;">Qty</th>
-                                <th style="width: 12%; text-align: right;">Aggregate</th>
-                            </tr>
-                        </thead>
-                        <tbody class="rows-target"></tbody>
-                    </table>
-                `;
-                const rowsTarget = tableFrame.querySelector(".rows-target");
-
-                sec.items.forEach((item) => {
-                    const lineSum = item.price * item.qty;
-                    secSum += lineSum;
-
-                    const rowControl = document.createElement("div");
-                    rowControl.className = "bg-[#1c1c1c] p-2 rounded border border-[#2d2d2d] space-y-2 text-xs";
-                    rowControl.innerHTML = `
-                        <div class="grid grid-cols-1 gap-2">
-                            <input type="text" value="${item.name}" placeholder="Service/Product Name..." class="bg-[#252525] border border-[#333] p-1.5 rounded text-white text-xs w-full row-name">
-                            <textarea placeholder="Custom Description details..." class="bg-[#252525] border border-[#333] p-1.5 rounded text-white text-xs w-full row-desc" rows="1">${item.desc}</textarea>
-                        </div>
-                        <div class="flex items-center justify-between gap-2 border-t border-[#252525] pt-1.5">
-                            <div class="flex items-center space-x-1">
-                                <label class="text-gray-500 text-[10px]">Price (₹):</label>
-                                <input type="number" value="${item.price}" class="w-20 bg-[#252525] border border-[#333] p-1 rounded text-white text-right font-mono row-price">
+                    secControlCard.innerHTML = `
+                        <div class="flex justify-between items-center bg-[#0d0d0d] p-1.5 rounded border border-[#222]">
+                            <div class="flex items-center space-x-2 w-full">
+                                <span class="text-xs text-[#D4AF37] font-mono font-bold">${sec.indexStr}</span>
+                                <input type="text" value="${sec.title}" class="bg-transparent text-xs text-white font-bold outline-none w-full border-b border-transparent focus:border-[#D4AF37] input-sec-title-sync">
                             </div>
-                            <div class="flex items-center space-x-1">
-                                <label class="text-gray-500 text-[10px]">Qty:</label>
-                                <input type="number" value="${item.qty}" class="w-12 bg-[#252525] border border-[#333] p-1 rounded text-white text-center font-mono row-qty">
-                            </div>
-                            <span class="text-[#D4AF37] font-mono font-semibold">₹${lineSum}</span>
-                            <button type="button" class="text-gray-400 hover:text-red-400 row-del px-1"><i class="fa-solid fa-xmark"></i></button>
+                            <button type="button" class="text-red-400 hover:text-red-500 text-xs ml-2 btn-sec-del-hook"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
+                        <div class="space-y-2 inner-rows-injection-wrapper"></div>
+                        <button type="button" class="bg-[#111] hover:bg-[#1a1a1a] border border-[#2c2c2c] text-[#D4AF37] text-[10px] py-1 rounded w-full text-center font-semibold tracking-wide btn-item-row-add-hook">
+                            <i class="fa-solid fa-plus-circle mr-1"></i> Add Service Pricing Row Line
+                        </button>
                     `;
 
-                    rowControl.querySelector(".row-name").addEventListener("input", (e) => { item.name = e.target.value; executeRenderLoop(); });
-                    rowControl.querySelector(".row-desc").addEventListener("input", (e) => { item.desc = e.target.value; executeRenderLoop(); });
-                    rowControl.querySelector(".row-price").addEventListener("input", (e) => { item.price = parseFloat(e.target.value) || 0; executeRenderLoop(); });
-                    rowControl.querySelector(".row-qty").addEventListener("input", (e) => { item.qty = parseInt(e.target.value) || 0; executeRenderLoop(); });
-                    rowControl.querySelector(".row-del").addEventListener("click", () => {
-                        sec.items = sec.items.filter(i => i.id !== item.id); executeRenderLoop();
+                    secControlCard.querySelector(".input-sec-title-sync").addEventListener("input", (e) => {
+                        sec.title = e.target.value;
+                        document.getElementById(`pview-hdr-${sec.id}`).innerText = `${sec.indexStr} ${sec.title}`;
+                    });
+                    secControlCard.querySelector(".btn-sec-del-hook").addEventListener("click", () => {
+                        this.state.sections = this.state.sections.filter(s => s.id !== sec.id);
+                        this.executeReactiveEvaluationSweepAndPanelRebuild();
+                    });
+                    secControlCard.querySelector(".btn-item-row-add-hook").addEventListener("click", () => {
+                        sec.items.push({ id: "it_" + Date.now(), name: "Custom Scope Specification Variant", desc: "Custom product description parameters specifications layout mapping alignment rules metrics.", price: 0, qty: 1, discount: 0, taxOverride: 18 });
+                        this.executeReactiveEvaluationLoop(true);
                     });
 
-                    subItemsArea.appendChild(rowControl);
+                    const innerRowsWrapperTargetNode = secControlCard.querySelector(".inner-rows-injection-wrapper");
 
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `
-                        <td class="font-semibold text-white tracking-wide">${item.name}</td>
-                        <td class="text-gray-400 font-sans leading-relaxed">${item.desc}</td>
-                        <td style="text-align: right;" class="font-mono text-gray-300">₹${item.price.toLocaleString('en-IN')}</td>
-                        <td style="text-align: center;" class="font-mono text-gray-400">${item.qty}</td>
-                        <td style="text-align: right;" class="font-bold font-mono text-white">₹${lineSum.toLocaleString('en-IN')}</td>
+                    // Right preview core document paper table blueprint matrix element configuration
+                    const previewTableWrapperElement = document.createElement("div");
+                    previewTableWrapperElement.className = "space-y-1";
+                    previewTableWrapperElement.innerHTML = `
+                        <h3 id="pview-hdr-${sec.id}" class="text-[11px] font-bold uppercase tracking-widest font-cinzel text-[var(--primary)] mt-2">${sec.indexStr} ${sec.title}</h3>
+                        <table class="premium-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 25%;">Service Metrics</th>
+                                    <th style="width: 43%;">Scope Execution Breakdown Context Matrix</th>
+                                    <th style="width: 10%; text-align: right;">Rate</th>
+                                    <th style="width: 5%; text-align: center;">Qty</th>
+                                    <th style="width: 5%; text-align: center;">Tax</th>
+                                    <th style="width: 12%; text-align: right;">Aggregate Sum</th>
+                                </tr>
+                            </thead>
+                            <tbody class="tbody-rows-destination"></tbody>
+                        </table>
                     `;
-                    rowsTarget.appendChild(tr);
+                    const previewTbodyNode = previewTableWrapperElement.querySelector(".tbody-rows-destination");
+
+                    // Enumerate nested items data parameters collections matrices loops
+                    sec.items.forEach((item) => {
+                        const baseGrossSumValue = item.price * item.qty;
+                        const lineDiscountOffset = parseFloat(item.discount) || 0;
+                        const baselineTaxMultiplicationValue = ((item.taxOverride || 0) / 100) * (baseGrossSumValue - lineDiscountOffset);
+                        const cumulativeLineItemTotalValuation = (baseGrossSumValue - lineDiscountOffset) + baselineTaxMultiplicationValue;
+
+                        accumulativeSubtotal += baseGrossSumValue;
+                        accumulativeDiscount += lineDiscountOffset;
+                        accumulativeTax += baselineTaxMultiplicationValue;
+
+                        // Create input control elements panel block rows interface tracking lanes
+                        const itemControlContainerRow = document.createElement("div");
+                        itemControlContainerRow.className = "bg-[#0d0d0d] p-2 rounded border border-[#222] space-y-1.5 text-[11px]";
+                        itemControlContainerRow.innerHTML = `
+                            <div class="grid grid-cols-1 gap-1">
+                                <input type="text" value="${item.name}" placeholder="Service/Product name line input..." class="bg-[#141414] border border-[#2a2a2a] p-1 text-xs rounded text-white font-medium row-sync-name">
+                                <textarea placeholder="Scope specifications overview data paragraph descriptions mapping..." class="bg-[#141414] border border-[#2a2a2a] p-1 text-[11px] rounded text-gray-400 w-full row-sync-desc" rows="1">${item.desc}</textarea>
+                            </div>
+                            <div class="flex items-center justify-between gap-1.5 border-t border-[#1a1a1a] pt-1">
+                                <div class="flex items-center space-x-1">
+                                    <span class="text-gray-500 text-[9px] uppercase">Rate:</span>
+                                    <input type="number" value="${item.price}" class="w-16 bg-[#141414] border border-[#2a2a2a] p-0.5 rounded text-white text-right font-mono row-sync-price">
+                                </div>
+                                <div class="flex items-center space-x-1">
+                                    <span class="text-gray-500 text-[9px] uppercase">Qty:</span>
+                                    <input type="number" value="${item.qty}" class="w-9 bg-[#141414] border border-[#2a2a2a] p-0.5 rounded text-white text-center font-mono row-sync-qty">
+                                </div>
+                                <div class="flex items-center space-x-1">
+                                    <span class="text-gray-500 text-[9px] uppercase">Disc:</span>
+                                    <input type="number" value="${item.discount}" class="w-12 bg-[#141414] border border-[#2a2a2a] p-0.5 rounded text-white text-right font-mono row-sync-disc text-red-400">
+                                </div>
+                                <div class="flex items-center space-x-1">
+                                    <span class="text-gray-500 text-[9px] uppercase">Tax%:</span>
+                                    <input type="number" value="${item.taxOverride}" class="w-10 bg-[#141414] border border-[#2a2a2a] p-0.5 rounded text-white text-center font-mono row-sync-tax">
+                                </div>
+                                <button type="button" class="text-gray-500 hover:text-red-400 row-item-delete-btn-hook px-1"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                        `;
+
+                        itemControlContainerRow.querySelector(".row-sync-name").addEventListener("input", (e) => { item.name = e.target.value; this.executeReactiveEvaluationLoop(); });
+                        itemControlContainerRow.querySelector(".row-sync-desc").addEventListener("input", (e) => { item.desc = e.target.value; this.executeReactiveEvaluationLoop(); });
+                        itemControlContainerRow.querySelector(".row-sync-price").addEventListener("input", (e) => { item.price = parseFloat(e.target.value) || 0; this.executeReactiveEvaluationLoop(); });
+                        itemControlContainerRow.querySelector(".row-sync-qty").addEventListener("input", (e) => { item.qty = parseInt(e.target.value) || 1; this.executeReactiveEvaluationLoop(); });
+                        itemControlContainerRow.querySelector(".row-sync-disc").addEventListener("input", (e) => { item.discount = parseFloat(e.target.value) || 0; this.executeReactiveEvaluationLoop(); });
+                        itemControlContainerRow.querySelector(".row-sync-tax").addEventListener("input", (e) => { item.taxOverride = parseFloat(e.target.value) || 0; this.executeReactiveEvaluationLoop(); });
+                        itemControlContainerRow.querySelector(".row-item-delete-btn-hook").addEventListener("click", () => {
+                            sec.items = sec.items.filter(i => i.id !== item.id);
+                            this.executeReactiveEvaluationLoop(true);
+                        });
+
+                        innerRowsWrapperTargetNode.appendChild(itemControlContainerRow);
+
+                        // Output document visual preview table generation mappings append
+                        const trPreviewRow = document.createElement("tr");
+                        trPreviewRow.innerHTML = `
+                            <td class="font-semibold text-white tracking-wide text-[11px]">${item.name}</td>
+                            <td class="text-gray-400 font-sans leading-relaxed text-[10px]">${item.desc}</td>
+                            <td style="text-align: right;" class="font-mono text-gray-300">₹${item.price.toLocaleString('en-IN')}</td>
+                            <td style="text-align: center;" class="font-mono text-gray-400">${item.qty}</td>
+                            <td style="text-align: center;" class="font-mono text-gray-500">${item.taxOverride}%</td>
+                            <td style="text-align: right;" class="font-bold font-mono text-white">₹${cumulativeLineItemTotalValuation.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        `;
+                        previewTbodyNode.appendChild(trPreviewRow);
+                    });
+
+                    rightDocumentWrapperNode.appendChild(previewTableWrapperElement);
                 });
 
-                grandTotal += secSum;
-                controlsNode.appendChild(secCard);
-                previewNode.appendChild(tableFrame);
-            });
+                // Compile advanced financial equations results summaries block structures parameters
+                const systemAggregatedGrossValuation = (accumulativeSubtotal - accumulativeDiscount) + accumulativeTax;
+                const evaluatedTdsOffsetTaxProductValue = 0.01 * systemAggregatedGrossValuation; // Default operational 1% Indian TDS benchmark parameter rules
+                const definitiveNetCompoundedValuation = systemAggregatedGrossValuation - evaluatedTdsOffsetTaxProductValue;
+                
+                const cleanRoundedFinalNetPayableValue = Math.round(definitiveNetCompoundedValuation);
 
-            const tax = (state.financials.globalTaxRate / 100) * grandTotal;
-            const finalVal = grandTotal + tax;
-            const advance = (state.financials.advancePercent / 100) * finalVal;
-            const balance = finalVal - advance;
+                document.getElementById("pviewSubtotal").innerText = accumulativeSubtotal.toLocaleString('en-IN', {minimumFractionDigits: 2});
+                document.getElementById("pviewDiscount").innerText = accumulativeDiscount.toLocaleString('en-IN', {minimumFractionDigits: 2});
+                document.getElementById("pviewTax").innerText = accumulativeTax.toLocaleString('en-IN', {minimumFractionDigits: 2});
+                document.getElementById("pviewGrandTotal").innerText = systemAggregatedGrossValuation.toLocaleString('en-IN', {minimumFractionDigits: 2});
+                document.getElementById("pviewTds").innerText = evaluatedTdsOffsetTaxProductValue.toLocaleString('en-IN', {minimumFractionDigits: 2});
+                document.getElementById("pviewNetTotal").innerText = cleanRoundedFinalNetPayableValue.toLocaleString('en-IN');
+                
+                document.getElementById("pviewAmountInWords").innerText = this.convertNumericalCurrencyValuesIntoIndianWordsSystem(cleanRoundedFinalNetPayableValue) + " Rupees Only";
 
-            document.getElementById("pviewGrandTotal").innerText = finalVal.toLocaleString('en-IN', {minimumFractionDigits: 2});
-            document.getElementById("pviewAdvanceAmount").innerText = advance.toLocaleString('en-IN', {minimumFractionDigits: 2});
-            document.getElementById("pviewBalanceAmount").innerText = balance.toLocaleString('en-IN', {minimumFractionDigits: 2});
+                // Render milestones controls panel and right preview chart framework metrics blocks
+                const milestonesControlsNode = document.getElementById("milestonesControlsAreaWrapper");
+                const milestonesPviewNode = document.getElementById("pviewMilestonesTargetContainer");
+                const milestonesContainerWrapperNode = document.getElementById("pviewMilestonesDocumentOutputWrapper");
+                
+                milestonesControlsNode.innerHTML = "";
+                milestonesPviewNode.innerHTML = "";
 
-            const leftClauses = document.getElementById("clausesContainer");
-            const rightClauses = document.getElementById("pviewClausesRender");
-            leftClauses.innerHTML = ""; rightClauses.innerHTML = "";
+                if (this.state.milestones.length > 0) {
+                    milestonesContainerWrapperNode.classList.remove("hidden");
+                    this.state.milestones.forEach((m, mIdx) => {
+                        const lineValueAmount = (m.percent / 100) * cleanRoundedFinalNetPayableValue;
 
-            state.clauses.forEach((cl) => {
-                const clCard = document.createElement("div");
-                clCard.className = "bg-[#252525] p-3 rounded border border-[#333] space-y-2 text-xs";
-                clCard.innerHTML = `
-                    <div class="flex justify-between items-center border-b border-[#333] pb-1">
-                        <input type="text" value="${cl.title}" class="bg-transparent font-bold text-[#D4AF37] outline-none cl-title w-full">
-                        <button type="button" class="text-red-400 hover:text-red-500 ml-2 cl-del"><i class="fa-solid fa-trash-can"></i></button>
-                    </div>
-                    <textarea class="w-full bg-[#1c1c1c] border border-[#333] text-gray-300 p-1.5 rounded text-xs outline-none cl-text" rows="2">${cl.text}</textarea>
-                `;
-                clCard.querySelector(".cl-title").addEventListener("input", (e) => { cl.title = e.target.value; executeRenderLoop(); });
-                clCard.querySelector(".cl-text").addEventListener("input", (e) => { cl.text = e.target.value; executeRenderLoop(); });
-                clCard.querySelector(".cl-del").addEventListener("click", () => {
-                    state.clauses = state.clauses.filter(c => c.id !== cl.id); executeRenderLoop();
+                        const ctrlRow = document.createElement("div");
+                        ctrlRow.className = "flex items-center space-x-2 bg-[#1c1c1c] p-2 rounded border border-[#2d2d2d]";
+                        ctrlRow.innerHTML = `
+                            <input type="text" value="${m.label}" class="flex-1 bg-[#0d0d0d] border border-[#333] p-1 rounded text-white text-xs ctrl-m-label">
+                            <div class="flex items-center space-x-1 w-20 shrink-0">
+                                <input type="number" value="${m.percent}" class="w-12 bg-[#0d0d0d] border border-[#333] p-1 rounded text-white text-center font-mono ctrl-m-percent">
+                                <span class="text-gray-500">%</span>
+                            </div>
+                            <button type="button" class="text-gray-500 hover:text-red-400 ctrl-m-del px-1"><i class="fa-solid fa-trash-can"></i></button>
+                        `;
+
+                        ctrlRow.querySelector(".ctrl-m-label").addEventListener("input", (e) => { m.label = e.target.value; this.executeReactiveEvaluationLoop(); });
+                        ctrlRow.querySelector(".ctrl-m-percent").addEventListener("input", (e) => { m.percent = parseFloat(e.target.value) || 0; this.executeReactiveEvaluationLoop(); });
+                        ctrlRow.querySelector(".ctrl-m-del").addEventListener("click", () => {
+                            this.state.milestones = this.state.milestones.filter(item => item.id !== m.id);
+                            this.executeReactiveEvaluationLoop();
+                        });
+                        milestonesControlsNode.appendChild(ctrlRow);
+
+                        // Print layout milestones items injection execution lane lines
+                        const pBlock = document.createElement("div");
+                        pBlock.className = "bg-[#111] border border-gray-900 rounded p-2.5 text-left font-mono";
+                        pBlock.innerHTML = `
+                            <span class="block uppercase font-sans text-gray-500 text-[8px] font-bold tracking-wider">${m.label}</span>
+                            <span class="block text-white text-xs font-bold mt-1">₹${Math.round(lineValueAmount).toLocaleString('en-IN')}.00</span>
+                            <span class="block text-[8px] text-[var(--primary)] font-sans mt-0.5 font-medium">Allocation Tier Ratio: ${m.percent}%</span>
+                        `;
+                        milestonesPviewNode.appendChild(pBlock);
+                    });
+                } else { milestonesContainerWrapperNode.classList.add("hidden"); }
+
+                // Dynamic Terms and Conditions sections parser allocation loop blocks
+                const clausesLeftControlsNode = document.getElementById("clausesInterfaceBoxWrapper");
+                const clausesRightPviewNode = document.getElementById("pviewClausesRender");
+                clausesLeftControlsNode.innerHTML = "";
+                clausesRightPviewNode.innerHTML = "";
+
+                this.state.clauses.forEach((cl) => {
+                    const clBox = document.createElement("div");
+                    clBox.className = "bg-[#1c1c1c] p-2.5 rounded border border-[#2d2d2d] space-y-1.5";
+                    clBox.innerHTML = `
+                        <div class="flex justify-between items-center border-b border-[#2b2b2b] pb-1">
+                            <input type="text" value="${cl.title}" class="bg-transparent text-xs text-[#D4AF37] font-bold outline-none w-full cl-sync-title">
+                            <button type="button" class="text-gray-500 hover:text-red-400 cl-sync-del px-1"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                        <textarea class="w-full bg-[#0d0d0d] border border-[#333] rounded p-1 text-[11px] text-gray-300 outline-none h-12 cl-sync-text">${cl.text}</textarea>
+                    `;
+
+                    clBox.querySelector(".cl-sync-title").addEventListener("input", (e) => { cl.title = e.target.value; this.executeReactiveEvaluationLoop(); });
+                    clBox.querySelector(".cl-sync-text").addEventListener("input", (e) => { cl.text = e.target.value; this.executeReactiveEvaluationLoop(); });
+                    clBox.querySelector(".cl-sync-del").addEventListener("click", () => {
+                        this.state.clauses = this.state.clauses.filter(c => c.id !== cl.id);
+                        this.executeReactiveEvaluationLoop();
+                    });
+                    clausesLeftControlsNode.appendChild(clBox);
+
+                    const pViewLineParagraph = document.createElement("div");
+                    pViewLineParagraph.className = "text-[10px] leading-relaxed font-sans";
+                    pViewLineParagraph.innerHTML = `<strong class="text-white font-medium">${cl.title}:</strong> <span class="text-gray-400">${cl.text}</span>`;
+                    clausesRightPviewNode.appendChild(pViewLineParagraph);
                 });
-                leftClauses.appendChild(clCard);
 
-                const div = document.createElement("div");
-                div.className = "text-[11px] leading-relaxed";
-                div.innerHTML = `<strong class="text-white font-sans">${cl.title}:</strong> <span class="text-gray-400 font-sans">${cl.text}</span>`;
-                rightClauses.appendChild(div);
-            });
+                // Trigger isolated payment QR code rendering layout re-initialization pipeline updates
+                this.refreshDynamicUpiRemittanceQrMatrix(cleanRoundedFinalNetPayableValue);
+            }
 
-            ["freelancer", "client"].forEach((key) => {
-                const out = document.getElementById(`${key}SigOutputWrapper`);
-                const obj = state.signatures[key];
-                out.innerHTML = "";
-                if (obj.type === "text") {
-                    const span = document.createElement("span");
-                    span.className = "font-['Great_Vibes'] text-3xl text-[#D4AF37] tracking-widest block";
-                    span.innerText = obj.value;
-                    out.appendChild(span);
-                } else if (obj.type === "image") {
-                    const img = document.createElement("img");
-                    img.className = "max-h-14 object-contain max-w-[200px] block mx-auto";
-                    img.src = obj.value;
-                    out.appendChild(img);
-                } else {
-                    out.innerHTML = `<span class="text-gray-600 font-mono text-xs italic opacity-40">[Awaiting Signature...]</span>`;
+            refreshDynamicUpiRemittanceQrMatrix(payableNetValueAggregate) {
+                const node = document.getElementById("pviewRemittanceQrContainer");
+                node.innerHTML = "";
+
+                const upiStringWireUri = `upi://pay?pa=${encodeURIComponent(this.state.remittance.upi)}&pn=${encodeURIComponent(this.state.remittance.beneficiary)}&am=${payableNetValueAggregate}&cu=INR&tn=${encodeURIComponent(this.state.meta.ref)}`;
+                
+                try {
+                    this.easyQrInstance = new QRCode(node, {
+                        text: upiStringWireUri,
+                        width: 80,
+                        height: 80,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.M
+                    });
+                } catch(err) {
+                    node.innerHTML = `<span class="text-[8px] text-red-400 font-mono">QR Engine Ready</span>`;
                 }
-            });
+            }
+
+            refreshAnalyticsPanel() {
+                // Calculate historical arrays patterns indicators values matching active document metrics registers
+                document.getElementById("analyticsTotalCount").innerText = "1";
+                document.getElementById("analyticsTotalRevenue").innerText = "₹" + document.getElementById("pviewNetTotal").innerText;
+                document.getElementById("analyticsAvgDealSize").innerText = "₹" + document.getElementById("pviewNetTotal").innerText;
+            }
+
+            convertNumericalCurrencyValuesIntoIndianWordsSystem(amountValueParam) {
+                if (amountValueParam === 0) return "Zero";
+                const singleDigits = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+                const doubleDigits = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+                
+                const processThreeDigitsGroupMax = (num) => {
+                    let str = "";
+                    if (num >= 100) {
+                        str += singleDigits[Math.floor(num / 100)] + " Hundred ";
+                        num %= 100;
+                    }
+                    if (num >= 20) {
+                        str += doubleDigits[Math.floor(num / 10)] + " ";
+                        num %= 10;
+                    }
+                    if (num > 0) {
+                        str += singleDigits[num] + " ";
+                    }
+                    return str;
+                };
+
+                let outputTextWordsStr = "";
+                let remainingValueDividerVal = amountValueParam;
+
+                if (Math.floor(remainingValueDividerVal / 10000000) > 0) {
+                    outputTextWordsStr += processThreeDigitsGroupMax(Math.floor(remainingValueDividerVal / 10000000)) + "Crore ";
+                    remainingValueDividerVal %= 10000000;
+                }
+                if (Math.floor(remainingValueDividerVal / 100000) > 0) {
+                    outputTextWordsStr += processThreeDigitsGroupMax(Math.floor(remainingValueDividerVal / 100000)) + "Lakh ";
+                    remainingValueDividerVal %= 100000;
+                }
+                if (Math.floor(remainingValueDividerVal / 1000) > 0) {
+                    outputTextWordsStr += processThreeDigitsGroupMax(Math.floor(remainingValueDividerVal / 1000)) + "Thousand ";
+                    remainingValueDividerVal %= 1000;
+                }
+                if (remainingValueDividerVal > 0) {
+                    outputTextWordsStr += processThreeDigitsGroupMax(remainingValueDividerVal);
+                }
+                return outputTextWordsStr.trim();
+            }
+
+            generateHighFidelityPdfDownloaderPipeline() {
+                const node = document.getElementById("renderTargetQuotation");
+                const captureConfigurationOptions = {
+                    margin: [0, 0, 0, 0],
+                    filename: `${this.state.meta.ref || 'JK-MGMT-QUOTATION'}.pdf`,
+                    image: { type: 'jpeg', quality: 1.0 },
+                    html2canvas: { 
+                        scale: 2, 
+                        useCORS: true, 
+                        backgroundColor: "#0B0B0B",
+                        logging: false
+                    },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['css', 'legacy'] }
+                };
+                html2pdf().set(captureConfigurationOptions).from(node).save();
+            }
         }
 
-        window.onload = initEngine;
+        // Global Orchestration Instance Triggering Execution Mapping Channel
+        let ApplicationMasterOrchestrator;
+        window.addEventListener("load", () => {
+            ApplicationMasterOrchestrator = new QuotationStateEngine();
+            ApplicationMasterOrchestrator.bootUp();
+        });
     </script>
 </body>
 </html>
