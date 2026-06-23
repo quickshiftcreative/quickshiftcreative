@@ -3,70 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Quotation Builder & PDF Engine</title>
+    <title>Premium Quotation Builder Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,500&family=Great+Vibes&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-[#121212] text-gray-200 font-['Inter'] antialiased min-h-screen">
 
-    <header class="bg-[#1c1c1c] border-b border-[#333] sticky top-0 z-50 px-6 py-4 flex flex-wrap justify-between items-center gap-4">
+    <header class="bg-[#1c1c1c] border-b border-[#333] sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
         <div class="flex items-center space-x-3">
             <div class="w-8 h-8 rounded bg-gradient-to-tr from-[#C9A227] to-[#D4AF37] flex items-center justify-center text-black font-bold">Q</div>
             <div>
-                <h1 class="text-lg font-bold text-white tracking-wide">JK-MGMT <span class="text-[#D4AF37] font-light">Engine</span></h1>
-                <p class="text-xs text-gray-400">Premium Visual DNA Quotation Builder</p>
+                <h1 class="text-lg font-bold text-white tracking-wide">JK-MGMT <span class="text-[#D4AF37] font-light">Studio</span></h1>
+                <p class="text-xs text-gray-400">100% Workable Premium Quotation Builder</p>
             </div>
         </div>
         
-        <div class="flex items-center flex-wrap gap-3">
-            <div class="flex items-center bg-[#252525] rounded p-1 border border-[#333]">
-                <label class="text-xs text-gray-400 px-2">Theme:</label>
-                <select id="themeSelector" class="bg-[#1c1c1c] text-sm text-white border-none rounded px-2 py-1 focus:ring-1 focus:ring-[#D4AF37] outline-none">
-                    <option value="theme-premium-dark">Black Gold Premium</option>
-                    <option value="theme-white-gold">White Gold Minimal</option>
-                    <option value="theme-corporate-blue">Corporate Deep Blue</option>
-                </select>
-            </div>
-
+        <div class="flex items-center space-x-3">
             <button id="btnSaveDraft" class="bg-[#252525] hover:bg-[#333] border border-[#444] text-white px-4 py-2 text-sm rounded transition flex items-center gap-2">
                 <i class="fa-solid fa-floppy-disk"></i> Save Draft
             </button>
             <button id="btnLoadDraft" class="bg-[#252525] hover:bg-[#333] border border-[#444] text-white px-4 py-2 text-sm rounded transition flex items-center gap-2">
-                <i class="fa-solid fa-folder-open"></i> Load Last
+                <i class="fa-solid fa-folder-open"></i> Load Draft
             </button>
-            <button id="btnExportPDF" class="bg-gradient-to-r from-[#C9A227] to-[#D4AF37] hover:from-[#D4AF37] hover:to-[#E5C158] text-black font-semibold px-5 py-2 text-sm rounded transition shadow-lg shadow-gold/10 flex items-center gap-2">
-                <i class="fa-solid fa-file-pdf"></i> Export PDF
+            <button id="btnExportPDF" class="bg-gradient-to-r from-[#C9A227] to-[#D4AF37] hover:from-[#D4AF37] hover:to-[#E5C158] text-black font-semibold px-6 py-2 text-sm rounded transition shadow-lg flex items-center gap-2">
+                <i class="fa-solid fa-download"></i> Download Premium PDF
             </button>
         </div>
     </header>
 
     <div class="grid grid-cols-1 xl:grid-cols-2 h-[calc(100vh-73px)] overflow-hidden">
         
-        <main class="overflow-y-auto p-6 space-y-8 border-r border-[#262626] bg-[#161616]">
+        <main class="overflow-y-auto p-6 space-y-6 border-r border-[#262626] bg-[#161616]">
             
             <div class="bg-[#1c1c1c] p-5 rounded-lg border border-[#2d2d2d] space-y-4">
-                <h2 class="text-sm font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-2"><i class="fa-solid fa-sliders mr-2"></i> Document Identity & Meta</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <h2 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-2"><i class="fa-solid fa-file-invoice mr-2"></i> Document Reference & Metadata</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Quote Reference</label>
-                        <input type="text" id="metaRef" value="JK-MGMT-2026-004-WRITEASE" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-2 text-sm focus:border-[#D4AF37] text-white outline-none">
+                        <label class="block text-xs font-semibold text-gray-400 mb-1">Quote Reference Number</label>
+                        <input type="text" id="metaRef" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-2 text-sm focus:border-[#D4AF37] text-white outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Document Date</label>
-                        <input type="text" id="metaDate" value="20/05/2026" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-2 text-sm focus:border-[#D4AF37] text-white outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Watermark Option</label>
-                        <select id="metaWatermark" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-2 text-sm focus:border-[#D4AF37] text-white outline-none">
-                            <option value="none">No Watermark</option>
-                            <option value="confidential">CONFIDENTIAL</option>
-                            <option value="original">ORIGINAL COPY</option>
-                        </select>
+                        <label class="block text-xs font-semibold text-gray-400 mb-1">Document Date</label>
+                        <input type="text" id="metaDate" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-2 text-sm focus:border-[#D4AF37] text-white outline-none">
                     </div>
                 </div>
             </div>
@@ -74,38 +56,38 @@
             <div class="bg-[#1c1c1c] p-5 rounded-lg border border-[#2d2d2d] space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-3">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-2"><i class="fa-solid fa-user-tie mr-2"></i> Prepared By (Freelancer)</h3>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-2"><i class="fa-solid fa-user-tie mr-2"></i> Freelancer Details (Prepared By)</h3>
                         <div>
                             <label class="block text-xs text-gray-400 mb-1">Name</label>
-                            <input type="text" id="byName" value="Jenish Kamli" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
+                            <input type="text" id="byName" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-400 mb-1">Role/Tagline</label>
-                            <input type="text" id="byRole" value="Freelance E-Commerce Growth Manager" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
+                            <label class="block text-xs text-gray-400 mb-1">Professional Role</label>
+                            <input type="text" id="byRole" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-400 mb-1">Extra Focus Details</label>
-                            <input type="text" id="byExtra" value="Marketplace Specialist, Independent Consultant" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
+                            <label class="block text-xs text-gray-400 mb-1">Extra Credentials</label>
+                            <input type="text" id="byExtra" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
                         </div>
                     </div>
 
                     <div class="space-y-3">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-2"><i class="fa-solid fa-building-user mr-2"></i> Prepared For (Client)</h3>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-2"><i class="fa-solid fa-building-user mr-2"></i> Client Details (Prepared For)</h3>
                         <div>
                             <label class="block text-xs text-gray-400 mb-1">Client Name</label>
-                            <input type="text" id="forName" value="Abhiral Jain" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
+                            <input type="text" id="forName" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-400 mb-1">Company Name</label>
-                            <input type="text" id="forCompany" value="Writease.in" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
+                            <label class="block text-xs text-gray-400 mb-1">Company Website/Name</label>
+                            <input type="text" id="forCompany" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-400 mb-1">Phone / Contact</label>
-                            <input type="text" id="forPhone" value="+91 88306 93895" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
+                            <label class="block text-xs text-gray-400 mb-1">Phone Number</label>
+                            <input type="text" id="forPhone" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs text-gray-400 mb-1">Country/Location</label>
-                            <input type="text" id="forCountry" value="India" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
+                            <label class="block text-xs text-gray-400 mb-1">Country Location</label>
+                            <input type="text" id="forCountry" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-1.5 text-sm text-white focus:border-[#D4AF37] outline-none">
                         </div>
                     </div>
                 </div>
@@ -113,20 +95,20 @@
 
             <div class="bg-[#1c1c1c] p-5 rounded-lg border border-[#2d2d2d] space-y-4">
                 <div class="flex justify-between items-center border-b border-[#2d2d2d] pb-2">
-                    <h2 class="text-sm font-bold uppercase tracking-wider text-[#D4AF37]"><i class="fa-solid fa-cubes mr-2"></i> Section & Pricing Architect</h2>
-                    <button id="btnAddSection" class="bg-[#2d2d2d] hover:bg-[#3d3d3d] text-[#D4AF37] border border-[#D4AF37]/30 text-xs px-3 py-1 rounded transition flex items-center gap-1">
-                        <i class="fa-solid fa-folder-plus"></i> Add Section
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37]"><i class="fa-solid fa-cubes mr-2"></i> Service Builder Matrix</h2>
+                    <button id="btnAddSection" class="bg-[#2d2d2d] hover:bg-[#3d3d3d] text-[#D4AF37] border border-[#D4AF37]/30 text-xs px-3 py-1.5 rounded transition flex items-center gap-1">
+                        <i class="fa-solid fa-folder-plus"></i> Add New Section
                     </button>
                 </div>
 
-                <div id="dynamicSectionsContainer" class="space-y-6">
+                <div id="dynamicSectionsContainer" class="space-y-4">
                     </div>
             </div>
 
             <div class="bg-[#1c1c1c] p-5 rounded-lg border border-[#2d2d2d] space-y-4">
                 <div class="flex justify-between items-center border-b border-[#2d2d2d] pb-2">
-                    <h2 class="text-sm font-bold uppercase tracking-wider text-[#D4AF37]"><i class="fa-solid fa-gavel mr-2"></i> Terms & Conditions Clauses</h2>
-                    <button id="btnAddClause" class="bg-[#2d2d2d] hover:bg-[#3d3d3d] text-[#D4AF37] border border-[#D4AF37]/30 text-xs px-3 py-1 rounded transition flex items-center gap-1">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37]"><i class="fa-solid fa-gavel mr-2"></i> Terms & Conditions Clauses</h2>
+                    <button id="btnAddClause" class="bg-[#2d2d2d] hover:bg-[#3d3d3d] text-[#D4AF37] border border-[#D4AF37]/30 text-xs px-3 py-1.5 rounded transition flex items-center gap-1">
                         <i class="fa-solid fa-plus"></i> Add Clause
                     </button>
                 </div>
@@ -135,219 +117,205 @@
             </div>
 
             <div class="bg-[#1c1c1c] p-5 rounded-lg border border-[#2d2d2d] space-y-4">
-                <h2 class="text-sm font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-2"><i class="fa-solid fa-signature mr-2"></i> Freelancer Authorizing Signature Block</h2>
+                <h2 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-2"><i class="fa-solid fa-signature mr-2"></i> Freelancer Authorization Signature</h2>
                 
                 <div class="flex space-x-2 bg-[#252525] p-1 rounded border border-[#333]">
-                    <button type="button" data-tab="draw" class="sig-tab-btn flex-1 py-1 text-xs text-center rounded bg-[#1c1c1c] text-[#D4AF37] font-semibold border border-[#D4AF37]/40">Draw Pad</button>
-                    <button type="button" data-tab="text" class="sig-tab-btn flex-1 py-1 text-xs text-center rounded text-gray-400">Typography Font</button>
-                    <button type="button" data-tab="upload" class="sig-tab-btn flex-1 py-1 text-xs text-center rounded text-gray-400">File Upload</button>
+                    <button type="button" data-tab="draw" class="sig-tab-btn flex-1 py-1.5 text-xs text-center rounded bg-[#1c1c1c] text-[#D4AF37] font-semibold border border-[#D4AF37]/30">Interactive Draw Pad</button>
+                    <button type="button" data-tab="text" class="sig-tab-btn flex-1 py-1.5 text-xs text-center rounded text-gray-400">Typography Font Input</button>
                 </div>
 
                 <div id="sigPanelDraw" class="sig-panel space-y-2">
-                    <div class="relative bg-white rounded-md border border-[#444] overflow-hidden h-32">
-                        <canvas id="signatureCanvas" class="w-full h-full cursor-crosshair block"></canvas>
+                    <div class="bg-white rounded-md border border-[#444] overflow-hidden h-36 relative">
+                        <canvas id="signatureCanvas" class="absolute inset-0 w-full h-full cursor-crosshair touch-none bg-white"></canvas>
                     </div>
                     <div class="flex justify-end space-x-2">
-                        <button id="btnClearCanvas" class="bg-[#333] hover:bg-[#444] text-gray-300 text-xs px-3 py-1 rounded">Clear Pad</button>
-                        <button id="btnSaveCanvas" class="bg-[#D4AF37] text-black text-xs px-3 py-1 font-semibold rounded">Commit Signature</button>
+                        <button id="btnClearCanvas" class="bg-[#333] hover:bg-[#444] text-gray-300 text-xs px-3 py-1.5 rounded transition">Reset Pad</button>
+                        <button id="btnSaveCanvas" class="bg-[#D4AF37] hover:bg-[#C9A227] text-black text-xs px-4 py-1.5 font-bold rounded transition shadow-md">Apply Signature onto Canvas</button>
                     </div>
                 </div>
 
                 <div id="sigPanelText" class="sig-panel hidden space-y-2">
-                    <input type="text" id="sigTextInput" value="J. m. KamLi" placeholder="Type your signing text code" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-2 text-sm text-white focus:border-[#D4AF37] outline-none">
-                    <div class="grid grid-cols-2 gap-2">
-                        <button data-font="font-sig-1" class="font-sig-selector-btn text-left p-2 border border-[#D4AF37] bg-[#252525] rounded font-['Great_Vibes'] text-xl text-white">Great Vibes Selection</button>
-                        <button data-font="font-sig-2" class="font-sig-selector-btn text-left p-2 border border-[#333] bg-[#252525] rounded font-['Playfair_Display'] italic text-sm text-white">Playfair Display Italic</button>
-                    </div>
-                </div>
-
-                <div id="sigPanelUpload" class="sig-panel hidden space-y-2">
-                    <label class="block text-xs text-gray-400">Select file (Transparent PNG or high-contrast JPEG recommended)</label>
-                    <input type="file" id="sigFileInput" accept="image/*" class="block w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-[#333] file:text-white hover:file:bg-[#444]">
+                    <input type="text" id="sigTextInput" value="J. m. KamLi" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-2 text-sm text-white focus:border-[#D4AF37] outline-none">
+                    <p class="text-[11px] text-gray-400 italic">This will use a standard aesthetic calligraphic handwriting font mapping model on your document signature token line.</p>
                 </div>
             </div>
 
             <div class="bg-[#1c1c1c] p-5 rounded-lg border border-[#2d2d2d] space-y-4">
-                <h2 class="text-sm font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-2"><i class="fa-solid fa-coins mr-2"></i> Milestone & Tax Offsets</h2>
+                <h2 class="text-xs font-bold uppercase tracking-wider text-[#D4AF37] border-b border-[#2d2d2d] pb-2"><i class="fa-solid fa-coins mr-2"></i> Financial Calculation & Tax Matrices</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs text-gray-400 mb-1">Global Applied Tax Rate (%)</label>
+                        <label class="block text-xs text-gray-400 mb-1">Applied Tax Multiplier Rate (%)</label>
                         <input type="number" id="globalTaxRate" value="0" min="0" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-2 text-sm text-white focus:border-[#D4AF37] outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs text-gray-400 mb-1">Advance Payment Milestone Allocation (%)</label>
-                        <input type="number" id="advanceMilestonePercent" value="50" min="0" max="100" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-2 text-sm text-white focus:border-[#D4AF37] outline-none">
+                        <label class="block text-xs text-gray-400 mb-1">Advance Commitment Allocation (%)</label>
+                        <input type="number" id="advancePercent" value="50" min="0" max="100" class="w-full bg-[#252525] border border-[#383838] rounded px-3 py-2 text-sm text-white focus:border-[#D4AF37] outline-none">
                     </div>
                 </div>
             </div>
 
         </main>
 
-        <section class="overflow-y-auto p-8 bg-[#2a2a2a] flex justify-center items-start">
+        <section class="overflow-y-auto p-8 bg-[#2e2e2e] flex justify-center items-start">
+            <link rel="stylesheet" href="style.css">
             
-            <div id="previewOuterContainer" class="shadow-2xl bg-transparent my-4 transform origin-top transition duration-200">
+            <div id="renderTargetQuotation" class="shadow-2xl bg-[#0B0B0B] text-white p-[2.5rem] font-['Inter'] relative w-[794px] min-h-[1123px]">
                 
-                <div id="renderTargetQuotation" class="theme-premium-dark print-document bg-[#0B0B0B] text-white p-[2.5rem] font-['Inter'] relative select-none">
-                    
-                    <div id="watermarkLayer" class="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none z-0 text-[7rem] font-bold tracking-widest text-white transform -rotate-45 hidden">CONFIDENTIAL</div>
+                <div class="pdf-page-container flex flex-col justify-between min-h-[1040px] relative z-10 pb-8 border-b border-[#2d2d2d]/30 mb-8">
+                    <div>
+                        <div class="h-1.5 w-full bg-gradient-to-r from-[#C9A227] via-[#D4AF37] to-[#C9A227] mb-12"></div>
+                        
+                        <div class="flex justify-between items-start mb-16">
+                            <div>
+                                <h1 class="text-4xl font-bold tracking-widest uppercase font-['Cinzel'] text-white mb-2">Quotation</h1>
+                                <p class="text-[#D4AF37] uppercase text-xs font-semibold tracking-widest">E-Commerce & Quick Commerce Growth Services</p>
+                            </div>
+                            <div class="text-right font-mono text-xs text-gray-400 space-y-1">
+                                <p><span class="text-gray-500">REF:</span> <span id="pviewRef" class="text-white font-semibold">-</span></p>
+                                <p><span class="text-gray-500">DATE:</span> <span id="pviewDate" class="text-white font-semibold">-</span></p>
+                            </div>
+                        </div>
 
-                    <div class="pdf-page-break-container flex flex-col justify-between h-[1045px] relative z-10 border-b border-[#2d2d2d]/20 pb-8">
-                        <div>
-                            <div class="h-1.5 w-full bg-gradient-to-r from-[#C9A227] via-[#D4AF37] to-[#C9A227] mb-12"></div>
-                            
-                            <div class="flex justify-between items-start mb-16">
+                        <div class="grid grid-cols-2 gap-12 border-t border-b border-[#262626] py-10 mb-16">
+                            <div class="space-y-3">
+                                <span class="text-[10px] uppercase text-[#D4AF37] font-bold tracking-widest block">Prepared By</span>
                                 <div>
-                                    <h1 class="text-4xl font-bold tracking-widest uppercase font-['Cinzel'] text-white mb-2">Quotation</h1>
-                                    <p class="text-[#D4AF37] uppercase text-xs font-semibold tracking-widest tracking-wider">E-Commerce & Quick Commerce Growth Services</p>
-                                </div>
-                                <div class="text-right font-mono text-xs text-gray-400 space-y-1">
-                                    <p><span class="text-gray-500">REF:</span> <span id="pviewRef" class="text-white font-semibold">JK-MGMT-2026-004-WRITEASE</span></p>
-                                    <p><span class="text-gray-500">DATE:</span> <span id="pviewDate" class="text-white font-semibold">20/05/2026</span></p>
+                                    <h3 id="pviewByName" class="text-lg font-bold text-white tracking-wide">-</h3>
+                                    <p id="pviewByRole" class="text-xs text-gray-400 mt-1">-</p>
+                                    <p id="pviewByExtra" class="text-[11px] text-gray-500 mt-0.5">-</p>
                                 </div>
                             </div>
-
-                            <div class="grid grid-cols-2 gap-12 border-t border-b border-[#262626] py-10 mb-16">
-                                <div class="space-y-3">
-                                    <span class="text-[10px] uppercase text-[#D4AF37] font-bold tracking-widest block">Prepared By</span>
-                                    <div>
-                                        <h3 id="pviewByName" class="text-lg font-bold text-white tracking-wide">Jenish Kamli</h3>
-                                        <p id="pviewByRole" class="text-xs text-gray-400 mt-1">Freelance E-Commerce Growth Manager</p>
-                                        <p id="pviewByExtra" class="text-[11px] text-gray-500 mt-0.5">Marketplace Specialist, Independent Consultant</p>
-                                    </div>
+                            <div class="space-y-3 border-l border-[#262626] pl-10">
+                                <span class="text-[10px] uppercase text-[#D4AF37] font-bold tracking-widest block">Prepared For</span>
+                                <div>
+                                    <h3 id="pviewForName" class="text-lg font-bold text-white tracking-wide">-</h3>
+                                    <p id="pviewForCompany" class="text-xs text-gray-400 mt-1">-</p>
+                                    <p id="pviewForPhone" class="text-[11px] text-gray-400 mt-0.5 font-mono">-</p>
+                                    <p id="pviewForCountry" class="text-[11px] text-gray-500 mt-0.5">-</p>
                                 </div>
-                                <div class="space-y-3 border-l border-[#262626] pl-10">
-                                    <span class="text-[10px] uppercase text-[#D4AF37] font-bold tracking-widest block">Prepared For</span>
-                                    <div>
-                                        <h3 id="pviewForName" class="text-lg font-bold text-white tracking-wide">Abhiral Jain</h3>
-                                        <p id="pviewForCompany" class="text-xs text-gray-400 mt-1">Writease.in</p>
-                                        <p id="pviewForPhone" class="text-[11px] text-gray-400 mt-0.5 font-mono">+91 88306 93895</p>
-                                        <p id="pviewForCountry" class="text-[11px] text-gray-500 mt-0.5 font-sans">India</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="py-6 px-8 bg-[#111] border-l-2 border-[#D4AF37] rounded-r">
-                                <p class="text-xs text-gray-300 leading-relaxed font-sans italic">
-                                    "Prepared with precision | Built for growth | Designed for success"
-                                </p>
                             </div>
                         </div>
 
-                        <div>
-                            <div class="grid grid-cols-5 gap-3 border-t border-[#262626] pt-8 text-center text-[10px] tracking-widest uppercase font-semibold text-gray-400">
-                                <div class="py-2 border border-[#222] bg-[#111]/40 rounded"><i class="fa-solid fa-store text-[#D4AF37] block mb-1.5 text-xs"></i> Marketplace</div>
-                                <div class="py-2 border border-[#222] bg-[#111]/40 rounded"><i class="fa-solid fa-shield-halved text-[#D4AF37] block mb-1.5 text-xs"></i> Brand Registry</div>
-                                <div class="py-2 border border-[#222] bg-[#111]/40 rounded"><i class="fa-solid fa-list-check text-[#D4AF37] block mb-1.5 text-xs"></i> Listings</div>
-                                <div class="py-2 border border-[#222] bg-[#111]/40 rounded"><i class="fa-solid fa-bolt text-[#D4AF37] block mb-1.5 text-xs"></i> Quick Comm</div>
-                                <div class="py-2 border border-[#222] bg-[#111]/40 rounded"><i class="fa-solid fa-chart-line text-[#D4AF37] block mb-1.5 text-xs"></i> PPC Strategy</div>
-                            </div>
-                            <div class="flex justify-between items-center text-[9px] text-gray-500 font-mono mt-8">
-                                <span>JK-MGMT NETWORK CONFIGURATION SYSTEM</span>
-                                <span>Page 1 of 3</span>
-                            </div>
+                        <div class="py-6 px-8 bg-[#111] border-l-2 border-[#D4AF37] rounded-r">
+                            <p class="text-xs text-gray-300 leading-relaxed font-sans italic">
+                                "Prepared with precision | Built for growth | Designed for success"
+                            </p>
                         </div>
                     </div>
 
-                    <div class="pdf-page-break-container flex flex-col justify-between min-h-[1045px] relative z-10 border-b border-[#2d2d2d]/20 py-8">
-                        <div>
-                            <div class="flex items-center justify-between border-b border-[#262626] pb-3 mb-8">
-                                <h2 class="text-sm font-bold uppercase tracking-widest font-['Cinzel'] text-[#D4AF37]">01 Services & Line Item Pricing</h2>
-                                <span class="text-xs font-mono text-gray-500" id="pviewHeaderRef">REF: JK-MGMT-2026-004</span>
-                            </div>
-
-                            <div id="pviewDynamicSectionsRender" class="space-y-8">
-                                </div>
+                    <div>
+                        <div class="grid grid-cols-5 gap-3 border-t border-[#262626] pt-8 text-center text-[10px] tracking-widest uppercase font-semibold text-gray-400">
+                            <div class="py-2 border border-[#222] bg-[#111]/40 rounded"><i class="fa-solid fa-store text-[#D4AF37] block mb-1.5 text-xs"></i> Marketplace</div>
+                            <div class="py-2 border border-[#222] bg-[#111]/40 rounded"><i class="fa-solid fa-shield-halved text-[#D4AF37] block mb-1.5 text-xs"></i> Brand Registry</div>
+                            <div class="py-2 border border-[#222] bg-[#111]/40 rounded"><i class="fa-solid fa-list-check text-[#D4AF37] block mb-1.5 text-xs"></i> Listings</div>
+                            <div class="py-2 border border-[#222] bg-[#111]/40 rounded"><i class="fa-solid fa-bolt text-[#D4AF37] block mb-1.5 text-xs"></i> Quick Comm</div>
+                            <div class="grid py-2 border border-[#222] bg-[#111]/40 rounded content-center justify-center"><i class="fa-solid fa-chart-line text-[#D4AF37] block mb-1.5 text-xs"></i> PPC Strategy</div>
                         </div>
-
-                        <div class="pt-8">
-                            <div class="flex justify-between items-center text-[9px] text-gray-500 font-mono">
-                                <span>CONFIDENTIAL & PROPRIETARY INTEGRITY DATA</span>
-                                <span>Page 2 of 3</span>
-                            </div>
+                        <div class="flex justify-between items-center text-[9px] text-gray-500 font-mono mt-8">
+                            <span>JK-MGMT SYSTEM COMPILATION NETWORKS</span>
+                            <span>Page 1 of 3</span>
                         </div>
                     </div>
-
-                    <div class="pdf-page-break-container flex flex-col justify-between min-h-[1045px] relative z-10 pt-8">
-                        <div class="space-y-8">
-                            
-                            <div>
-                                <div class="flex items-center justify-between border-b border-[#262626] pb-3 mb-4">
-                                    <h2 class="text-sm font-bold uppercase tracking-widest font-['Cinzel'] text-[#D4AF37]">02 Financial Breakdown Valuation</h2>
-                                </div>
-                                <div class="bg-[#111] border border-[#222] rounded p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                    <div class="space-y-1">
-                                        <div class="text-xs text-gray-400">Total Contract Value (Aggregate sum across scopes):</div>
-                                        <div class="text-2xl font-bold font-mono text-white">₹ <span id="pviewGrandTotal">0.00</span></div>
-                                    </div>
-                                    <div class="grid grid-cols-2 gap-4 border-t md:border-t-0 md:border-l border-[#333] pt-4 md:pt-0 md:pl-6 text-xs">
-                                        <div>
-                                            <span class="text-gray-500 uppercase block text-[10px]">Advance Required</span>
-                                            <span class="font-bold font-mono text-[#D4AF37]">₹ <span id="pviewAdvanceAmount">0.00</span></span>
-                                        </div>
-                                        <div>
-                                            <span class="text-gray-500 uppercase block text-[10px]">Live-Launch Balance</span>
-                                            <span class="font-bold font-mono text-white">₹ <span id="pviewBalanceAmount">0.00</span></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="flex items-center justify-between border-b border-[#262626] pb-3 mb-4">
-                                    <h2 class="text-sm font-bold uppercase tracking-widest font-['Cinzel'] text-[#D4AF37]">03 Legal Clauses & Delivery Alignment</h2>
-                                </div>
-                                <div id="pviewClausesRender" class="space-y-3 max-h-[400px] overflow-hidden">
-                                    </div>
-                            </div>
-
-                            <div class="pt-6">
-                                <div class="grid grid-cols-2 gap-0 border border-[#262626] bg-[#111]/20 rounded overflow-hidden">
-                                    <div class="p-6 space-y-6">
-                                        <div>
-                                            <span class="text-[9px] uppercase text-gray-500 font-mono tracking-widest block mb-1">CLIENT AUTHORIZATION</span>
-                                            <h4 id="pviewSigClientName" class="text-sm font-bold text-white tracking-wide">Abhiral Jain</h4>
-                                            <p id="pviewSigClientComp" class="text-xs text-gray-400 font-mono">Writease.in</p>
-                                        </div>
-                                        <div class="h-16 border-b border-dashed border-[#444] flex items-end pb-1 relative">
-                                            <span class="text-[9px] text-gray-600 font-serif tracking-widest absolute top-0 left-0">SIGNATURE</span>
-                                            </div>
-                                        <div class="text-[10px] text-gray-500 font-mono">DATE: _____________________</div>
-                                    </div>
-
-                                    <div class="p-6 space-y-6 border-l border-[#262626] bg-[#111]/50">
-                                        <div>
-                                            <span class="text-[9px] uppercase text-[#D4AF37] font-mono tracking-widest block mb-1">FREELANCER VALIDATION</span>
-                                            <h4 id="pviewSigByName" class="text-sm font-bold text-white tracking-wide">Jenish Kamli</h4>
-                                            <p id="pviewSigByRole" class="text-xs text-gray-400">E-Commerce Growth Manager</p>
-                                        </div>
-                                        <div class="h-16 border-b border-dashed border-[#D4AF37]/30 flex items-center justify-center relative">
-                                            <span class="text-[9px] text-gray-600 font-serif tracking-widest absolute top-0 left-0">SIGNATURE</span>
-                                            <div id="pviewSignatureOutputContainer" class="w-full h-full flex items-center justify-center">
-                                                <span id="pviewTextSignature" class="font-['Great_Vibes'] text-2xl text-[#D4AF37] tracking-widest">J. m. KamLi</span>
-                                                <img id="pviewImageSignature" src="" alt="Signature Verification Line" class="max-h-12 object-contain hidden">
-                                            </div>
-                                        </div>
-                                        <div class="text-[10px] text-[#D4AF37]/80 font-mono">DATE: <span id="pviewSigDate" class="font-semibold">20/05/2026</span></div>
-                                    </div>
-                                </div>
-                                <p class="text-center text-[10px] text-gray-500 italic mt-4 font-sans">
-                                    "This document confirms mutual agreement on the selected scope variants, itemized pricing ledgers, and attached contractual execution stipulations."
-                                </p>
-                            </div>
-
-                        </div>
-
-                        <div class="pt-8">
-                            <div class="flex justify-between items-center text-[9px] text-gray-500 font-mono">
-                                <span>JK-MGMT COMPLETE REPLICA PLATFORM MATRIX</span>
-                                <span>Page 3 of 3</span>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
-            </div>
 
+                <div class="pdf-page-container flex flex-col justify-between min-h-[1040px] relative z-10 pb-8 border-b border-[#2d2d2d]/30 mb-8">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-[#262626] pb-3 mb-6">
+                            <h2 class="text-sm font-bold uppercase tracking-widest font-['Cinzel'] text-[#D4AF37]">01 Services & Line Item Pricing</h2>
+                            <span class="text-xs font-mono text-gray-500 id-header-ref-span">REF: -</span>
+                        </div>
+
+                        <div id="pviewDynamicSectionsRender" class="space-y-8">
+                            </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <div class="flex justify-between items-center text-[9px] text-gray-500 font-mono">
+                            <span>CONFIDENTIAL FINANCIAL DOCUMENT INTEGRITY</span>
+                            <span>Page 2 of 3</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pdf-page-container flex flex-col justify-between min-h-[1040px] relative z-10">
+                    <div class="space-y-6">
+                        
+                        <div>
+                            <div class="flex items-center justify-between border-b border-[#262626] pb-2 mb-4">
+                                <h2 class="text-sm font-bold uppercase tracking-widest font-['Cinzel'] text-[#D4AF37]">02 Financial Breakdown Valuation</h2>
+                            </div>
+                            <div class="bg-[#111] border border-[#222] rounded p-5 flex justify-between items-center">
+                                <div class="space-y-1">
+                                    <div class="text-xs text-gray-400">Total Contract Value (Aggregate sum + tax models):</div>
+                                    <div class="text-2xl font-bold font-mono text-white">₹ <span id="pviewGrandTotal">0.00</span></div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-6 border-l border-[#333] pl-6 text-xs">
+                                    <div>
+                                        <span class="text-gray-500 uppercase block text-[10px] font-semibold tracking-wider">Advance Milestone</span>
+                                        <span class="font-bold font-mono text-[#D4AF37]">₹ <span id="pviewAdvanceAmount">0.00</span></span>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500 uppercase block text-[10px] font-semibold tracking-wider">Balance Due Delivery</span>
+                                        <span class="font-bold font-mono text-white">₹ <span id="pviewBalanceAmount">0.00</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between border-b border-[#262626] pb-2 mb-4">
+                                <h2 class="text-sm font-bold uppercase tracking-widest font-['Cinzel'] text-[#D4AF37]">03 Legal Clauses & Delivery Alignment</h2>
+                            </div>
+                            <div id="pviewClausesRender" class="space-y-3">
+                                </div>
+                        </div>
+
+                        <div class="pt-4">
+                            <div class="grid grid-cols-2 gap-0 border border-[#262626] bg-[#111]/20 rounded overflow-hidden">
+                                <div class="p-6 space-y-6">
+                                    <div>
+                                        <span class="text-[9px] uppercase text-gray-500 font-mono tracking-widest block mb-1">CLIENT AUTHORIZATION</span>
+                                        <h4 id="pviewSigClientName" class="text-sm font-bold text-white tracking-wide">-</h4>
+                                        <p id="pviewSigClientComp" class="text-xs text-gray-400 font-mono">-</p>
+                                    </div>
+                                    <div class="h-16 border-b border-dashed border-[#444] flex items-end pb-1 relative">
+                                        <span class="text-[9px] text-gray-600 font-serif tracking-widest absolute top-0 left-0">SIGNATURE LINE</span>
+                                    </div>
+                                    <div class="text-[10px] text-gray-500 font-mono">DATE: _____________________</div>
+                                </div>
+
+                                <div class="p-6 space-y-6 border-l border-[#262626] bg-[#111]/40">
+                                    <div>
+                                        <span class="text-[9px] uppercase text-[#D4AF37] font-mono tracking-widest block mb-1">FREELANCER VALIDATION</span>
+                                        <h4 id="pviewSigByName" class="text-sm font-bold text-white tracking-wide">-</h4>
+                                        <p id="pviewSigByRole" class="text-xs text-gray-400">-</p>
+                                    </div>
+                                    <div class="h-16 border-b border-dashed border-[#D4AF37]/30 flex items-center justify-center relative">
+                                        <span class="text-[9px] text-gray-600 font-serif tracking-widest absolute top-0 left-0">SIGNATURE</span>
+                                        <div id="pviewSignatureOutputContainer" class="w-full h-full flex items-center justify-center">
+                                            <span id="pviewTextSignature" class="font-['Great_Vibes'] text-3xl text-[#D4AF37] tracking-widest">J. m. KamLi</span>
+                                            <img id="pviewImageSignature" src="" alt="Canvas Draw Trace Output Link" class="max-h-14 object-contain hidden bg-transparent">
+                                        </div>
+                                    </div>
+                                    <div class="text-[10px] text-[#D4AF37]/80 font-mono">DATE: <span id="pviewSigDate" class="font-semibold">-</span></div>
+                                </div>
+                            </div>
+                            <p class="text-center text-[10px] text-gray-500 italic mt-6">
+                                "This document confirms mutual agreement on the selected scope variants, itemized pricing ledgers, and attached contractual execution stipulations."
+                              </p>
+                        </div>
+
+                    </div>
+
+                    <div class="pt-4">
+                        <div class="flex justify-between items-center text-[9px] text-gray-500 font-mono">
+                            <span>JK-MGMT DUPLICATE DESIGN SYSTEM PRODUCTION</span>
+                            <span>Page 3 of 3</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </section>
 
     </div>
