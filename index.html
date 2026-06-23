@@ -40,12 +40,6 @@ body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;min-
 .btn-danger{background:rgba(220,53,69,.15);border:1px solid rgba(220,53,69,.3);color:#ff6b6b;}
 .btn-danger:hover{background:rgba(220,53,69,.25);}
 .btn-sm{padding:5px 10px;font-size:10px;}
-.status-badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:1px;}
-.status-draft{background:rgba(212,175,55,.15);color:var(--gold);border:1px solid var(--gold-border);}
-.status-sent{background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.3);}
-.status-accepted{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.3);}
-.status-rejected{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3);}
-.status-paid{background:rgba(16,185,129,.3);color:#6ee7b7;border:1px solid rgba(16,185,129,.5);}
 
 /* LAYOUT */
 .main-layout{display:grid;grid-template-columns:42% 58%;height:calc(100vh - 57px);overflow:hidden;}
@@ -84,7 +78,6 @@ body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;min-
 .form-select:focus{outline:none;border-color:var(--gold);}
 textarea.form-input{resize:vertical;min-height:70px;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
 
 /* SECTION BUILDER */
 .section-block{background:#111;border:1px solid var(--border);border-radius:6px;margin-bottom:12px;overflow:hidden;}
@@ -125,16 +118,16 @@ textarea.form-input{resize:vertical;min-height:70px;}
 @media(max-width:900px){.close-preview-btn{display:block;}}
 
 /* A4 PREVIEW */
-.a4-wrapper{width:794px;max-width:100%;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.5);font-family:'Inter',sans-serif;color:#1a1a1a;}
+.a4-wrapper{width:794px;max-width:100%;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.5);font-family:'Inter',sans-serif;color:#1a1a1a; position: relative;}
 @media(max-width:900px){.a4-wrapper{width:100%;}}
 
 /* PDF SPECIFIC STYLES */
-.pdf-page{min-height:1123px;position:relative;padding:50px 50px 80px;}
+.pdf-page{min-height:1123px;position:relative;padding:50px 50px 80px; background: #fff;}
 .pdf-header{background:#0B0B0B;color:#fff;padding:36px 40px;position:relative;overflow:hidden;}
 .pdf-header::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;border:2px solid #D4AF37;margin:8px;opacity:.4;}
 .pdf-title{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:#D4AF37;letter-spacing:2px;}
 .pdf-subtitle{font-size:12px;color:#B8B8B8;letter-spacing:3px;text-transform:uppercase;margin-top:4px;}
-.pdf-ref-line{font-size:11px;color:#888;margin-top:16px;padding-top:16px;border-top:1px solid #2a2a2a;}
+.pdf-ref-line{font-size:11px;color:#888;margin-top:16px;padding-top:16px;border-top:1px solid #2a2a2a; display: flex; justify-content: space-between;}
 .pdf-prepared-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:30px 40px;background:#0d0d0d;border-bottom:2px solid #D4AF37;}
 .pdf-prepared-card{padding:16px;border:1px solid rgba(212,175,55,.3);border-radius:4px;}
 .pdf-prepared-label{font-size:9px;color:#D4AF37;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
@@ -150,7 +143,6 @@ textarea.form-input{resize:vertical;min-height:70px;}
 .pdf-table th{background:#0B0B0B;color:#D4AF37;padding:10px 12px;font-size:10px;letter-spacing:2px;text-transform:uppercase;text-align:left;border-bottom:2px solid #D4AF37;}
 .pdf-table td{padding:10px 12px;font-size:12px;border-bottom:1px solid #eee;color:#333;vertical-align:top;}
 .pdf-table tr:nth-child(even) td{background:#f9f8f5;}
-.pdf-table tr:last-child td{border-bottom:none;}
 .pdf-totals{background:#0B0B0B;margin:0 40px 30px;padding:20px;border:1px solid rgba(212,175,55,.3);}
 .pdf-total-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:#B8B8B8;border-bottom:1px solid #1a1a1a;}
 .pdf-total-row.grand{color:#D4AF37;font-weight:700;font-size:16px;border-top:1px solid #D4AF37;border-bottom:none;margin-top:6px;padding-top:12px;}
@@ -158,42 +150,38 @@ textarea.form-input{resize:vertical;min-height:70px;}
 .pdf-milestones{margin:0 40px 30px;border:1px solid rgba(212,175,55,.3);}
 .pdf-milestone-header{background:#0B0B0B;padding:12px 16px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#D4AF37;display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;}
 .pdf-milestone-row{padding:10px 16px;font-size:12px;border-bottom:1px solid #eee;display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;color:#333;}
-.pdf-milestone-row:last-child{border-bottom:none;}
-.pdf-payment{margin:0 40px 30px;display:grid;grid-template-columns:1fr auto;gap:20px;border:1px solid rgba(212,175,55,.3);padding:20px;background:#fff;}
-.pdf-payment-details{font-size:12px;color:#333;}
+.pdf-payment{margin:0 40px 30px;display:flex; justify-content: space-between; gap:20px; border:1px solid rgba(212,175,55,.3);padding:20px;background:#fff;}
+.pdf-payment-details{font-size:12px;color:#333; flex: 1;}
 .pdf-payment-label{font-size:9px;color:#888;letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;}
 .pdf-payment-val{font-size:13px;color:#0B0B0B;font-weight:500;margin-bottom:10px;}
 .pdf-terms-table{width:100%;border-collapse:collapse;margin:0 40px 30px;width:calc(100% - 80px);}
 .pdf-terms-table th{background:#0B0B0B;color:#D4AF37;padding:10px 12px;font-size:10px;letter-spacing:2px;text-transform:uppercase;text-align:left;}
 .pdf-terms-table td{padding:12px;font-size:11px;border-bottom:1px solid #eee;vertical-align:top;color:#333;}
 .pdf-terms-table td:first-child{font-weight:600;color:#0B0B0B;white-space:nowrap;width:160px;}
-.pdf-sig-section{background:#0B0B0B;padding:30px 40px;display:grid;grid-template-columns:1fr 1fr;gap:40px;}
+.pdf-sig-section{background:#0B0B0B;padding:30px 40px;display:grid;grid-template-columns:1fr 1fr;gap:40px; margin: 0 40px;}
 .pdf-sig-box{border:1px solid rgba(212,175,55,.3);padding:20px;}
 .pdf-sig-label{font-size:9px;color:#D4AF37;letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;}
 .pdf-sig-name{font-size:14px;color:#fff;font-weight:600;margin-bottom:2px;}
 .pdf-sig-role{font-size:11px;color:#B8B8B8;}
-.pdf-sig-line{border-bottom:1px solid rgba(212,175,55,.4);margin:20px 0 8px;}
+.pdf-sig-line{border-bottom:1px solid rgba(212,175,55,.4);margin:20px 0 8px; min-height: 50px; display: flex; align-items: flex-end;}
 .pdf-sig-date{font-size:10px;color:#555;}
-.pdf-sig-img{max-height:70px;max-width:180px;margin:10px 0;}
+.pdf-sig-img{max-height:60px;max-width:100%;object-fit:contain;}
+.pdf-stamp-img{max-height:80px;position:absolute;right:20px;bottom:20px;opacity:0.6;}
 .pdf-footer-bar{position:absolute;bottom:0;left:0;right:0;background:#0B0B0B;padding:10px 40px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(212,175,55,.3);}
 .pdf-footer-text{font-size:9px;color:#555;letter-spacing:1px;}
 .pdf-page-num{font-size:9px;color:#D4AF37;}
 .pdf-logo-img{max-height:50px;margin-bottom:12px;}
-
-/* WATERMARK */
-.watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:80px;color:rgba(212,175,55,.04);font-family:'Playfair Display',serif;white-space:nowrap;pointer-events:none;z-index:0;}
-
-/* QR */
-#qr-code canvas,#qr-code img{width:80px!important;height:80px!important;}
 
 /* THEME VARIANTS */
 .theme-royal .pdf-header,.theme-royal .pdf-prepared-grid,.theme-royal .pdf-tagline,.theme-royal .pdf-totals,.theme-royal .pdf-milestone-header,.theme-royal .pdf-sig-section,.theme-royal .pdf-footer-bar,.theme-royal .pdf-table th,.theme-royal .pdf-terms-table th{background:#0D1B3E!important;}
 .theme-royal .pdf-title,.theme-royal .pdf-section-num,.theme-royal .pdf-prepared-label,.theme-royal .pdf-table th,.theme-royal .pdf-milestone-header,.theme-royal .pdf-sig-label,.theme-royal .pdf-terms-table th,.theme-royal .pdf-page-num,.theme-royal .pdf-tagline{color:#4A9EFF!important;}
 .theme-royal .pdf-section-num{background:#4A9EFF!important;color:#000!important;}
 .theme-royal .pdf-table{border-top:2px solid #4A9EFF!important;}
+
 .theme-emerald .pdf-header,.theme-emerald .pdf-prepared-grid,.theme-emerald .pdf-tagline,.theme-emerald .pdf-totals,.theme-emerald .pdf-milestone-header,.theme-emerald .pdf-sig-section,.theme-emerald .pdf-footer-bar,.theme-emerald .pdf-table th,.theme-emerald .pdf-terms-table th{background:#0D2818!important;}
 .theme-emerald .pdf-title,.theme-emerald .pdf-section-num,.theme-emerald .pdf-prepared-label,.theme-emerald .pdf-table th,.theme-emerald .pdf-milestone-header,.theme-emerald .pdf-sig-label,.theme-emerald .pdf-terms-table th,.theme-emerald .pdf-page-num,.theme-emerald .pdf-tagline{color:#10D96F!important;}
 .theme-emerald .pdf-section-num{background:#10D96F!important;color:#000!important;}
+
 .theme-platinum .pdf-header,.theme-platinum .pdf-prepared-grid,.theme-platinum .pdf-tagline,.theme-platinum .pdf-totals,.theme-platinum .pdf-milestone-header,.theme-platinum .pdf-sig-section,.theme-platinum .pdf-footer-bar,.theme-platinum .pdf-table th,.theme-platinum .pdf-terms-table th{background:#1a1a1a!important;}
 .theme-platinum .pdf-title,.theme-platinum .pdf-section-num,.theme-platinum .pdf-prepared-label,.theme-platinum .pdf-table th,.theme-platinum .pdf-milestone-header,.theme-platinum .pdf-sig-label,.theme-platinum .pdf-terms-table th,.theme-platinum .pdf-page-num,.theme-platinum .pdf-tagline{color:#E8E8E8!important;}
 .theme-platinum .pdf-section-num{background:#E8E8E8!important;color:#000!important;}
@@ -204,59 +192,26 @@ textarea.form-input{resize:vertical;min-height:70px;}
 .modal{background:#141414;border:1px solid var(--gold-border);border-radius:8px;padding:24px;width:90%;max-width:500px;max-height:80vh;overflow-y:auto;}
 .modal-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold);margin-bottom:16px;}
 
-/* SEARCH */
-.search-box{position:relative;margin-bottom:12px;}
-.search-box input{padding-left:32px;}
-.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;}
-
 /* TOAST */
 .toast{position:fixed;bottom:80px;right:20px;background:var(--gold);color:#000;padding:10px 18px;border-radius:4px;font-size:12px;font-weight:700;z-index:1000;transform:translateY(100px);transition:transform .3s;letter-spacing:.5px;}
 .toast.show{transform:translateY(0);}
 
-/* CHART */
-.bar-chart{display:flex;align-items:flex-end;gap:6px;height:80px;padding-top:10px;}
-.bar{flex:1;background:rgba(212,175,55,.2);border-radius:2px 2px 0 0;position:relative;cursor:pointer;transition:background .2s;}
-.bar:hover{background:rgba(212,175,55,.5);}
-.bar-fill{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,var(--gold),var(--gold2));border-radius:2px 2px 0 0;}
-.bar-label{font-size:8px;color:var(--muted);text-align:center;margin-top:4px;}
-
-/* LOGO UPLOAD */
-.logo-preview{width:80px;height:80px;object-fit:contain;border:1px solid var(--gold-border);border-radius:4px;display:block;background:#0d0d0d;}
-
-/* STAMP */
-.stamp-preview{max-width:100px;max-height:100px;object-fit:contain;opacity:.7;}
-
-/* TERMS */
-.term-row{display:flex;align-items:flex-start;gap:6px;margin-bottom:6px;padding:8px;background:#111;border-radius:4px;border:1px solid var(--border);}
-.term-row .term-text{flex:1;font-size:12px;color:var(--white);}
-.term-actions{display:flex;gap:4px;flex-shrink:0;}
-
 /* CLIENT LIST */
-.client-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:#111;border-radius:4px;border:1px solid var(--border);margin-bottom:6px;cursor:pointer;transition:border-color .2s;}
+.client-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:#111;border-radius:4px;border:1px solid var(--border);margin-bottom:6px;cursor:pointer;}
 .client-row:hover{border-color:var(--gold-border);}
 .client-name{font-size:12px;color:var(--white);font-weight:500;}
 .client-company{font-size:10px;color:var(--muted);}
 
-/* RADIO TABS */
 .radio-tabs{display:flex;gap:2px;background:#111;padding:3px;border-radius:5px;margin-bottom:10px;}
-.radio-tab{flex:1;text-align:center;padding:6px;font-size:11px;cursor:pointer;border-radius:3px;color:var(--muted);transition:all .2s;font-weight:600;letter-spacing:.5px;}
+.radio-tab{flex:1;text-align:center;padding:6px;font-size:11px;cursor:pointer;border-radius:3px;color:var(--muted);transition:all .2s;font-weight:600;}
 .radio-tab.active{background:var(--gold);color:#000;}
 
-.number-format{font-feature-settings:'tnum';}
+/* TERMS */
+.term-row{display:flex;align-items:flex-start;gap:6px;margin-bottom:6px;padding:8px;background:#111;border-radius:4px;border:1px solid var(--border);}
+.term-row .term-text{flex:1;font-size:12px;color:var(--white);}
 
-/* SCROLLABLE LIST */
-.scroll-list{max-height:200px;overflow-y:auto;}
-
-/* drag handle */
-.drag-handle{cursor:grab;color:var(--muted);font-size:14px;padding:0 4px;}
-
-/* mobile preview toggle */
 .preview-toggle-bar{display:none;background:#1a1a1a;border-bottom:1px solid var(--gold-border);padding:10px 16px;}
 @media(max-width:900px){.preview-toggle-bar{display:block;}}
-
-/* page break simulation */
-.pdf-page-break{border-top:2px dashed rgba(212,175,55,.2);margin:30px 0;text-align:center;position:relative;}
-.pdf-page-break::after{content:'--- Page Break ---';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#111;padding:0 8px;font-size:9px;color:var(--muted);}
 </style>
 </head>
 <body>
@@ -271,7 +226,6 @@ textarea.form-input{resize:vertical;min-height:70px;}
     <select class="form-select" style="width:110px;font-size:11px;padding:5px 8px;" id="statusSelect" onchange="updateStatus()">
       <option value="draft">● Draft</option>
       <option value="sent">● Sent</option>
-      <option value="viewed">● Viewed</option>
       <option value="accepted">● Accepted</option>
       <option value="rejected">● Rejected</option>
       <option value="paid">● Paid</option>
@@ -283,7 +237,6 @@ textarea.form-input{resize:vertical;min-height:70px;}
   </div>
 </div>
 
-<!-- MOBILE PREVIEW TOGGLE -->
 <div class="preview-toggle-bar">
   <button onclick="toggleMobilePreview()" style="background:linear-gradient(135deg,#D4AF37,#C9A227);color:#000;border:none;padding:8px 20px;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;width:100%;">
     👁 Preview Quotation
@@ -303,7 +256,7 @@ textarea.form-input{resize:vertical;min-height:70px;}
       <button class="tab" onclick="switchTab('clients')">Clients</button>
       <button class="tab" onclick="switchTab('terms')">Terms</button>
       <button class="tab" onclick="switchTab('analytics')">Analytics</button>
-      <button class="tab" onclick="switchTab('settings')">Profile</button>
+      <button class="tab" onclick="switchTab('settings')">Settings</button>
     </div>
 
     <!-- TAB: INFO -->
@@ -326,99 +279,51 @@ textarea.form-input{resize:vertical;min-height:70px;}
         </div>
         <div class="form-group">
           <label class="form-label">Tagline</label>
-          <input class="form-input" id="quoteTagline" value="Prepared with precision | Built for growth | Designed for success" oninput="renderPreview()"/>
+          <input class="form-input" id="quoteTagline" value="Prepared with precision | Built for growth" oninput="renderPreview()"/>
         </div>
-        <div style="display:flex;gap:6px;margin-top:6px;">
-          <button class="btn btn-outline btn-sm" onclick="generateRefNum()">🔄 Auto Ref#</button>
-          <button class="btn btn-outline btn-sm" onclick="duplicateQuotation()">⧉ Duplicate</button>
-        </div>
+        <button class="btn btn-outline btn-sm" onclick="generateRefNum()">🔄 Auto Ref#</button>
       </div>
 
       <div class="card card-gold">
         <div class="card-title">Prepared By</div>
         <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Name</label>
-            <input class="form-input" id="fromName" value="Jenish Kamli" oninput="renderPreview()"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Role</label>
-            <input class="form-input" id="fromRole" value="E-Commerce Growth Manager" oninput="renderPreview()"/>
-          </div>
+          <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="fromName" value="Jenish Kamli" oninput="renderPreview()"/></div>
+          <div class="form-group"><label class="form-label">Role</label><input class="form-input" id="fromRole" value="E-Commerce Growth Manager" oninput="renderPreview()"/></div>
         </div>
         <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Phone</label>
-            <input class="form-input" id="fromPhone" oninput="renderPreview()"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            <input class="form-input" id="fromEmail" oninput="renderPreview()"/>
-          </div>
+          <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="fromPhone" oninput="renderPreview()"/></div>
+          <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="fromEmail" oninput="renderPreview()"/></div>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">GST No.</label>
-            <input class="form-input" id="fromGST" oninput="renderPreview()"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Country</label>
-            <input class="form-input" id="fromCountry" value="India" oninput="renderPreview()"/>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Address</label>
-          <input class="form-input" id="fromAddress" oninput="renderPreview()"/>
-        </div>
+        <div class="form-group"><label class="form-label">Company/Address</label><input class="form-input" id="fromAddress" oninput="renderPreview()"/></div>
         <div class="form-group">
           <label class="form-label">Logo</label>
           <input type="file" accept="image/*" id="logoFile" onchange="uploadLogo()" style="display:none"/>
-          <div style="display:flex;align-items:center;gap:10px;">
-            <img id="logoPreview" class="logo-preview" style="display:none;"/>
-            <button class="btn btn-outline btn-sm" onclick="document.getElementById('logoFile').click()">Upload Logo</button>
-            <button class="btn btn-outline btn-sm" onclick="clearLogo()">✕ Clear</button>
-          </div>
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('logoFile').click()">Upload Logo</button>
+          <button class="btn btn-outline btn-sm" onclick="clearLogo()">✕ Clear</button>
         </div>
       </div>
 
       <div class="card card-gold">
-        <div class="card-title">Prepared For</div>
+        <div class="card-title">Prepared For (Client)</div>
         <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Client Name</label>
-            <input class="form-input" id="toName" value="Abhiral Jain" oninput="renderPreview()"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Company</label>
-            <input class="form-input" id="toCompany" value="Writease.in" oninput="renderPreview()"/>
-          </div>
+          <div class="form-group"><label class="form-label">Client Name</label><input class="form-input" id="toName" oninput="renderPreview()"/></div>
+          <div class="form-group"><label class="form-label">Company</label><input class="form-input" id="toCompany" oninput="renderPreview()"/></div>
         </div>
         <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Phone</label>
-            <input class="form-input" id="toPhone" value="+91 88306 93895" oninput="renderPreview()"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            <input class="form-input" id="toEmail" oninput="renderPreview()"/>
-          </div>
+          <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="toPhone" oninput="renderPreview()"/></div>
+          <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="toEmail" oninput="renderPreview()"/></div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Address</label>
-          <input class="form-input" id="toAddress" oninput="renderPreview()"/>
-        </div>
-        <button class="btn btn-outline btn-sm" onclick="openClientModal()">📋 Load from Clients</button>
+        <div class="form-group"><label class="form-label">Address</label><input class="form-input" id="toAddress" oninput="renderPreview()"/></div>
+        <button class="btn btn-outline btn-sm" onclick="openClientModal()">📋 Load Client</button>
       </div>
     </div>
 
     <!-- TAB: SERVICES -->
     <div class="tab-content" id="tab-services">
-      <!-- TEMPLATES -->
       <div class="card card-gold">
         <div class="card-title">Quick Templates</div>
         <div class="template-grid" id="templateGrid"></div>
       </div>
-      <!-- SECTIONS -->
       <div id="sectionsContainer"></div>
       <button class="btn btn-outline" style="width:100%;margin-bottom:12px;" onclick="addSection()">+ Add Section</button>
     </div>
@@ -426,72 +331,37 @@ textarea.form-input{resize:vertical;min-height:70px;}
     <!-- TAB: FINANCE -->
     <div class="tab-content" id="tab-finance">
       <div class="card card-gold">
-        <div class="card-title">Tax & Discount</div>
+        <div class="card-title">Tax & Settings</div>
         <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Default GST %</label>
-            <input class="form-input" id="gstRate" value="18" type="number" oninput="renderPreview()"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Global Discount %</label>
-            <input class="form-input" id="discountPct" value="0" type="number" oninput="renderPreview()"/>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">TDS %</label>
-            <input class="form-input" id="tdsPct" value="0" type="number" oninput="renderPreview()"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Currency</label>
-            <select class="form-select" id="currency" onchange="renderPreview()">
-              <option value="₹">₹ INR</option>
-              <option value="$">$ USD</option>
-              <option value="€">€ EUR</option>
-              <option value="£">£ GBP</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="card card-gold">
-        <div class="card-title">Payment Milestones</div>
-        <div id="milestonesContainer"></div>
-        <button class="btn btn-outline btn-sm" onclick="addMilestone()">+ Add Milestone</button>
-      </div>
-
-      <div class="card card-gold">
-        <div class="card-title">Payment Details</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">UPI ID</label>
-            <input class="form-input" id="upiId" oninput="renderPreview();generateQR()"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Bank Name</label>
-            <input class="form-input" id="bankName" oninput="renderPreview()"/>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Account No.</label>
-            <input class="form-input" id="accountNo" oninput="renderPreview()"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">IFSC</label>
-            <input class="form-input" id="ifsc" oninput="renderPreview()"/>
-          </div>
+          <div class="form-group"><label class="form-label">GST %</label><input class="form-input" id="gstRate" value="18" type="number" oninput="renderPreview()"/></div>
+          <div class="form-group"><label class="form-label">Discount %</label><input class="form-input" id="discountPct" value="0" type="number" oninput="renderPreview()"/></div>
         </div>
         <div class="form-group">
-          <label class="form-label">Beneficiary Name</label>
-          <input class="form-input" id="beneficiary" oninput="renderPreview()"/>
+          <label class="form-label">Currency</label>
+          <select class="form-select" id="currency" onchange="renderPreview()"><option value="₹">₹ INR</option><option value="$">$ USD</option></select>
         </div>
-        <div style="display:none;"><div id="qr-code"></div></div>
       </div>
 
-      <!-- SUMMARY -->
       <div class="card card-gold">
-        <div class="card-title">Financial Summary</div>
+        <div class="card-title">Milestones</div>
+        <div id="milestonesContainer"></div>
+        <button class="btn btn-outline btn-sm" onclick="addMilestone()">+ Add</button>
+      </div>
+
+      <div class="card card-gold">
+        <div class="card-title">Payment Bank/UPI Info</div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">UPI ID</label><input class="form-input" id="upiId" oninput="generateQR();renderPreview()"/></div>
+          <div class="form-group"><label class="form-label">Bank</label><input class="form-input" id="bankName" oninput="renderPreview()"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Account No.</label><input class="form-input" id="accountNo" oninput="renderPreview()"/></div>
+          <div class="form-group"><label class="form-label">IFSC</label><input class="form-input" id="ifsc" oninput="renderPreview()"/></div>
+        </div>
+        <div style="display:none;" id="qr-code"></div>
+      </div>
+      <div class="card card-gold">
+        <div class="card-title">Summary</div>
         <div id="financeSummary" style="font-size:12px;"></div>
       </div>
     </div>
@@ -501,14 +371,12 @@ textarea.form-input{resize:vertical;min-height:70px;}
       <div class="card card-gold">
         <div class="card-title">Destination</div>
         <div class="radio-tabs">
-          <div class="radio-tab active" id="destClient" onclick="setDestination('client')">Client</div>
-          <div class="radio-tab" id="destFreelancer" onclick="setDestination('freelancer')">Freelancer</div>
+          <div class="radio-tab active" id="destClient" onclick="setDestination('client')">Client Sign</div>
+          <div class="radio-tab" id="destFreelancer" onclick="setDestination('freelancer')">My Sign</div>
         </div>
-        <div id="destInfo" style="font-size:11px;color:var(--muted);margin-top:4px;"></div>
       </div>
-
       <div class="card card-gold">
-        <div class="card-title">Signature Mode</div>
+        <div class="card-title">Method</div>
         <div class="radio-tabs">
           <div class="radio-tab active" id="sigModeDraw" onclick="setSigMode('draw')">Draw</div>
           <div class="radio-tab" id="sigModeType" onclick="setSigMode('type')">Type</div>
@@ -516,101 +384,52 @@ textarea.form-input{resize:vertical;min-height:70px;}
         </div>
       </div>
 
-      <!-- DRAW MODE -->
       <div class="card card-gold" id="sigDrawPanel">
-        <div class="card-title">Draw Signature</div>
-        <canvas id="sigCanvas" class="sig-canvas" width="400" height="150"></canvas>
-        <div style="display:flex;gap:6px;margin-top:8px;">
+        <canvas id="sigCanvas" class="sig-canvas" height="150"></canvas>
+        <div style="margin-top:8px; display:flex; gap:5px;">
           <button class="btn btn-outline btn-sm" onclick="clearCanvas()">Clear</button>
           <button class="btn btn-outline btn-sm" onclick="undoCanvas()">Undo</button>
-          <button class="btn btn-gold btn-sm" onclick="applyCanvasSig()">Apply</button>
+          <button class="btn btn-gold btn-sm" onclick="applyCanvasSig()">Apply Sign</button>
         </div>
       </div>
 
-      <!-- TYPE MODE -->
       <div class="card card-gold" id="sigTypePanel" style="display:none;">
-        <div class="card-title">Type Signature</div>
-        <input class="form-input" id="sigTypeInput" placeholder="Type your name..." oninput="updateTypeSigPreview()"/>
-        <div class="form-group" style="margin-top:8px;">
-          <label class="form-label">Font</label>
-          <select class="form-select" id="sigFont" onchange="updateTypeSigPreview()">
-            <option value="'Great Vibes',cursive">Great Vibes</option>
-            <option value="'Allura',cursive">Allura</option>
-            <option value="'Parisienne',cursive">Parisienne</option>
-            <option value="'Dancing Script',cursive">Dancing Script</option>
-            <option value="'Sacramento',cursive">Sacramento</option>
-          </select>
-        </div>
+        <input class="form-input" id="sigTypeInput" placeholder="Type name..." oninput="updateTypeSigPreview()"/>
+        <select class="form-select" id="sigFont" onchange="updateTypeSigPreview()" style="margin-top:8px;">
+          <option value="'Great Vibes',cursive">Great Vibes</option>
+          <option value="'Dancing Script',cursive">Dancing Script</option>
+        </select>
         <div class="sig-font-preview" id="typeSigPreview">Your Signature</div>
-        <button class="btn btn-gold btn-sm" style="margin-top:8px;width:100%;" onclick="applyTypeSig()">Apply Signature</button>
+        <button class="btn btn-gold btn-sm" onclick="applyTypeSig()">Apply</button>
       </div>
 
-      <!-- UPLOAD MODE -->
       <div class="card card-gold" id="sigUploadPanel" style="display:none;">
-        <div class="card-title">Upload Signature</div>
-        <input type="file" id="sigUploadFile" accept=".png,.jpg,.jpeg,.webp" onchange="applySigUpload()" style="display:none;"/>
-        <button class="btn btn-outline" style="width:100%;" onclick="document.getElementById('sigUploadFile').click()">Choose Image (PNG/JPG/WEBP)</button>
-        <div id="sigUploadPreview" style="margin-top:8px;text-align:center;"></div>
+        <input type="file" id="sigUploadFile" accept="image/*" onchange="applySigUpload()" style="display:none;"/>
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('sigUploadFile').click()">Choose Image</button>
       </div>
 
-      <!-- STAMP -->
       <div class="card card-gold">
         <div class="card-title">Company Stamp</div>
         <input type="file" id="stampFile" accept="image/*" onchange="uploadStamp()" style="display:none;"/>
         <button class="btn btn-outline btn-sm" onclick="document.getElementById('stampFile').click()">Upload Stamp</button>
         <button class="btn btn-outline btn-sm" onclick="clearStamp()">Clear</button>
-        <div id="stampPreview" style="margin-top:8px;"></div>
-      </div>
-
-      <!-- SIG DATE -->
-      <div class="card card-gold">
-        <div class="card-title">Signature Dates</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Client Date</label>
-            <input class="form-input" type="date" id="clientSigDate" oninput="renderPreview()"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Freelancer Date</label>
-            <input class="form-input" type="date" id="freelancerSigDate" oninput="renderPreview()"/>
-          </div>
-        </div>
       </div>
     </div>
 
     <!-- TAB: CLIENTS -->
     <div class="tab-content" id="tab-clients">
       <div class="card card-gold">
-        <div class="card-title">Client Manager</div>
-        <div class="search-box">
-          <span class="search-icon">🔍</span>
-          <input class="form-input" id="clientSearch" placeholder="Search clients..." oninput="renderClientList()" style="padding-left:32px;"/>
-        </div>
+        <div class="card-title">Add Client</div>
         <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Name</label>
-            <input class="form-input" id="newClientName" placeholder="Client name"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Company</label>
+            <input class="form-input" id="newClientName" placeholder="Name"/>
             <input class="form-input" id="newClientCompany" placeholder="Company"/>
-          </div>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Phone</label>
-            <input class="form-input" id="newClientPhone"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            <input class="form-input" id="newClientEmail"/>
-          </div>
+        <div class="form-row" style="margin-top:8px;">
+            <input class="form-input" id="newClientPhone" placeholder="Phone"/>
+            <input class="form-input" id="newClientEmail" placeholder="Email"/>
         </div>
-        <div class="form-group">
-          <label class="form-label">Address</label>
-          <input class="form-input" id="newClientAddress"/>
-        </div>
-        <button class="btn btn-gold btn-sm" style="margin-top:6px;" onclick="saveClient()">Save Client</button>
+        <input class="form-input" id="newClientAddress" placeholder="Address" style="margin-top:8px;"/>
+        <button class="btn btn-gold btn-sm" style="margin-top:8px;" onclick="saveClient()">Save Client</button>
       </div>
       <div id="clientList" class="scroll-list"></div>
     </div>
@@ -618,19 +437,13 @@ textarea.form-input{resize:vertical;min-height:70px;}
     <!-- TAB: TERMS -->
     <div class="tab-content" id="tab-terms">
       <div class="card card-gold">
-        <div class="card-title">Terms & Conditions</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Clause Title</label>
-            <input class="form-input" id="termTitle" placeholder="e.g. Payment Policy"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Details</label>
-            <input class="form-input" id="termDetails" placeholder="Clause details..."/>
-          </div>
+        <div class="card-title">Add Term</div>
+        <input class="form-input" id="termTitle" placeholder="Title" style="margin-bottom:8px;"/>
+        <input class="form-input" id="termDetails" placeholder="Details..."/>
+        <div style="margin-top:8px; display:flex; gap:5px;">
+            <button class="btn btn-gold btn-sm" onclick="addTerm()">Add Term</button>
+            <button class="btn btn-outline btn-sm" onclick="loadDefaultTerms()">Load Defaults</button>
         </div>
-        <button class="btn btn-gold btn-sm" onclick="addTerm()">+ Add Term</button>
-        <button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="loadDefaultTerms()">Load Defaults</button>
       </div>
       <div id="termsList"></div>
     </div>
@@ -638,83 +451,45 @@ textarea.form-input{resize:vertical;min-height:70px;}
     <!-- TAB: ANALYTICS -->
     <div class="tab-content" id="tab-analytics">
       <div class="analytics-grid">
-        <div class="analytic-card">
-          <div class="analytic-val" id="a-total">0</div>
-          <div class="analytic-label">Total Quotes</div>
-        </div>
-        <div class="analytic-card">
-          <div class="analytic-val" id="a-revenue">₹0</div>
-          <div class="analytic-label">Total Revenue</div>
-        </div>
-        <div class="analytic-card">
-          <div class="analytic-val" id="a-avg">₹0</div>
-          <div class="analytic-label">Avg Deal</div>
-        </div>
-        <div class="analytic-card">
-          <div class="analytic-val" id="a-accepted" style="color:#34d399;">0</div>
-          <div class="analytic-label">Accepted</div>
-        </div>
-        <div class="analytic-card">
-          <div class="analytic-val" id="a-rejected" style="color:#f87171;">0</div>
-          <div class="analytic-label">Rejected</div>
-        </div>
-        <div class="analytic-card">
-          <div class="analytic-val" id="a-pending" style="color:#fbbf24;">0</div>
-          <div class="analytic-label">Pending</div>
-        </div>
+        <div class="analytic-card"><div class="analytic-val" id="a-total">0</div><div class="analytic-label">Quotes</div></div>
+        <div class="analytic-card"><div class="analytic-val" id="a-revenue">0</div><div class="analytic-label">Revenue</div></div>
+        <div class="analytic-card"><div class="analytic-val" id="a-accepted" style="color:#34d399;">0</div><div class="analytic-label">Accepted</div></div>
       </div>
-      <div class="card card-gold">
-        <div class="card-title">Monthly Activity</div>
-        <div class="bar-chart" id="monthlyChart"></div>
-        <div style="display:flex;gap:6px;margin-top:4px;" id="monthLabels"></div>
-      </div>
-      <button class="btn btn-outline" style="width:100%;margin-top:10px;" onclick="refreshAnalytics()">Refresh</button>
+      <button class="btn btn-outline btn-sm" onclick="refreshAnalytics()">Refresh</button>
     </div>
 
-    <!-- TAB: SETTINGS / PROFILE -->
+    <!-- TAB: SETTINGS -->
     <div class="tab-content" id="tab-settings">
       <div class="card card-gold">
         <div class="card-title">Theme</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-outline" onclick="setTheme('')" style="background:linear-gradient(135deg,#D4AF37,#C9A227);color:#000;border:none;">JK Gold</button>
-          <button class="btn btn-outline" onclick="setTheme('theme-royal')" style="background:linear-gradient(135deg,#0D1B3E,#4A9EFF);color:#fff;border:none;">Royal Blue</button>
-          <button class="btn btn-outline" onclick="setTheme('theme-emerald')" style="background:linear-gradient(135deg,#0D2818,#10D96F);color:#fff;border:none;">Emerald</button>
-          <button class="btn btn-outline" onclick="setTheme('theme-platinum')" style="background:linear-gradient(135deg,#1a1a1a,#E8E8E8);color:#000;border:none;">Platinum</button>
+          <button class="btn btn-outline" onclick="setTheme('')">JK Gold</button>
+          <button class="btn btn-outline" onclick="setTheme('theme-royal')">Royal Blue</button>
+          <button class="btn btn-outline" onclick="setTheme('theme-emerald')">Emerald</button>
+          <button class="btn btn-outline" onclick="setTheme('theme-platinum')">Platinum</button>
         </div>
       </div>
       <div class="card card-gold">
-        <div class="card-title">Save Profile</div>
-        <p style="font-size:11px;color:var(--muted);margin-bottom:10px;">Profile data from "Prepared By" section is auto-saved to your browser.</p>
-        <button class="btn btn-gold" onclick="saveProfile()">💾 Save Profile</button>
-        <button class="btn btn-outline btn-sm" style="margin-left:6px;" onclick="loadProfile()">Load Profile</button>
+        <div class="card-title">Profile Data</div>
+        <button class="btn btn-gold btn-sm" onclick="saveProfile()">Save Profile</button>
+        <button class="btn btn-outline btn-sm" onclick="loadProfile()">Load Profile</button>
       </div>
       <div class="card card-gold">
-        <div class="card-title">Import JSON</div>
+        <div class="card-title">Data Actions</div>
         <input type="file" id="importJSONFile" accept=".json" onchange="importJSON()" style="display:none;"/>
-        <button class="btn btn-outline" onclick="document.getElementById('importJSONFile').click()">📂 Import Quotation JSON</button>
-      </div>
-      <div class="card card-gold">
-        <div class="card-title">Global Search</div>
-        <input class="form-input" id="globalSearch" placeholder="Search clients, quotations, services..." oninput="globalSearchFn()"/>
-        <div id="globalSearchResults" style="margin-top:8px;font-size:12px;color:var(--muted);"></div>
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('importJSONFile').click()">Import JSON</button>
       </div>
     </div>
   </div>
 
   <!-- RIGHT PANEL (PREVIEW) -->
   <div class="right-panel" id="rightPanel">
-    <button class="close-preview-btn" onclick="toggleMobilePreview()">✕ Close Preview</button>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;width:794px;max-width:100%;">
-      <div style="font-size:11px;color:var(--muted);letter-spacing:1px;">LIVE PREVIEW — A4</div>
-      <div style="display:flex;gap:6px;">
-        <button class="btn btn-outline btn-sm" onclick="exportPDF()">⬇ Export PDF</button>
-      </div>
-    </div>
+    <button class="close-preview-btn" onclick="toggleMobilePreview()">✕ Close</button>
     <div class="a4-wrapper" id="previewContent"></div>
   </div>
 </div>
 
-<!-- MODAL: CLIENT SELECTOR -->
+<!-- MODAL: CLIENT -->
 <div class="modal-overlay" id="clientModal">
   <div class="modal">
     <div class="modal-title">Select Client</div>
@@ -724,24 +499,14 @@ textarea.form-input{resize:vertical;min-height:70px;}
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ============================================================
-// STATE
-// ============================================================
+// ================= STATE & CONSTANTS =================
 let state = {
-  sections: [],
-  milestones: [],
-  terms: [],
-  clientSig: null,
-  freelancerSig: null,
-  stamp: null,
-  logo: null,
-  theme: '',
-  status: 'draft',
-  qrDataUrl: null,
+  sections: [], milestones: [], terms: [],
+  clientSig: null, freelancerSig: null, stamp: null, logo: null,
+  theme: '', status: 'draft', qrDataUrl: null,
 };
 
 let sigMode = 'draw';
@@ -751,577 +516,357 @@ let isDrawing = false;
 let lastX = 0, lastY = 0;
 
 const TEMPLATES = [
-  {name:'Amazon Listing',service:'Amazon Listing',desc:'SEO-optimized title, bullet points, description & keywords',price:150,qty:1},
-  {name:'Flipkart Listing',service:'Flipkart Listing',desc:'Product listing with SEO content for Flipkart',price:150,qty:1},
-  {name:'Brand Registry',service:'Brand Registry',desc:'Trademark linking, brand protection & A+ content unlock',price:1700,qty:1},
-  {name:'A+ Content',service:'A+ Content (Basic)',desc:'Standard brand creatives & enhanced brand content',price:999,qty:1},
-  {name:'PPC Management',service:'PPC & Ad Management',desc:'Sponsored ads setup & optimization',price:0,qty:1},
-  {name:'Blinkit Setup',service:'Blinkit Setup',desc:'Blinkit onboarding, store mapping & product listing',price:5000,qty:1},
-  {name:'Zepto Setup',service:'Zepto Setup',desc:'Zepto onboarding, store mapping & product listing',price:5000,qty:1},
-  {name:'Instamart Setup',service:'Instamart Setup',desc:'Swiggy Instamart onboarding & product listing',price:5000,qty:1},
-  {name:'Monthly Retainer',service:'Growth Plan Retainer',desc:'2 Platforms — SPF/HPF Claims, Account Health Monitoring, Inventory Coordination',price:15000,qty:1},
-  {name:'Q-Commerce Setup',service:'Quick Commerce Setup',desc:'Blinkit, Zepto, Instamart onboarding & store mapping',price:5000,qty:1},
+  {name:'Amazon Listing',service:'Amazon Listing',desc:'SEO-optimized title, bullet points, & keywords',price:150,qty:1},
+  {name:'A+ Content',service:'A+ Content',desc:'Standard brand creatives',price:999,qty:1},
+  {name:'Monthly Retainer',service:'Growth Retainer',desc:'Account management & strategy',price:15000,qty:1},
 ];
-
 const DEFAULT_TERMS = [
-  {title:'Payment Milestones',details:'50% non-refundable advance required to commence work. Remaining 50% due upon completion prior to live-launch or final asset handover.'},
-  {title:'Scope & Revisions',details:'Covers exact SKUs and platforms specified. Additional SKUs or platforms billed separately. Includes 2 rounds of minor revisions.'},
-  {title:'Late Payments',details:'Work paused if milestone payments delayed by more than 7 days. Late fee of 2% per month on overdue invoices.'},
-  {title:'Platform Dependency',details:'Final brand registry approvals and go-live timelines subject to internal policies of Amazon, Flipkart, Blinkit, Zepto, and Instamart.'},
-  {title:'Data Security & Trust',details:'All client business data handled with strict confidentiality and will never be shared with third parties.'},
-  {title:'Account Access Delay',details:'Client must provide OTPs, API keys, or sub-user access promptly. Timelines extended for delays in providing required credentials.'},
-  {title:'Sales Disclaimer',details:'Services guarantee high-quality optimization. Actual sales velocity depends on market demand, product pricing, and competitor activity.'},
+  {title:'Payment',details:'50% advance required to commence work.'},
+  {title:'Revisions',details:'Includes 2 rounds of minor revisions.'},
 ];
 
-// ============================================================
-// INIT
-// ============================================================
-function init(){
-  // Set today date
+// Utilities
+const esc = str => (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const q = id => document.getElementById(id);
+const qVal = id => document.getElementById(id).value;
+const toast = msg => { const t = q('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2500); };
+
+// ================= INIT =================
+window.onload = function init() {
   const today = new Date().toISOString().split('T')[0];
-  document.getElementById('quoteDate').value = today;
-  document.getElementById('clientSigDate').value = today;
-  document.getElementById('freelancerSigDate').value = today;
-
-  // Load saved theme
-  const savedTheme = localStorage.getItem('jk_theme') || '';
-  setTheme(savedTheme, true);
-
-  // Load profile
-  loadProfile(true);
-
-  // Render templates
+  q('quoteDate').value = today;
+  setTheme(localStorage.getItem('jk_theme') || '');
+  loadProfile();
   renderTemplates();
-
-  // Add default section
   addSection('Marketplace Services');
-
-  // Add default milestones
-  state.milestones = [
-    {label:'50% Advance',pct:50},
-    {label:'25% Mid',pct:25},
-    {label:'25% Final',pct:25},
-  ];
-  renderMilestones();
-
-  // Load default terms
+  state.milestones = [{label:'50% Advance',pct:50}, {label:'50% Final',pct:50}];
   state.terms = [...DEFAULT_TERMS];
-  renderTermsList();
-
-  // Init canvas
   initCanvas();
-
-  // Load clients
   renderClientList();
-
-  // Load analytics
-  refreshAnalytics();
-
-  // Render
+  if(!localStorage.getItem('jk_lastRef')) generateRefNum();
   renderPreview();
+};
 
-  // Auto-generate ref
-  const lastRef = localStorage.getItem('jk_lastRef');
-  if(!lastRef) generateRefNum();
-}
-
-// ============================================================
-// TAB SWITCHING
-// ============================================================
-function switchTab(tab){
-  document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.remove('active');});
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   event.target.classList.add('active');
-  document.getElementById('tab-'+tab).classList.add('active');
+  q('tab-'+tab).classList.add('active');
 }
-
-// ============================================================
-// MOBILE PREVIEW
-// ============================================================
-function toggleMobilePreview(){
-  const panel = document.getElementById('rightPanel');
-  panel.classList.toggle('show');
-  if(panel.classList.contains('show')) renderPreview();
-}
-
-// ============================================================
-// TOAST
-// ============================================================
-function toast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
-}
-
-// ============================================================
-// REF NUMBER
-// ============================================================
-function generateRefNum(){
-  let n = parseInt(localStorage.getItem('jk_refCounter') || '0') + 1;
+function toggleMobilePreview() { q('rightPanel').classList.toggle('show'); renderPreview(); }
+function updateStatus() { state.status = qVal('statusSelect'); renderPreview(); }
+function generateRefNum() {
+  let n = parseInt(localStorage.getItem('jk_refCounter')||'0') + 1;
   localStorage.setItem('jk_refCounter', n);
-  const ref = 'JK-MGMT-2026-' + String(n).padStart(4,'0');
-  document.getElementById('refNum').value = ref;
-  localStorage.setItem('jk_lastRef', ref);
+  q('refNum').value = 'JK-MGMT-' + new Date().getFullYear() + '-' + String(n).padStart(4,'0');
   renderPreview();
 }
 
-// ============================================================
-// STATUS
-// ============================================================
-function updateStatus(){
-  state.status = document.getElementById('statusSelect').value;
-  renderPreview();
+// ================= SECTIONS & ROWS =================
+function addSection(title='New Section') { state.sections.push({id:Date.now(), title, rows:[]}); renderSections(); renderPreview(); }
+function removeSection(id) { state.sections = state.sections.filter(s=>s.id!==id); renderSections(); renderPreview(); }
+function updateSectionTitle(id, val) { state.sections.find(s=>s.id===id).title = val; renderPreview(); }
+function addRow(sId) { state.sections.find(s=>s.id===sId).rows.push({id:Date.now(), service:'', desc:'', price:0, qty:1, discount:0, tax:-1}); renderSections(); renderPreview(); }
+function removeRow(sId, rId) { const s = state.sections.find(s=>s.id===sId); s.rows = s.rows.filter(r=>r.id!==rId); renderSections(); renderPreview(); }
+function updateRow(sId, rId, field, val) { 
+  const r = state.sections.find(s=>s.id===sId).rows.find(x=>x.id===rId);
+  r[field] = ['price','qty','discount','tax'].includes(field) ? parseFloat(val)||0 : val;
+  renderPreview(); updateFinanceSummary();
 }
 
-// ============================================================
-// SECTION BUILDER
-// ============================================================
-function addSection(defaultTitle=''){
-  const id = Date.now() + Math.random();
-  state.sections.push({id, title: defaultTitle || 'New Section', rows:[]});
-  renderSections();
-  renderPreview();
-}
-
-function removeSection(id){
-  state.sections = state.sections.filter(s=>s.id!==id);
-  renderSections();
-  renderPreview();
-}
-
-function addRow(sectionId){
-  const s = state.sections.find(s=>s.id===sectionId);
-  if(!s) return;
-  s.rows.push({id:Date.now()+Math.random(),service:'',desc:'',price:0,qty:1,discount:0,tax:-1});
-  renderSections();
-  renderPreview();
-}
-
-function removeRow(sectionId, rowId){
-  const s = state.sections.find(s=>s.id===sectionId);
-  if(!s) return;
-  s.rows = s.rows.filter(r=>r.id!==rowId);
-  renderSections();
-  renderPreview();
-}
-
-function updateRow(sectionId, rowId, field, value){
-  const s = state.sections.find(s=>s.id===sectionId);
-  if(!s) return;
-  const r = s.rows.find(r=>r.id===rowId);
-  if(!r) return;
-  r[field] = field==='price'||field==='qty'||field==='discount'||field==='tax' ? parseFloat(value)||0 : value;
-  renderPreview();
-  updateFinanceSummary();
-}
-
-function updateSectionTitle(id, val){
-  const s = state.sections.find(s=>s.id===id);
-  if(s) s.title = val;
-  renderPreview();
-}
-
-function renderSections(){
-  const container = document.getElementById('sectionsContainer');
-  container.innerHTML = '';
-  state.sections.forEach((sec,idx)=>{
-    const div = document.createElement('div');
-    div.className = 'section-block';
-    div.innerHTML = `
+function renderSections() {
+  const c = q('sectionsContainer');
+  c.innerHTML = state.sections.map((sec,idx) => `
+    <div class="section-block">
       <div class="section-header">
         <div class="section-num">${idx+1}</div>
-        <input class="section-title-input" value="${esc(sec.title)}" onchange="updateSectionTitle(${sec.id},this.value)" placeholder="Section Title"/>
+        <input class="section-title-input" value="${esc(sec.title)}" onchange="updateSectionTitle(${sec.id},this.value)"/>
         <button class="btn btn-danger btn-sm" onclick="removeSection(${sec.id})">✕</button>
       </div>
       <div class="section-body">
-        <div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1fr 1fr 30px;gap:4px;margin-bottom:4px;padding:0 4px;">
-          <div class="col-label">Service</div>
-          <div class="col-label">Description</div>
-          <div class="col-label">Price</div>
-          <div class="col-label">Qty</div>
-          <div class="col-label">Disc%</div>
-          <div class="col-label">Tax%</div>
-          <div></div>
-        </div>
-        ${sec.rows.map(row=>`
+        ${sec.rows.map(r => `
         <div class="service-row">
           <div class="service-row-grid">
-            <input class="row-input" placeholder="Service name" value="${esc(row.service)}" oninput="updateRow(${sec.id},${row.id},'service',this.value)"/>
-            <input class="row-input" placeholder="Description" value="${esc(row.desc)}" oninput="updateRow(${sec.id},${row.id},'desc',this.value)"/>
-            <input class="row-input" type="number" placeholder="Price" value="${row.price||''}" oninput="updateRow(${sec.id},${row.id},'price',this.value)"/>
-            <input class="row-input" type="number" placeholder="1" value="${row.qty||''}" oninput="updateRow(${sec.id},${row.id},'qty',this.value)"/>
-            <input class="row-input" type="number" placeholder="0" value="${row.discount||''}" oninput="updateRow(${sec.id},${row.id},'discount',this.value)"/>
-            <input class="row-input" type="number" placeholder="Auto" value="${row.tax<0?'':row.tax}" oninput="updateRow(${sec.id},${row.id},'tax',this.value)" title="Leave blank for global GST"/>
-            <button class="btn btn-danger btn-sm" onclick="removeRow(${sec.id},${row.id})" style="padding:4px 7px;">✕</button>
+            <input class="row-input" placeholder="Service" value="${esc(r.service)}" oninput="updateRow(${sec.id},${r.id},'service',this.value)"/>
+            <input class="row-input" placeholder="Description" value="${esc(r.desc)}" oninput="updateRow(${sec.id},${r.id},'desc',this.value)"/>
+            <input class="row-input" type="number" placeholder="Price" value="${r.price}" oninput="updateRow(${sec.id},${r.id},'price',this.value)"/>
+            <input class="row-input" type="number" placeholder="Qty" value="${r.qty}" oninput="updateRow(${sec.id},${r.id},'qty',this.value)"/>
+            <button class="btn btn-danger btn-sm" onclick="removeRow(${sec.id},${r.id})">✕</button>
           </div>
         </div>`).join('')}
-        <button class="btn btn-outline btn-sm" style="margin-top:6px;" onclick="addRow(${sec.id})">+ Add Row</button>
+        <button class="btn btn-outline btn-sm" onclick="addRow(${sec.id})">+ Row</button>
       </div>
-    `;
-    container.appendChild(div);
-  });
+    </div>`).join('');
 }
 
-// ============================================================
-// TEMPLATES
-// ============================================================
-function renderTemplates(){
-  const grid = document.getElementById('templateGrid');
-  grid.innerHTML = TEMPLATES.map(t=>`<div class="template-chip" onclick='insertTemplate(${JSON.stringify(t)})'>${t.name}</div>`).join('');
+// ================= TEMPLATES & MILESTONES & TERMS =================
+function renderTemplates() { q('templateGrid').innerHTML = TEMPLATES.map(t=>`<div class="template-chip" onclick='insertTemplate(${JSON.stringify(t)})'>${t.name}</div>`).join(''); }
+function insertTemplate(t) { 
+  if(!state.sections.length) addSection(t.service);
+  state.sections[state.sections.length-1].rows.push({id:Date.now(), service:t.service, desc:t.desc, price:t.price, qty:t.qty, discount:0, tax:-1});
+  renderSections(); renderPreview(); toast('Template added!');
 }
 
-function insertTemplate(t){
-  if(state.sections.length===0) addSection(t.service);
-  const sec = state.sections[state.sections.length-1];
-  sec.rows.push({id:Date.now()+Math.random(),service:t.service,desc:t.desc,price:t.price,qty:t.qty,discount:0,tax:-1});
-  renderSections();
-  renderPreview();
-  toast('Template added!');
-}
-
-// ============================================================
-// MILESTONES
-// ============================================================
-function addMilestone(){
-  state.milestones.push({label:'Milestone',pct:0});
-  renderMilestones();
-  renderPreview();
-}
-
-function renderMilestones(){
-  const c = document.getElementById('milestonesContainer');
-  c.innerHTML = state.milestones.map((m,i)=>`
+function addMilestone() { state.milestones.push({label:'New', pct:0}); renderMilestones(); renderPreview(); }
+function renderMilestones() {
+  q('milestonesContainer').innerHTML = state.milestones.map((m,i)=>`
     <div class="milestone-row">
-      <input class="row-input" value="${esc(m.label)}" oninput="state.milestones[${i}].label=this.value;renderPreview();" placeholder="Label"/>
-      <input class="row-input" type="number" value="${m.pct}" oninput="state.milestones[${i}].pct=parseFloat(this.value)||0;renderPreview();" placeholder="%"/>
-      <div style="font-size:11px;color:var(--gold);padding:4px;" id="ms-amt-${i}"></div>
-      <button class="btn btn-danger btn-sm" onclick="state.milestones.splice(${i},1);renderMilestones();renderPreview();">✕</button>
-    </div>
-  `).join('');
-  updateMilestoneAmounts();
+      <input class="row-input" value="${esc(m.label)}" oninput="state.milestones[${i}].label=this.value; renderPreview();"/>
+      <input class="row-input" type="number" value="${m.pct}" oninput="state.milestones[${i}].pct=parseFloat(this.value)||0; renderPreview();"/>
+      <button class="btn btn-danger btn-sm" onclick="state.milestones.splice(${i},1); renderMilestones(); renderPreview();">✕</button>
+    </div>`).join('');
 }
 
-function updateMilestoneAmounts(){
-  const grand = calcGrandTotal();
-  state.milestones.forEach((m,i)=>{
-    const el = document.getElementById(`ms-amt-${i}`);
-    if(el) el.textContent = formatCurrency((grand * m.pct)/100);
-  });
+function addTerm() {
+  const t = qVal('termTitle'), d = qVal('termDetails');
+  if(t || d) { state.terms.push({title:t, details:d}); q('termTitle').value=''; q('termDetails').value=''; renderTermsList(); renderPreview(); }
+}
+function loadDefaultTerms() { state.terms = [...DEFAULT_TERMS]; renderTermsList(); renderPreview(); }
+function renderTermsList() {
+  q('termsList').innerHTML = state.terms.map((t,i)=>`<div class="term-row"><div class="term-text"><b>${esc(t.title)}</b><br>${esc(t.details)}</div><button class="btn btn-danger btn-sm" onclick="state.terms.splice(${i},1);renderTermsList();renderPreview();">✕</button></div>`).join('');
 }
 
-// ============================================================
-// TERMS
-// ============================================================
-function addTerm(){
-  const title = document.getElementById('termTitle').value.trim();
-  const details = document.getElementById('termDetails').value.trim();
-  if(!title && !details) return;
-  state.terms.push({title, details});
-  document.getElementById('termTitle').value = '';
-  document.getElementById('termDetails').value = '';
-  renderTermsList();
-  renderPreview();
-}
+// ================= FINANCE MATH =================
+const getGst = ()=>parseFloat(qVal('gstRate'))||0;
+const getDisc = ()=>parseFloat(qVal('discountPct'))||0;
+const formatCur = n => (qVal('currency')||'₹') + n.toLocaleString('en-IN',{maximumFractionDigits:2});
 
-function loadDefaultTerms(){
-  state.terms = [...DEFAULT_TERMS];
-  renderTermsList();
-  renderPreview();
-  toast('Default terms loaded');
-}
-
-function renderTermsList(){
-  const c = document.getElementById('termsList');
-  c.innerHTML = state.terms.map((t,i)=>`
-    <div class="term-row">
-      <div class="term-text">
-        <strong style="color:var(--gold);font-size:11px;">${esc(t.title)}</strong><br/>
-        <span style="color:var(--muted);font-size:11px;">${esc(t.details)}</span>
-      </div>
-      <div class="term-actions">
-        <button class="btn btn-outline btn-sm" onclick="moveTerm(${i},-1)">↑</button>
-        <button class="btn btn-outline btn-sm" onclick="moveTerm(${i},1)">↓</button>
-        <button class="btn btn-danger btn-sm" onclick="removeTerm(${i})">✕</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function moveTerm(i,dir){
-  const j=i+dir;
-  if(j<0||j>=state.terms.length) return;
-  [state.terms[i],state.terms[j]]=[state.terms[j],state.terms[i]];
-  renderTermsList();
-  renderPreview();
-}
-
-function removeTerm(i){
-  state.terms.splice(i,1);
-  renderTermsList();
-  renderPreview();
-}
-
-// ============================================================
-// CLIENTS
-// ============================================================
-function saveClient(){
-  const clients = getClients();
-  const c = {
-    id: Date.now(),
-    name: document.getElementById('newClientName').value.trim(),
-    company: document.getElementById('newClientCompany').value.trim(),
-    phone: document.getElementById('newClientPhone').value.trim(),
-    email: document.getElementById('newClientEmail').value.trim(),
-    address: document.getElementById('newClientAddress').value.trim(),
-  };
-  if(!c.name) return toast('Enter client name');
-  clients.push(c);
-  localStorage.setItem('jk_clients', JSON.stringify(clients));
-  document.getElementById('newClientName').value='';
-  document.getElementById('newClientCompany').value='';
-  document.getElementById('newClientPhone').value='';
-  document.getElementById('newClientEmail').value='';
-  document.getElementById('newClientAddress').value='';
-  renderClientList();
-  toast('Client saved!');
-}
-
-function getClients(){
-  return JSON.parse(localStorage.getItem('jk_clients')||'[]');
-}
-
-function renderClientList(){
-  const q = (document.getElementById('clientSearch')||{}).value||'';
-  const clients = getClients().filter(c=>!q||(c.name+c.company).toLowerCase().includes(q.toLowerCase()));
-  const list = document.getElementById('clientList');
-  if(!list) return;
-  list.innerHTML = clients.map(c=>`
-    <div class="client-row">
-      <div onclick="loadClient(${c.id})">
-        <div class="client-name">${esc(c.name)}</div>
-        <div class="client-company">${esc(c.company)} · ${esc(c.phone)}</div>
-      </div>
-      <div style="display:flex;gap:4px;">
-        <button class="btn btn-gold btn-sm" onclick="loadClient(${c.id})">Use</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteClient(${c.id})">✕</button>
-      </div>
-    </div>
-  `).join('') || '<div style="color:var(--muted);font-size:12px;padding:10px;">No clients saved.</div>';
-}
-
-function loadClient(id){
-  const c = getClients().find(x=>x.id===id);
-  if(!c) return;
-  document.getElementById('toName').value = c.name||'';
-  document.getElementById('toCompany').value = c.company||'';
-  document.getElementById('toPhone').value = c.phone||'';
-  document.getElementById('toEmail').value = c.email||'';
-  document.getElementById('toAddress').value = c.address||'';
-  renderPreview();
-  toast('Client loaded!');
-}
-
-function deleteClient(id){
-  const clients = getClients().filter(c=>c.id!==id);
-  localStorage.setItem('jk_clients',JSON.stringify(clients));
-  renderClientList();
-  toast('Client deleted');
-}
-
-function openClientModal(){
-  document.getElementById('clientModal').classList.add('show');
-  renderModalClientList('');
-}
-
-function closeClientModal(){
-  document.getElementById('clientModal').classList.remove('show');
-}
-
-function renderModalClientList(q){
-  const clients = getClients().filter(c=>!q||(c.name+c.company).toLowerCase().includes(q.toLowerCase()));
-  document.getElementById('modalClientList').innerHTML = clients.map(c=>`
-    <div class="client-row" onclick="loadClient(${c.id});closeClientModal();">
-      <div>
-        <div class="client-name">${esc(c.name)}</div>
-        <div class="client-company">${esc(c.company)}</div>
-      </div>
-    </div>
-  `).join('') || '<div style="color:var(--muted);font-size:12px;">No clients</div>';
-}
-
-// ============================================================
-// CALCULATIONS
-// ============================================================
-function getGSTRate(){return parseFloat(document.getElementById('gstRate').value)||18;}
-function getDiscountPct(){return parseFloat(document.getElementById('discountPct').value)||0;}
-function getTDSPct(){return parseFloat(document.getElementById('tdsPct').value)||0;}
-function getCurrency(){return document.getElementById('currency').value||'₹';}
-
-function calcRowTotal(row){
-  const tax = row.tax >= 0 ? row.tax : getGSTRate();
-  const base = (row.price * row.qty);
-  const disc = base * (row.discount/100);
-  const taxable = base - disc;
-  const taxAmt = taxable * (tax/100);
-  return taxable + taxAmt;
-}
-
-function calcSubtotal(){
-  let sub = 0;
-  state.sections.forEach(s=>s.rows.forEach(r=>{ sub += r.price * r.qty; }));
-  return sub;
-}
-
-function calcGrandTotal(){
-  const sub = calcSubtotal();
-  const discAmt = sub * (getDiscountPct()/100);
-  const taxable = sub - discAmt;
-  let tax = 0;
-  state.sections.forEach(s=>s.rows.forEach(r=>{
-    const t = r.tax>=0?r.tax:getGSTRate();
-    const base = r.price * r.qty;
-    const d = base * (r.discount/100);
-    tax += (base - d) * (t/100);
+function calcFinancials() {
+  let sub = 0, tax = 0;
+  state.sections.forEach(s => s.rows.forEach(r => {
+    const base = r.price * r.qty; sub += base;
+    const t = r.tax >= 0 ? r.tax : getGst();
+    tax += base * (t/100);
   }));
-  const grand = taxable + tax;
-  return grand;
+  const discAmt = sub * (getDisc()/100);
+  tax -= discAmt * (getGst()/100); // adjust tax on disc
+  return { sub, discAmt, tax: Math.max(0, tax), grand: sub - discAmt + Math.max(0, tax) };
 }
 
-function calcFinancials(){
-  const sub = calcSubtotal();
-  const discAmt = sub * (getDiscountPct()/100);
-  const taxable = sub - discAmt;
-  let tax = 0;
-  state.sections.forEach(s=>s.rows.forEach(r=>{
-    const t = r.tax>=0?r.tax:getGSTRate();
-    const base = r.price * r.qty;
-    const d = base * (r.discount/100);
-    tax += (base - d) * (t/100);
-  }));
-  const grand = taxable + tax;
-  const tds = grand * (getTDSPct()/100);
-  const net = grand - tds;
-  const rounded = Math.round(net);
-  return {sub, discAmt, taxable, tax, grand, tds, net, rounded};
-}
-
-function updateFinanceSummary(){
+function updateFinanceSummary() {
   const f = calcFinancials();
-  const cur = getCurrency();
-  document.getElementById('financeSummary').innerHTML = `
-    <div style="display:grid;gap:4px;">
-      ${row2('Subtotal', formatCurrency(f.sub))}
-      ${getDiscountPct()>0?row2('Discount ('+getDiscountPct()+'%)', '- '+formatCurrency(f.discAmt)):''}
-      ${row2('GST / Tax', formatCurrency(f.tax))}
-      ${row2('Grand Total', formatCurrency(f.grand), true)}
-      ${getTDSPct()>0?row2('TDS ('+getTDSPct()+'%)', '- '+formatCurrency(f.tds)):''}
-      ${getTDSPct()>0?row2('Net Payable', formatCurrency(f.net), true):''}
-      <div style="background:#1a1a1a;padding:8px;margin-top:6px;font-size:11px;color:var(--muted);border-left:3px solid var(--gold);font-style:italic;">${toWords(Math.round(f.net||f.grand))}</div>
-    </div>
-  `;
-  updateMilestoneAmounts();
+  q('financeSummary').innerHTML = `
+    <div>Subtotal: ${formatCur(f.sub)}</div>
+    <div>Discount: -${formatCur(f.discAmt)}</div>
+    <div>Tax: ${formatCur(f.tax)}</div>
+    <div style="color:var(--gold);font-weight:bold;margin-top:5px;">Total: ${formatCur(f.grand)}</div>`;
 }
 
-function row2(label, val, bold=false){
-  return `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #1a1a1a;${bold?'color:var(--gold);font-weight:700;':'color:var(--muted);'}font-size:12px;"><span>${label}</span><span>${val}</span></div>`;
+// ================= IMAGES, LOGO & STAMP =================
+function readImg(file, cb) {
+  if(!file) return; const r=new FileReader(); r.onload=e=>cb(e.target.result); r.readAsDataURL(file);
+}
+function uploadLogo() { readImg(q('logoFile').files[0], res=>{ state.logo=res; renderPreview(); }); }
+function clearLogo() { state.logo=null; q('logoFile').value=''; renderPreview(); }
+function uploadStamp() { readImg(q('stampFile').files[0], res=>{ state.stamp=res; renderPreview(); }); }
+function clearStamp() { state.stamp=null; q('stampFile').value=''; renderPreview(); }
+
+// ================= SIGNATURE CANVAS & TYPE =================
+function setDestination(d) { sigDestination=d; q('destClient').classList.toggle('active',d==='client'); q('destFreelancer').classList.toggle('active',d==='freelancer'); }
+function setSigMode(m) {
+  sigMode=m; ['Draw','Type','Upload'].forEach(x=>{ q('sigMode'+x).classList.toggle('active', m.toLowerCase()===x.toLowerCase()); q('sig'+x+'Panel').style.display = m.toLowerCase()===x.toLowerCase()?'block':'none'; });
+}
+function initCanvas() {
+  const cvs = q('sigCanvas'), ctx = cvs.getContext('2d');
+  cvs.width = cvs.offsetWidth || 400; ctx.strokeStyle = '#D4AF37'; ctx.lineWidth = 2.5; ctx.lineCap='round';
+  const getP = e => { const r=cvs.getBoundingClientRect(); return e.touches ? {x:e.touches[0].clientX-r.left, y:e.touches[0].clientY-r.top} : {x:e.clientX-r.left, y:e.clientY-r.top}; };
+  const draw = e => { if(!isDrawing)return; const p=getP(e); ctx.lineTo(p.x,p.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(p.x,p.y); };
+  cvs.onmousedown=cvs.ontouchstart = e=>{isDrawing=true; ctx.beginPath(); canvasHistory.push(ctx.getImageData(0,0,cvs.width,cvs.height)); const p=getP(e); ctx.moveTo(p.x,p.y);};
+  cvs.onmousemove=cvs.ontouchmove = draw; cvs.onmouseup=cvs.onmouseleave=cvs.ontouchend = ()=>isDrawing=false;
+}
+function clearCanvas() { const c=q('sigCanvas'); c.getContext('2d').clearRect(0,0,c.width,c.height); canvasHistory=[]; }
+function undoCanvas() { if(canvasHistory.length) q('sigCanvas').getContext('2d').putImageData(canvasHistory.pop(),0,0); }
+function applyCanvasSig() {
+  const data = q('sigCanvas').toDataURL('image/png');
+  sigDestination==='client' ? state.clientSig=data : state.freelancerSig=data;
+  renderPreview(); toast('Signature Applied');
+}
+function updateTypeSigPreview() { q('typeSigPreview').style.fontFamily = qVal('sigFont'); q('typeSigPreview').textContent = qVal('sigTypeInput')||'Your Signature'; }
+function applyTypeSig() {
+  const cvs=document.createElement('canvas'); cvs.width=400; cvs.height=150; const ctx=cvs.getContext('2d');
+  ctx.font = `40px ${qVal('sigFont')}`; ctx.fillStyle='#D4AF37'; ctx.textAlign='center'; ctx.fillText(qVal('sigTypeInput'), 200, 90);
+  sigDestination==='client' ? state.clientSig=cvs.toDataURL() : state.freelancerSig=cvs.toDataURL();
+  renderPreview(); toast('Signature Applied');
+}
+function applySigUpload() { readImg(q('sigUploadFile').files[0], res=>{ sigDestination==='client' ? state.clientSig=res : state.freelancerSig=res; renderPreview(); toast('Uploaded'); }); }
+
+// ================= QR & CLIENTS =================
+function generateQR() {
+  q('qr-code').innerHTML=''; const upi = qVal('upiId');
+  if(!upi) { state.qrDataUrl = null; return; }
+  new QRCode(q('qr-code'), { text: `upi://pay?pa=${upi}&pn=Payment`, width:80, height:80 });
+  setTimeout(()=> { state.qrDataUrl = q('qr-code').querySelector('img')?.src || q('qr-code').querySelector('canvas')?.toDataURL(); renderPreview(); }, 100);
 }
 
-function formatCurrency(n){
-  const cur = getCurrency();
-  if(!n && n!==0) return cur+'0';
-  return cur + n.toLocaleString('en-IN',{maximumFractionDigits:2});
+function saveClient() {
+  let clients = JSON.parse(localStorage.getItem('jk_clients')||'[]');
+  clients.push({ id:Date.now(), name:qVal('newClientName'), company:qVal('newClientCompany'), phone:qVal('newClientPhone'), email:qVal('newClientEmail'), address:qVal('newClientAddress') });
+  localStorage.setItem('jk_clients', JSON.stringify(clients)); renderClientList(); toast('Client Saved');
+}
+function renderClientList() {
+  const clients = JSON.parse(localStorage.getItem('jk_clients')||'[]');
+  q('clientList').innerHTML = clients.map(c=>`<div class="client-row"><div onclick="loadClient(${c.id})">${esc(c.name)} - ${esc(c.company)}</div><button class="btn btn-danger btn-sm" onclick="deleteClient(${c.id})">✕</button></div>`).join('');
+}
+function loadClient(id) {
+  const c = JSON.parse(localStorage.getItem('jk_clients')||'[]').find(x=>x.id===id);
+  if(c) { q('toName').value=c.name||''; q('toCompany').value=c.company||''; q('toPhone').value=c.phone||''; q('toEmail').value=c.email||''; q('toAddress').value=c.address||''; closeClientModal(); renderPreview(); }
+}
+function deleteClient(id) { localStorage.setItem('jk_clients', JSON.stringify(JSON.parse(localStorage.getItem('jk_clients')).filter(c=>c.id!==id))); renderClientList(); }
+function openClientModal() { q('clientModal').classList.add('show'); renderModalClientList(''); }
+function closeClientModal() { q('clientModal').classList.remove('show'); }
+function renderModalClientList(srch) {
+  q('modalClientList').innerHTML = JSON.parse(localStorage.getItem('jk_clients')||'[]').filter(c=>!srch||(c.name+c.company).toLowerCase().includes(srch.toLowerCase())).map(c=>`<div class="client-row" onclick="loadClient(${c.id})">${esc(c.name)}</div>`).join('');
 }
 
-// Indian number in words
-function toWords(n){
-  if(n===0) return 'Zero Rupees Only';
-  const ones=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
-  const tens=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
-  function convert(num){
-    if(num===0) return '';
-    if(num<20) return ones[num]+' ';
-    if(num<100) return tens[Math.floor(num/10)]+' '+(num%10?ones[num%10]+' ':'');
-    return ones[Math.floor(num/100)]+'Hundred '+(num%100?convert(num%100):'');
-  }
-  let result='';
-  const cr=Math.floor(n/10000000); n%=10000000;
-  const lac=Math.floor(n/100000); n%=100000;
-  const thou=Math.floor(n/1000); n%=1000;
-  const rest=n;
-  if(cr) result+=convert(cr)+'Crore ';
-  if(lac) result+=convert(lac)+'Lakh ';
-  if(thou) result+=convert(thou)+'Thousand ';
-  result+=convert(rest);
-  return result.trim()+' Rupees Only';
-}
-
-// ============================================================
-// SIGNATURE SYSTEM
-// ============================================================
-function setDestination(dest){
-  sigDestination = dest;
-  document.getElementById('destClient').classList.toggle('active', dest==='client');
-  document.getElementById('destFreelancer').classList.toggle('active', dest==='freelancer');
-  document.getElementById('destInfo').textContent = dest==='client' ? 'Applying to: Client Authorization area' : 'Applying to: Freelancer Validation area';
-}
-
-function setSigMode(mode){
-  sigMode = mode;
-  ['draw','type','upload'].forEach(m=>{
-    document.getElementById('sigMode'+m.charAt(0).toUpperCase()+m.slice(1)).classList.toggle('active', m===mode);
-    document.getElementById('sigPanel'.replace('Panel','')+m.charAt(0).toUpperCase()+m.slice(1)+'Panel')||null;
+// ================= RENDER A4 PREVIEW =================
+function renderPreview() {
+  const f = calcFinancials(); updateFinanceSummary();
+  
+  let rowsHtml = '';
+  state.sections.forEach((sec,i) => {
+    if(!sec.rows.length) return;
+    rowsHtml += `<div class="pdf-section-title"><div class="pdf-section-num">${i+1}</div><div class="pdf-section-name">${esc(sec.title)}</div></div>
+    <table class="pdf-table"><tr><th>Service & Description</th><th style="text-align:center;">Qty</th><th style="text-align:right;">Price</th><th style="text-align:right;">Total</th></tr>`;
+    sec.rows.forEach(r => {
+      rowsHtml += `<tr><td><strong>${esc(r.service)}</strong><br><span style="color:#666;font-size:10px;">${esc(r.desc)}</span></td>
+      <td style="text-align:center;">${r.qty}</td><td style="text-align:right;">${formatCur(r.price)}</td><td style="text-align:right;">${formatCur(r.price*r.qty)}</td></tr>`;
+    });
+    rowsHtml += `</table>`;
   });
-  document.getElementById('sigDrawPanel').style.display = mode==='draw'?'block':'none';
-  document.getElementById('sigTypePanel').style.display = mode==='type'?'block':'none';
-  document.getElementById('sigUploadPanel').style.display = mode==='upload'?'block':'none';
+
+  const milestonesHtml = state.milestones.map(m=>`<div class="pdf-milestone-row"><div>${esc(m.label)}</div><div>${m.pct}%</div><div style="text-align:right;color:#D4AF37;font-weight:600;">${formatCur(f.grand*m.pct/100)}</div></div>`).join('');
+  const termsHtml = state.terms.map(t=>`<tr><td>${esc(t.title)}</td><td>${esc(t.details)}</td></tr>`).join('');
+
+  q('previewContent').innerHTML = `
+    <div class="pdf-page ${state.theme}" id="pdf-export-element">
+      <div class="pdf-header">
+        <div style="display:flex; justify-content:space-between;">
+          <div>
+            ${state.logo ? `<img src="${state.logo}" class="pdf-logo-img"/>` : `<div class="pdf-title">QUOTATION</div>`}
+            <div class="pdf-subtitle">${esc(qVal('quoteTitle'))}</div>
+          </div>
+          <div style="text-align:right;font-size:12px;">
+            <strong style="color:#D4AF37;">REF:</strong> ${esc(qVal('refNum'))}<br>
+            <strong style="color:#D4AF37;">DATE:</strong> ${qVal('quoteDate')}
+          </div>
+        </div>
+      </div>
+      <div class="pdf-prepared-grid">
+        <div class="pdf-prepared-card">
+          <div class="pdf-prepared-label">Prepared By</div>
+          <div class="pdf-prepared-name">${esc(qVal('fromName'))}</div>
+          <div class="pdf-prepared-sub">${esc(qVal('fromRole'))}<br>${esc(qVal('fromPhone'))} | ${esc(qVal('fromEmail'))}<br>${esc(qVal('fromAddress'))}</div>
+        </div>
+        <div class="pdf-prepared-card">
+          <div class="pdf-prepared-label">Prepared For</div>
+          <div class="pdf-prepared-name">${esc(qVal('toName'))}</div>
+          <div class="pdf-prepared-sub">${esc(qVal('toCompany'))}<br>${esc(qVal('toPhone'))} | ${esc(qVal('toEmail'))}<br>${esc(qVal('toAddress'))}</div>
+        </div>
+      </div>
+      
+      <div class="pdf-services-area">
+        ${rowsHtml}
+      </div>
+
+      <div class="pdf-totals">
+        <div class="pdf-total-row"><span>Subtotal</span><span>${formatCur(f.sub)}</span></div>
+        ${f.discAmt>0 ? `<div class="pdf-total-row"><span>Discount</span><span>-${formatCur(f.discAmt)}</span></div>` : ''}
+        <div class="pdf-total-row"><span>Tax (${getGst()}%)</span><span>${formatCur(f.tax)}</span></div>
+        <div class="pdf-total-row grand"><span>GRAND TOTAL</span><span>${formatCur(f.grand)}</span></div>
+      </div>
+
+      ${state.milestones.length ? `<div class="pdf-milestones">
+        <div class="pdf-milestone-header"><div>Milestone</div><div>Percentage</div><div style="text-align:right;">Amount</div></div>
+        ${milestonesHtml}
+      </div>` : ''}
+
+      <div class="pdf-payment">
+        <div class="pdf-payment-details">
+          <div class="pdf-prepared-label">Bank Details</div>
+          <div>Bank: <b>${esc(qVal('bankName'))}</b></div>
+          <div>A/C: <b>${esc(qVal('accountNo'))}</b></div>
+          <div>IFSC: <b>${esc(qVal('ifsc'))}</b></div>
+          <div>UPI ID: <b>${esc(qVal('upiId'))}</b></div>
+        </div>
+        ${state.qrDataUrl ? `<div><img src="${state.qrDataUrl}" style="width:80px;height:80px;border:1px solid #eee;padding:4px;" /></div>` : ''}
+      </div>
+
+      ${state.terms.length ? `<table class="pdf-terms-table">${termsHtml}</table>` : ''}
+
+      <div class="pdf-sig-section" style="position:relative;">
+        <div class="pdf-sig-box">
+          <div class="pdf-sig-label">Client Authorization</div>
+          <div class="pdf-sig-line">${state.clientSig ? `<img src="${state.clientSig}" class="pdf-sig-img"/>` : ''}</div>
+          <div class="pdf-sig-name">${esc(qVal('toName'))||'Client'}</div>
+        </div>
+        <div class="pdf-sig-box">
+          <div class="pdf-sig-label">Prepared By</div>
+          <div class="pdf-sig-line">${state.freelancerSig ? `<img src="${state.freelancerSig}" class="pdf-sig-img"/>` : ''}</div>
+          <div class="pdf-sig-name">${esc(qVal('fromName'))}</div>
+        </div>
+        ${state.stamp ? `<img src="${state.stamp}" class="pdf-stamp-img" />` : ''}
+      </div>
+      
+      <div class="pdf-footer-bar">
+        <div class="pdf-footer-text">${esc(qVal('quoteTagline'))}</div>
+      </div>
+    </div>`;
 }
 
-// CANVAS
-function initCanvas(){
-  const canvas = document.getElementById('sigCanvas');
-  const ctx = canvas.getContext('2d');
-  ctx.strokeStyle = '#D4AF37';
-  ctx.lineWidth = 2.5;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-
-  function getPos(e){
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    if(e.touches) return {x:(e.touches[0].clientX-rect.left)*scaleX, y:(e.touches[0].clientY-rect.top)*scaleY};
-    return {x:(e.clientX-rect.left)*scaleX, y:(e.clientY-rect.top)*scaleY};
-  }
-
-  function start(e){ e.preventDefault(); isDrawing=true; const p=getPos(e); lastX=p.x; lastY=p.y; canvasHistory.push(ctx.getImageData(0,0,canvas.width,canvas.height)); }
-  function draw(e){ if(!isDrawing) return; e.preventDefault(); const p=getPos(e); ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(p.x,p.y); ctx.stroke(); lastX=p.x; lastY=p.y; }
-  function stop(){ isDrawing=false; }
-
-  canvas.addEventListener('mousedown',start);
-  canvas.addEventListener('mousemove',draw);
-  canvas.addEventListener('mouseup',stop);
-  canvas.addEventListener('mouseleave',stop);
-  canvas.addEventListener('touchstart',start,{passive:false});
-  canvas.addEventListener('touchmove',draw,{passive:false});
-  canvas.addEventListener('touchend',stop);
+// ================= EXPORTS & SAVES =================
+function exportPDF() {
+  const el = q('pdf-export-element');
+  html2pdf().set({ margin:0, filename: qVal('refNum')+'.pdf', image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2}, jsPDF:{unit:'pt',format:'a4',orientation:'portrait'} }).from(el).save();
+}
+function getFullData() {
+  return { 
+    state, refNum: qVal('refNum'), date: qVal('quoteDate'), title: qVal('quoteTitle'), tag: qVal('quoteTagline'),
+    from: {n:qVal('fromName'), r:qVal('fromRole'), p:qVal('fromPhone'), e:qVal('fromEmail'), a:qVal('fromAddress')},
+    to: {n:qVal('toName'), c:qVal('toCompany'), p:qVal('toPhone'), e:qVal('toEmail'), a:qVal('toAddress')},
+    fin: {g:qVal('gstRate'), d:qVal('discountPct'), c:qVal('currency')},
+    bank: {u:qVal('upiId'), b:qVal('bankName'), ac:qVal('accountNo'), i:qVal('ifsc')}
+  };
+}
+function saveQuotation() {
+  let quotes = JSON.parse(localStorage.getItem('jk_quotes')||'[]');
+  quotes = quotes.filter(q=>q.refNum!==qVal('refNum'));
+  quotes.push(getFullData()); localStorage.setItem('jk_quotes', JSON.stringify(quotes)); toast('Saved locally!'); refreshAnalytics();
+}
+function loadQuotation() { /* In a full app, render a list and select */ toast('Feature minimal for demo. Use JSON import.'); }
+function exportJSON() {
+  const b = new Blob([JSON.stringify(getFullData())], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = qVal('refNum')+'.json'; a.click();
+}
+function importJSON() {
+  const f = q('importJSONFile').files[0]; if(!f) return;
+  const r = new FileReader(); r.onload=e=>{
+    const d = JSON.parse(e.target.result); state = d.state;
+    q('refNum').value=d.refNum; q('quoteDate').value=d.date; q('quoteTitle').value=d.title; q('quoteTagline').value=d.tag;
+    ['fromName','fromRole','fromPhone','fromEmail','fromAddress'].forEach((x,i)=>q(x).value=Object.values(d.from)[i]||'');
+    ['toName','toCompany','toPhone','toEmail','toAddress'].forEach((x,i)=>q(x).value=Object.values(d.to)[i]||'');
+    ['gstRate','discountPct','currency'].forEach((x,i)=>q(x).value=Object.values(d.fin)[i]||'');
+    ['upiId','bankName','accountNo','ifsc'].forEach((x,i)=>q(x).value=Object.values(d.bank)[i]||'');
+    renderSections(); renderMilestones(); renderTermsList(); generateQR(); renderPreview(); toast('Imported!');
+  }; r.readAsText(f);
 }
 
-function clearCanvas(){
-  const canvas = document.getElementById('sigCanvas');
-  canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
-  canvasHistory = [];
+function saveProfile() {
+  localStorage.setItem('jk_profile', JSON.stringify({n:qVal('fromName'), r:qVal('fromRole'), p:qVal('fromPhone'), e:qVal('fromEmail'), a:qVal('fromAddress')})); toast('Profile Saved');
 }
-
-function undoCanvas(){
-  if(!canvasHistory.length) return;
-  const canvas = document.getElementById('sigCanvas');
-  canvas.getContext('2d').putImageData(canvasHistory.pop(),0,0);
+function loadProfile() {
+  const p = JSON.parse(localStorage.getItem('jk_profile')||'null');
+  if(p) { q('fromName').value=p.n; q('fromRole').value=p.r; q('fromPhone').value=p.p; q('fromEmail').value=p.e; q('fromAddress').value=p.a; renderPreview(); }
 }
-
-function applyCanvasSig(){
-  const canvas = document.getElementById('sigCanvas');
-  const data = canvas.toDataURL('image/png');
-  if(sigDestination==='client') state.clientSig = data;
-  else state.freelancerSig = data;
-  renderPreview();
+function setTheme(t) { state.theme=t; localStorage.setItem('jk_theme',t); renderPreview(); }
+function refreshAnalytics() {
+  const qs = JSON.parse(localStorage.getItem('jk_quotes')||'[]');
+  q('a-total').textContent = qs.length;
+  // Mock revenue calculation from local history
+  let rev = 0, acc = 0;
+  qs.forEach(q => { if(q.state.status==='accepted' || q.state.status==='paid') { rev += 5000; acc++; } }); // dummy val
+  q('a-revenue').textContent = '₹' + rev.toLocaleString();
+  q('a-accepted').textContent = acc;
+}
+</script>
+</body>
+</html>
