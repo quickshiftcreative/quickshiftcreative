@@ -3,811 +3,197 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JK-MGMT Enterprise Quotation Builder</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700;800&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<title>JK-MGMT Pro Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@700&family=Dancing+Script&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg-color: #0B0B0B;
-  --panel-bg: #141414;
-  --gold: #D4AF37;
-  --gold-hover: #C9A227;
-  --border: rgba(212,175,55,0.35);
-  --border-light: rgba(255,255,255,0.1);
-  --text-main: #FFFFFF;
-  --text-muted: #B8B8B8;
-  --input-bg: #1A1A1A;
-  --danger: #EF4444;
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-body { background-color: var(--bg-color); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-color); }
-::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
-
-/* Topbar */
-.topbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; background: var(--panel-bg); border-bottom: 1px solid var(--border); z-index: 100; }
-.logo { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--gold); letter-spacing: 1px; }
-.logo span { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 400; color: var(--text-muted); display: block; letter-spacing: 2px; text-transform: uppercase; }
-.actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-.btn { padding: 8px 16px; border: none; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
-.btn-gold { background: var(--gold); color: #000; }
-.btn-gold:hover { background: var(--gold-hover); }
-.btn-outline { background: transparent; border: 1px solid var(--gold); color: var(--gold); }
-.btn-outline:hover { background: rgba(212,175,55,0.1); }
-.btn-danger { background: rgba(239,68,68,0.1); border: 1px solid var(--danger); color: var(--danger); }
-.btn-icon { padding: 4px 8px; font-size: 14px; }
-
-/* Main Layout & Toggle Logic */
-.layout { display: flex; flex: 1; height: calc(100vh - 60px); overflow: hidden; transition: all 0.3s ease; }
-.panel-left { width: 100%; background: var(--bg-color); border-right: 1px solid var(--border); display: flex; flex-direction: column; transition: width 0.3s ease; }
-.panel-right { width: 0%; background: #2A2A2A; overflow-y: auto; padding: 0; display: none; justify-content: center; position: relative; transition: width 0.3s ease; }
-
-.layout.preview-active .panel-left { width: 45%; }
-.layout.preview-active .panel-right { width: 55%; display: flex; padding: 40px; }
-
-@media(max-width: 900px) {
-  .layout.preview-active .panel-left { width: 100%; }
-  .layout.preview-active .panel-right { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200; padding: 20px; padding-top: 60px; }
-  .close-preview-mobile { display: block !important; position: fixed; top: 10px; right: 20px; z-index: 201; background: var(--danger); color: #fff; padding: 8px 16px; border-radius: 4px; border: none; font-weight: bold; }
-}
-.close-preview-mobile { display: none; }
-
-/* Tabs & UI */
-.tabs { display: flex; background: var(--panel-bg); padding: 8px 12px 0; border-bottom: 1px solid var(--border); overflow-x: auto; flex-shrink: 0; }
-.tab { padding: 10px 16px; font-size: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
-.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
-.tab-content { display: none; padding: 20px; overflow-y: auto; flex: 1; }
-.tab-content.active { display: block; }
-
-.card { background: var(--panel-bg); border: 1px solid var(--border-light); border-radius: 6px; padding: 16px; margin-bottom: 16px; }
-.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border-light); }
-.card-title { font-size: 12px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; }
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.form-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
-.form-group.full { grid-column: span 2; }
-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-input, select, textarea { background: var(--input-bg); border: 1px solid var(--border-light); color: var(--text-main); padding: 8px 12px; border-radius: 4px; font-size: 13px; outline: none; transition: border 0.2s; }
-input:focus, select:focus, textarea:focus { border-color: var(--gold); }
-textarea { resize: vertical; min-height: 80px; }
-
-/* Dynamic Builders */
-.section-block { background: var(--input-bg); border: 1px solid var(--border-light); border-radius: 6px; margin-bottom: 16px; overflow: hidden; }
-.section-header { background: rgba(255,255,255,0.05); padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-.section-title-input { background: transparent; border: none; color: var(--gold); font-weight: 600; font-size: 14px; flex: 1; outline: none; }
-.section-body { padding: 16px; }
-.row-item { display: grid; grid-template-columns: 2fr 3fr 1fr 1fr auto; gap: 8px; margin-bottom: 8px; align-items: start; }
-@media(max-width: 700px) { .row-item { grid-template-columns: 1fr; } }
-.row-item input { width: 100%; }
-
-/* Canvas (Strict White Bg, Black Ink) */
-.signature-wrapper { display: flex; flex-direction: column; gap: 10px; }
-.sig-canvas-container { background: #FFFFFF; border: 2px solid var(--border-light); border-radius: 4px; overflow: hidden; position: relative; width: 100%; height: 180px; }
-canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
-
-/* =========================================================
-   PDF Document Rendering - EXACT PDF REFERENCE MATCH
-   ========================================================= */
-.pdf-preview { width: 210mm; min-height: 297mm; background: #FFFFFF; box-shadow: 0 10px 30px rgba(0,0,0,0.5); padding: 25mm 20mm; font-family: 'Inter', sans-serif; color: #000000; position: relative; }
-.avoid-break { page-break-inside: avoid; break-inside: avoid; }
-
-.doc-title { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 800; color: #000; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
-.doc-subtitle { font-size: 16px; color: #333; font-weight: 600; margin-bottom: 15px; }
-.doc-meta { display: flex; font-size: 11px; color: #555; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 30px; gap: 20px; }
-
-.doc-parties { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 35px; }
-.party-label { font-size: 10px; color: #D4AF37; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 10px; }
-.party-name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #000; margin-bottom: 5px; }
-.party-desc { font-size: 12px; color: #444; line-height: 1.6; }
-
-.doc-tagline { text-align: center; font-size: 11px; font-weight: 600; color: #555; padding: 12px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; margin-bottom: 40px; letter-spacing: 0.5px; }
-
-.doc-section-header { display: flex; align-items: center; gap: 12px; margin-top: 40px; margin-bottom: 12px; }
-.doc-section-num { font-size: 24px; font-weight: 800; color: #D4AF37; line-height: 1; }
-.doc-section-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #000; flex: 1; }
-
-.doc-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-.doc-table th { background: #f9f9f9; padding: 12px; text-align: left; font-size: 10px; text-transform: uppercase; color: #555; font-weight: 700; border-bottom: 2px solid #ddd; letter-spacing: 0.5px; }
-.doc-table td { padding: 12px; border-bottom: 1px solid #eee; vertical-align: top; color: #444; font-size: 12px; line-height: 1.5; }
-.doc-table td strong { color: #000; font-size: 13px; display: block; margin-bottom: 4px; }
-
-.doc-totals { width: 350px; margin-left: auto; margin-top: 20px; }
-.tot-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px; color: #444; border-bottom: 1px solid #eee; }
-.tot-row.grand { font-size: 16px; font-weight: 800; color: #000; border-top: 2px solid #000; border-bottom: none; padding-top: 12px; margin-top: 4px; }
-
-.doc-signatures { border: 1px solid #D4AF37; margin-top: 60px; page-break-inside: avoid; }
-.sig-grid { display: grid; grid-template-columns: 1fr 1fr; }
-.sig-col { padding: 25px; border-right: 1px solid #eee; display: flex; flex-direction: column; }
-.sig-col:last-child { border-right: none; }
-.sig-gold-label { font-size: 10px; color: #D4AF37; text-transform: uppercase; font-weight: 700; margin-bottom: 15px; letter-spacing: 1px; }
-.sig-name { font-size: 16px; font-weight: 700; color: #000; margin-bottom: 4px; }
-.sig-company { font-size: 11px; color: #555; margin-bottom: 40px; }
-.sig-line-row { display: flex; align-items: flex-end; margin-bottom: 15px; }
-.sig-line-row span { font-size: 12px; color: #555; margin-right: 10px; width: 60px; }
-.sig-line-row .line { flex: 1; border-bottom: 1px solid #000; height: 35px; position: relative; }
-.sig-img { position: absolute; bottom: 2px; left: 10px; max-height: 50px; max-width: 90%; object-fit: contain; }
-.sig-footer-bar { background: #111; color: #D4AF37; text-align: center; padding: 12px; font-size: 10px; letter-spacing: 1px; font-weight: 500; border-top: 1px solid #D4AF37; }
-
-/* Toast */
-.toast-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
-.toast { background: var(--gold); color: #000; padding: 12px 24px; border-radius: 4px; font-size: 12px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.5); opacity: 0; transform: translateY(20px); transition: all 0.3s; pointer-events: none; }
-.toast.show { opacity: 1; transform: translateY(0); }
+    /* Premium Dark UI CSS */
+    :root { --bg: #0B0B0B; --card: #141414; --gold: #D4AF37; --border: #333; --text: #fff; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 20px; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .btn { padding: 10px 15px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 12px; }
+    .btn-gold { background: var(--gold); color: #000; }
+    .btn-outline { background: transparent; border: 1px solid var(--gold); color: var(--gold); }
+    .card { background: var(--card); border: 1px solid var(--border); padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+    .card h3 { color: var(--gold); margin-top: 0; font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+    input, textarea, select { width: 100%; background: #1a1a1a; border: 1px solid var(--border); color: #fff; padding: 10px; margin-bottom: 10px; border-radius: 4px; box-sizing: border-box; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    
+    /* Signature UI */
+    .sig-tabs { display: flex; gap: 5px; margin-bottom: 10px; }
+    .sig-tab { flex: 1; padding: 5px; text-align: center; background: #222; font-size: 11px; cursor: pointer; }
+    .sig-tab.active { background: var(--gold); color: #000; font-weight: bold; }
+    canvas { background: #fff; width: 100%; height: 150px; border-radius: 4px; cursor: crosshair; }
+    .img-preview { max-height: 80px; margin-top: 10px; border: 1px solid var(--border); display: none; }
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="logo">JK-MGMT<span>Enterprise Quotation Builder</span></div>
-  <div class="actions">
-    <button class="btn btn-outline" id="togglePreviewBtn" onclick="app.togglePreview()">👁 Toggle Preview</button>
-    <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📂 Import JSON</button>
-    <input type="file" id="importFile" style="display:none" accept=".json" onchange="app.importData(event)">
-    <button class="btn btn-gold" onclick="app.generatePDF()">⬇ Export PDF</button>
-  </div>
+<div class="header">
+    <h2 style="color:var(--gold); margin:0;">JK-MGMT Builder</h2>
+    <div>
+        <button class="btn btn-outline" onclick="saveToLocal()">💾 Save Draft</button>
+        <button class="btn btn-gold" onclick="generatePDF('http://localhost:3000/generate-pdf')" id="genBtn">🚀 Generate PDF</button>
+    </div>
 </div>
 
-<button class="close-preview-mobile" onclick="app.togglePreview()">✕ Close Preview</button>
-
-<div class="layout" id="main-layout">
-  <!-- LEFT PANEL -->
-  <div class="panel-left">
-    <div class="tabs">
-      <div class="tab active" onclick="app.switchTab('general')">General</div>
-      <div class="tab" onclick="app.switchTab('services')">Services & Pricing</div>
-      <div class="tab" onclick="app.switchTab('terms')">Terms</div>
-      <div class="tab" onclick="app.switchTab('signatures')">Signatures</div>
-      <div class="tab" onclick="app.switchTab('settings')">Finance</div>
+<div class="grid-2">
+    <div class="card">
+        <h3>General & Assets</h3>
+        <input type="text" id="g-title" placeholder="Title" value="E-Commerce Growth Services">
+        <input type="text" id="g-ref" placeholder="Ref No" value="JK-MGMT-2026-005">
+        <input type="text" id="g-date" placeholder="Date" value="20/05/2026">
+        <input type="text" id="g-tagline" placeholder="Tagline" value="Built for growth">
+        <label style="font-size:11px; color:#888;">Upload Logo:</label>
+        <input type="file" id="logoUpload" accept="image/*" onchange="encodeImage(this, 'logoPrev')">
+        <img id="logoPrev" class="img-preview">
+        <label style="font-size:11px; color:#888;">Upload Stamp:</label>
+        <input type="file" id="stampUpload" accept="image/*" onchange="encodeImage(this, 'stampPrev')">
+        <img id="stampPrev" class="img-preview">
     </div>
 
-    <!-- GENERAL TAB -->
-    <div class="tab-content active" id="tab-general">
-      <div class="card">
-        <div class="card-title">Document Setup</div>
-        <div class="form-grid">
-          <div class="form-group full">
-            <label>Title</label>
-            <input type="text" id="g-title" value="E-Commerce & Quick Commerce Growth Services" oninput="app.updateState('general','title',this.value)">
-          </div>
-          <div class="form-group">
-            <label>Reference No</label>
-            <input type="text" id="g-ref" value="JK-MGMT-2026-004-WRITEASE" oninput="app.updateState('general','ref',this.value)">
-          </div>
-          <div class="form-group">
-            <label>Date</label>
-            <input type="text" id="g-date" value="20/05/2026" oninput="app.updateState('general','date',this.value)">
-          </div>
-          <div class="form-group full">
-            <label>Tagline</label>
-            <input type="text" id="g-tagline" value="Prepared with precision | Built for growth | Designed for success" oninput="app.updateState('general','tagline',this.value)">
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Prepared By (Freelancer)</div>
-        <div class="form-grid">
-          <div class="form-group full">
-            <label>Name</label>
-            <input type="text" id="f-name" value="Jenish Kamli" oninput="app.updateState('freelancer','name',this.value)">
-          </div>
-          <div class="form-group full">
-            <label>Role</label>
-            <input type="text" id="f-role" value="Freelance E-Commerce Growth Manager" oninput="app.updateState('freelancer','role',this.value)">
-          </div>
-          <div class="form-group full">
-            <label>Additional Info</label>
-            <textarea id="f-info" oninput="app.updateState('freelancer','info',this.value)">Marketplace Specialist, Independent Consultant</textarea>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Prepared For (Client)</div>
-        <div class="form-grid">
-          <div class="form-group full">
-            <label>Client Name</label>
-            <input type="text" id="c-name" value="Abhiral Jain" oninput="app.updateState('client','name',this.value)">
-          </div>
-          <div class="form-group full">
-            <label>Company</label>
-            <input type="text" id="c-company" value="Writease.in" oninput="app.updateState('client','company',this.value)">
-          </div>
-          <div class="form-group full">
-            <label>Additional Info</label>
-            <textarea id="c-info" oninput="app.updateState('client','info',this.value)">+91 88306 93895&#10;India</textarea>
-          </div>
-        </div>
-      </div>
+    <div class="card">
+        <h3>Parties</h3>
+        <input type="text" id="f-name" placeholder="Your Name" value="Jenish Kamli">
+        <input type="text" id="f-role" placeholder="Your Role" value="Marketplace Specialist">
+        <input type="text" id="c-name" placeholder="Client Name">
+        <input type="text" id="c-company" placeholder="Client Company">
     </div>
-
-    <!-- SERVICES TAB -->
-    <div class="tab-content" id="tab-services">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Dynamic Sections</div>
-          <button class="btn btn-outline btn-icon" onclick="app.addSection()">+ Add Section</button>
-        </div>
-        <div id="sections-container"></div>
-      </div>
-    </div>
-
-    <!-- TERMS TAB -->
-    <div class="tab-content" id="tab-terms">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Terms & Conditions</div>
-          <button class="btn btn-outline btn-icon" onclick="app.addTerm()">+ Add Clause</button>
-        </div>
-        <div id="terms-container"></div>
-      </div>
-    </div>
-
-    <!-- SIGNATURES TAB -->
-    <div class="tab-content" id="tab-signatures">
-      <div style="margin-bottom: 15px; font-size: 11px; color: var(--text-muted);">* Signatures are drawn on a white canvas with black ink for exact PDF matching.</div>
-      <div class="card">
-        <div class="card-title">Client Signature</div>
-        <div class="signature-wrapper">
-          <div class="sig-canvas-container">
-            <canvas id="canvas-client"></canvas>
-          </div>
-          <div class="actions">
-            <button class="btn btn-outline" onclick="app.clearCanvas('client')">Clear</button>
-            <button class="btn btn-gold" onclick="app.saveSignature('client')">Apply / Save</button>
-          </div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">Freelancer Signature</div>
-        <div class="signature-wrapper">
-          <div class="sig-canvas-container">
-            <canvas id="canvas-freelancer"></canvas>
-          </div>
-          <div class="actions">
-            <button class="btn btn-outline" onclick="app.clearCanvas('freelancer')">Clear</button>
-            <button class="btn btn-gold" onclick="app.saveSignature('freelancer')">Apply / Save</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- FINANCE TAB -->
-    <div class="tab-content" id="tab-settings">
-      <div class="card">
-        <div class="card-title">Global Finance Settings</div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Currency Symbol</label>
-            <input type="text" id="fin-currency" value="₹" oninput="app.updateState('finance','currency',this.value)">
-          </div>
-          <div class="form-group">
-            <label>Global Discount (%)</label>
-            <input type="number" id="fin-discount" value="0" oninput="app.updateState('finance','discount',this.value)">
-          </div>
-          <div class="form-group">
-            <label>Global Tax / GST (%)</label>
-            <input type="number" id="fin-tax" value="0" oninput="app.updateState('finance','tax',this.value)">
-          </div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">Data Actions</div>
-        <button class="btn btn-outline" style="width: 100%;" onclick="app.exportData()">📤 Backup Data (Export JSON)</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- RIGHT PANEL (PREVIEW) -->
-  <div class="panel-right" id="preview-scroll">
-    <div class="pdf-preview" id="pdf-content">
-      <!-- Dynamic PDF Content Rendered Here -->
-    </div>
-  </div>
 </div>
 
-<div class="toast-container" id="toast-container"></div>
+<div class="card">
+    <h3>Finance & Taxes</h3>
+    <div class="grid-2">
+        <input type="text" id="fin-curr" placeholder="Currency (₹)" value="₹">
+        <input type="number" id="fin-tax" placeholder="Tax %" value="0">
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <h3>Client Signature</h3>
+        <div class="sig-tabs">
+            <div class="sig-tab active" onclick="switchSig('c', 'draw')">Draw</div>
+            <div class="sig-tab" onclick="switchSig('c', 'type')">Type</div>
+            <div class="sig-tab" onclick="switchSig('c', 'upload')">Upload</div>
+        </div>
+        <div id="c-draw-panel"><canvas id="c-canvas"></canvas><button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="clearCanvas('c-canvas')">Clear</button></div>
+        <div id="c-type-panel" style="display:none;"><input type="text" id="c-type-val" placeholder="Type Name" style="font-family:'Dancing Script'; font-size:24px; text-align:center;"></div>
+        <div id="c-upload-panel" style="display:none;"><input type="file" accept="image/*" onchange="encodeImage(this, 'c-upl-prev')"><img id="c-upl-prev" class="img-preview"></div>
+    </div>
+
+    <div class="card">
+        <h3>Freelancer Signature</h3>
+        <div class="sig-tabs">
+            <div class="sig-tab active" onclick="switchSig('f', 'draw')">Draw</div>
+            <div class="sig-tab" onclick="switchSig('f', 'type')">Type</div>
+            <div class="sig-tab" onclick="switchSig('f', 'upload')">Upload</div>
+        </div>
+        <div id="f-draw-panel"><canvas id="f-canvas"></canvas><button class="btn btn-outline" style="width:100%; margin-top:5px;" onclick="clearCanvas('f-canvas')">Clear</button></div>
+        <div id="f-type-panel" style="display:none;"><input type="text" id="f-type-val" placeholder="Type Name" style="font-family:'Dancing Script'; font-size:24px; text-align:center;"></div>
+        <div id="f-upload-panel" style="display:none;"><input type="file" accept="image/*" onchange="encodeImage(this, 'f-upl-prev')"><img id="f-upl-prev" class="img-preview"></div>
+    </div>
+</div>
 
 <script>
-const app = {
-  state: {
-    isPreviewVisible: false,
-    general: { title: "E-Commerce & Quick Commerce Growth Services", ref: "JK-MGMT-2026-004-WRITEASE", date: "20/05/2026", tagline: "Prepared with precision | Built for growth | Designed for success" },
-    freelancer: { name: "Jenish Kamli", role: "Freelance E-Commerce Growth Manager", info: "Marketplace Specialist, Independent Consultant" },
-    client: { name: "Abhiral Jain", company: "Writease.in", info: "+91 88306 93895\nIndia" },
-    finance: { currency: "₹", discount: 0, tax: 0 },
-    sections: [
-      { id: 1, title: "One-Time Setup & Onboarding", rows: [
-        { id: 101, name: "Marketplace Onboarding", desc: "Full account setup on Amazon, Flipkart, Meesho including GST, bank verification & shipping configuration", qty: 1, price: 1500 },
-        { id: 102, name: "Brand Registry", desc: "Trademark linking, brand protection & A+ content unlock", qty: 1, price: 1700 },
-        { id: 103, name: "Quick Commerce Setup", desc: "Blinkit, Zepto, Instamart onboarding & store mapping", qty: 1, price: 5000 }
-      ]},
-      { id: 2, title: "Product Listing (Per SKU)", rows: [
-        { id: 201, name: "Standard Listing", desc: "SEO Title, Bullet Points, Description, Keywords", qty: 1, price: 150 },
-        { id: 202, name: "Enhanced Listing", desc: "Content + Image Optimization + 1-2 Infographics", qty: 1, price: 300 }
-      ]},
-      { id: 3, title: "Monthly Management Retainer", rows: [
-        { id: 301, name: "Starter Plan", desc: "1 Platform: SPF Claims, HPF Claims, Account Health Monitoring", qty: 1, price: 10000 },
-        { id: 302, name: "Growth Plan", desc: "2 Platforms: Advanced optimization & strategic management", qty: 1, price: 15000 }
-      ]}
-    ],
-    terms: [
-      { id: 1, title: "Payment Milestones", details: "50% non-refundable advance required to commence onboarding/listing work. The remaining 50% is due immediately upon completion of the agreed scope." },
-      { id: 2, title: "Scope & Revisions", details: "The proposal covers the exact number of SKUs and platforms specified. Any additional SKUs will be billed separately. Includes 2 rounds of minor revisions per listing." },
-      { id: 3, title: "Platform Dependency", details: "Final brand registry approvals, account verifications, and go-live timelines are strictly subject to internal policies of Amazon, Flipkart, Blinkit, Zepto, and Instamart." },
-      { id: 4, title: "Data Security & Trust", details: "All client business data, sales volumes, proprietary product details, and login credentials provided during the tenure are handled with strict confidentiality." }
-    ],
-    signatures: { client: null, freelancer: null }
-  },
-  canvases: {},
-  drawingParams: {},
-  renderTimeout: null,
+// Base64 Image Encoder
+function encodeImage(input, previewId) {
+    const file = input.files[0];
+    if(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = document.getElementById(previewId);
+            img.src = e.target.result;
+            img.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+}
 
-  init() {
-    this.renderBuilder();
-    this.initCanvases();
-    this.renderPreview();
-  },
+// Signature Switching Logic
+let sigStates = { c: 'draw', f: 'draw' };
+function switchSig(person, mode) {
+    sigStates[person] = mode;
+    ['draw', 'type', 'upload'].forEach(m => document.getElementById(`${person}-${m}-panel`).style.display = m === mode ? 'block' : 'none');
+}
 
-  togglePreview() {
-    this.state.isPreviewVisible = !this.state.isPreviewVisible;
-    const layout = document.getElementById('main-layout');
-    const btn = document.getElementById('togglePreviewBtn');
+// Canvas Drawing Logic (Ultra Smooth)
+function initCanvas(id) {
+    const cvs = document.getElementById(id);
+    const ctx = cvs.getContext('2d');
+    cvs.width = cvs.offsetWidth || 300; cvs.height = 150;
+    ctx.fillStyle = '#FFF'; ctx.fillRect(0,0,cvs.width,cvs.height);
+    ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
     
-    if (this.state.isPreviewVisible) {
-      layout.classList.add('preview-active');
-      btn.innerText = "✕ Close Preview";
-      btn.classList.add('btn-danger');
-      btn.classList.remove('btn-outline');
-      this.renderPreview();
-    } else {
-      layout.classList.remove('preview-active');
-      btn.innerText = "👁 Toggle Preview";
-      btn.classList.remove('btn-danger');
-      btn.classList.add('btn-outline');
-    }
-  },
-
-  switchTab(tabId) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    event.target.classList.add('active');
-    document.getElementById(`tab-${tabId}`).classList.add('active');
+    let isDrawing = false;
+    const getPos = e => { const r = cvs.getBoundingClientRect(); return e.touches ? {x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top} : {x: e.clientX - r.left, y: e.clientY - r.top}; };
     
-    if (tabId === 'signatures') {
-      setTimeout(() => this.resizeCanvases(), 100); 
+    cvs.onmousedown = cvs.ontouchstart = (e) => { isDrawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); };
+    cvs.onmousemove = cvs.ontouchmove = (e) => { if(!isDrawing) return; e.preventDefault(); const p = getPos(e); requestAnimationFrame(()=> { ctx.lineTo(p.x, p.y); ctx.stroke(); }); };
+    window.onmouseup = window.ontouchend = () => isDrawing = false;
+}
+function clearCanvas(id) { const cvs = document.getElementById(id); cvs.getContext('2d').fillRect(0,0,cvs.width,cvs.height); }
+
+setTimeout(() => { initCanvas('c-canvas'); initCanvas('f-canvas'); }, 500);
+
+// Extract Signature Data based on active mode
+function getSignatureData(person) {
+    const mode = sigStates[person];
+    if(mode === 'draw') return document.getElementById(`${person}-canvas`).toDataURL('image/png');
+    if(mode === 'upload') return document.getElementById(`${person}-upl-prev`).src;
+    if(mode === 'type') {
+        const text = document.getElementById(`${person}-type-val`).value;
+        if(!text) return null;
+        const cvs = document.createElement('canvas'); cvs.width = 300; cvs.height = 100;
+        const ctx = cvs.getContext('2d');
+        ctx.fillStyle = '#fff'; ctx.fillRect(0,0,300,100);
+        ctx.font = '30px "Dancing Script"'; ctx.fillStyle = '#000'; ctx.textAlign = 'center'; ctx.fillText(text, 150, 60);
+        return cvs.toDataURL();
     }
-  },
+    return null;
+}
 
-  updateState(category, field, value) {
-    this.state[category][field] = value;
-    this.debounceRender();
-  },
+// Generate JSON & Send to Backend
+async function generatePDF(backendUrl) {
+    const btn = document.getElementById('genBtn');
+    btn.innerText = "⏳ Generating...";
+    
+    // Hardcoded demo sections (In your full code, connect this to dynamic inputs like previous version)
+    const payload = {
+        general: { title: document.getElementById('g-title').value, ref: document.getElementById('g-ref').value, date: document.getElementById('g-date').value, tagline: document.getElementById('g-tagline').value },
+        freelancer: { name: document.getElementById('f-name').value, role: document.getElementById('f-role').value, info: "India" },
+        client: { name: document.getElementById('c-name').value, company: document.getElementById('c-company').value, info: "Client Contact" },
+        finance: { currency: document.getElementById('fin-curr').value, tax: Number(document.getElementById('fin-tax').value), discount: 0 },
+        logo: document.getElementById('logoPrev').src.startsWith('data') ? document.getElementById('logoPrev').src : null,
+        stamp: document.getElementById('stampPrev').src.startsWith('data') ? document.getElementById('stampPrev').src : null,
+        signatures: { client: getSignatureData('c'), freelancer: getSignatureData('f') },
+        sections: [
+            { title: "Marketplace Services", rows: [{name: "Onboarding", desc: "Full setup", qty: 1, price: 1500}] }
+        ],
+        terms: [
+            { title: "Payment", details: "50% advance." }
+        ]
+    };
 
-  debounceRender() {
-    if(!this.state.isPreviewVisible) return;
-    clearTimeout(this.renderTimeout);
-    this.renderTimeout = setTimeout(() => this.renderPreview(), 150);
-  },
-
-  // SECTION BUILDER
-  addSection() {
-    this.state.sections.push({ id: Date.now(), title: "New Section", rows: [] });
-    this.renderBuilder();
-    this.debounceRender();
-  },
-  removeSection(id) {
-    this.state.sections = this.state.sections.filter(s => s.id !== id);
-    this.renderBuilder();
-    this.debounceRender();
-  },
-  updateSectionTitle(id, value) {
-    const sec = this.state.sections.find(s => s.id === id);
-    if(sec) { sec.title = value; this.debounceRender(); }
-  },
-  addRow(secId) {
-    const sec = this.state.sections.find(s => s.id === secId);
-    if(sec) {
-      sec.rows.push({ id: Date.now(), name: "", desc: "", qty: 1, price: 0 });
-      this.renderBuilder();
-      this.debounceRender();
-    }
-  },
-  removeRow(secId, rowId) {
-    const sec = this.state.sections.find(s => s.id === secId);
-    if(sec) {
-      sec.rows = sec.rows.filter(r => r.id !== rowId);
-      this.renderBuilder();
-      this.debounceRender();
-    }
-  },
-  updateRow(secId, rowId, field, value) {
-    const sec = this.state.sections.find(s => s.id === secId);
-    if(sec) {
-      const row = sec.rows.find(r => r.id === rowId);
-      if(row) {
-        row[field] = (field === 'qty' || field === 'price') ? Number(value) : value;
-        this.debounceRender();
-      }
-    }
-  },
-
-  // TERMS BUILDER
-  addTerm() {
-    this.state.terms.push({ id: Date.now(), title: "New Clause", details: "Details here..." });
-    this.renderBuilder();
-    this.debounceRender();
-  },
-  removeTerm(id) {
-    this.state.terms = this.state.terms.filter(t => t.id !== id);
-    this.renderBuilder();
-    this.debounceRender();
-  },
-  updateTerm(id, field, value) {
-    const term = this.state.terms.find(t => t.id === id);
-    if(term) { term[field] = value; this.debounceRender(); }
-  },
-
-  renderBuilder() {
-    const sCont = document.getElementById('sections-container');
-    sCont.innerHTML = this.state.sections.map((sec, i) => `
-      <div class="section-block">
-        <div class="section-header">
-          <div style="display:flex; align-items:center; gap:10px; flex:1;">
-            <div class="section-num">${String(i+1).padStart(2,'0')}</div>
-            <input class="section-title-input" value="${this.esc(sec.title)}" oninput="app.updateSectionTitle(${sec.id}, this.value)">
-          </div>
-          <button class="btn btn-danger btn-icon" onclick="app.removeSection(${sec.id})">✕</button>
-        </div>
-        <div class="section-body">
-          ${sec.rows.map(r => `
-            <div class="row-item">
-              <input placeholder="Service Name" value="${this.esc(r.name)}" oninput="app.updateRow(${sec.id}, ${r.id}, 'name', this.value)">
-              <input placeholder="Description" value="${this.esc(r.desc)}" oninput="app.updateRow(${sec.id}, ${r.id}, 'desc', this.value)">
-              <input type="number" placeholder="Qty" value="${r.qty}" oninput="app.updateRow(${sec.id}, ${r.id}, 'qty', this.value)">
-              <input type="number" placeholder="Price" value="${r.price}" oninput="app.updateRow(${sec.id}, ${r.id}, 'price', this.value)">
-              <button class="btn btn-danger btn-icon" onclick="app.removeRow(${sec.id}, ${r.id})">✕</button>
-            </div>
-          `).join('')}
-          <button class="btn btn-outline" style="width:100%; margin-top:8px;" onclick="app.addRow(${sec.id})">+ Add Row</button>
-        </div>
-      </div>
-    `).join('');
-
-    const tCont = document.getElementById('terms-container');
-    tCont.innerHTML = this.state.terms.map(t => `
-      <div class="section-block" style="padding: 12px; display:flex; flex-direction:column; gap:8px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <input style="flex:1; font-weight:bold; color:var(--gold); border:none; background:transparent;" value="${this.esc(t.title)}" oninput="app.updateTerm(${t.id}, 'title', this.value)">
-          <button class="btn btn-danger btn-icon" onclick="app.removeTerm(${t.id})">✕</button>
-        </div>
-        <textarea style="width:100%; border:none; background:rgba(0,0,0,0.2);" oninput="app.updateTerm(${t.id}, 'details', this.value)">${this.esc(t.details)}</textarea>
-      </div>
-    `).join('');
-  },
-
-  // SIGNATURE CANVAS
-  initCanvases() {
-    ['client', 'freelancer'].forEach(type => {
-      const cvs = document.getElementById(`canvas-${type}`);
-      if(!cvs) return;
-      const ctx = cvs.getContext('2d', { alpha: false });
-      this.canvases[type] = { cvs, ctx };
-      this.drawingParams[type] = { isDrawing: false, lastX: 0, lastY: 0 };
-      
-      this.resetCanvasStyle(type);
-
-      const startPos = (e) => {
-        const rect = cvs.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        return { x: clientX - rect.left, y: clientY - rect.top };
-      };
-
-      const start = (e) => { e.preventDefault(); this.drawingParams[type].isDrawing = true; const p = startPos(e); this.drawingParams[type].lastX = p.x; this.drawingParams[type].lastY = p.y; ctx.beginPath(); ctx.moveTo(p.x, p.y); };
-      const draw = (e) => {
-        if (!this.drawingParams[type].isDrawing) return;
-        e.preventDefault();
-        requestAnimationFrame(() => {
-          const p = startPos(e);
-          ctx.lineTo(p.x, p.y);
-          ctx.stroke();
-          this.drawingParams[type].lastX = p.x;
-          this.drawingParams[type].lastY = p.y;
+    try {
+        const response = await fetch(backendUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
         });
-      };
-      const stop = () => { this.drawingParams[type].isDrawing = false; };
-
-      cvs.addEventListener('mousedown', start);
-      cvs.addEventListener('mousemove', draw);
-      window.addEventListener('mouseup', stop);
-      cvs.addEventListener('touchstart', start, { passive: false });
-      cvs.addEventListener('touchmove', draw, { passive: false });
-      window.addEventListener('touchend', stop);
-    });
-    window.addEventListener('resize', () => this.resizeCanvases());
-    setTimeout(() => this.resizeCanvases(), 500); 
-  },
-  resizeCanvases() {
-    ['client', 'freelancer'].forEach(type => {
-      const c = this.canvases[type];
-      if(!c) return;
-      const parent = c.cvs.parentElement;
-      const newWidth = parent.clientWidth || 400; 
-      
-      if(newWidth > 0 && c.cvs.width !== newWidth) {
-        let imgData = null;
-        if(this.state.signatures[type]) {
-            imgData = this.state.signatures[type];
-        }
-        c.cvs.width = newWidth;
-        c.cvs.height = 180;
-        this.resetCanvasStyle(type);
         
-        if(imgData) {
-            const img = new Image();
-            img.onload = () => { c.ctx.drawImage(img, 0, 0); };
-            img.src = imgData;
-        }
-      }
-    });
-  },
-  resetCanvasStyle(type) {
-    const c = this.canvases[type];
-    if(!c) return;
-    const ctx = c.ctx;
-    
-    // Ensure canvas dimensions are set if missing
-    if(c.cvs.width === 0 || c.cvs.width === 300) {
-        c.cvs.width = c.cvs.parentElement.clientWidth || 400;
-        c.cvs.height = 180;
+        if(!response.ok) throw new Error("Server error");
+        
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = payload.general.ref + '.pdf';
+        a.click();
+    } catch(err) {
+        alert("Error connecting to backend! Ensure Render URL is correct.");
+    } finally {
+        btn.innerText = "🚀 Generate PDF";
     }
-    
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, c.cvs.width, c.cvs.height);
-    ctx.strokeStyle = '#000000';
-    ctx.lineWidth = 2.5;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-  },
-  clearCanvas(type) {
-    this.resetCanvasStyle(type);
-    this.state.signatures[type] = null;
-    this.debounceRender();
-  },
-  saveSignature(type) {
-    const c = this.canvases[type];
-    if(c) {
-      this.state.signatures[type] = c.cvs.toDataURL('image/png');
-      this.debounceRender();
-      this.toast(`${type} signature applied.`);
-    }
-  },
-
-  // RENDER ENGINE
-  esc(str) { 
-      return str ? String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>') : ''; 
-  },
-  fmtCur(n) { 
-      return `${this.state.finance.currency}${Number(n).toLocaleString('en-IN', {maximumFractionDigits:2})}`; 
-  },
-
-  renderPreview() {
-    const s = this.state;
-    const container = document.getElementById('pdf-content');
-    if(!container) return;
-
-    let html = `
-      <div class="doc-header avoid-break">
-        <div class="doc-title">QUOTATION</div>
-        <div class="doc-subtitle">${this.esc(s.general.title)}</div>
-        <div class="doc-meta">
-          <span>REF: ${this.esc(s.general.ref)}</span>
-          <span>DATE: ${this.esc(s.general.date)}</span>
-        </div>
-      </div>
-      <div class="doc-parties avoid-break">
-        <div>
-          <div class="party-label">PREPARED BY</div>
-          <div class="party-name">${this.esc(s.freelancer.name)}</div>
-          <div class="party-desc">${this.esc(s.freelancer.role)}<br>${this.esc(s.freelancer.info)}</div>
-        </div>
-        <div>
-          <div class="party-label">PREPARED FOR</div>
-          <div class="party-name">${this.esc(s.client.name)}</div>
-          <div class="party-desc">${this.esc(s.client.company)}<br>${this.esc(s.client.info)}</div>
-        </div>
-      </div>
-      <div class="doc-tagline avoid-break">${this.esc(s.general.tagline)}</div>
-    `;
-
-    let subtotal = 0;
-    s.sections.forEach((sec, i) => {
-      if(!sec.rows || !sec.rows.length) return;
-      html += `
-        <div class="doc-section-header avoid-break">
-          <div class="doc-section-num">${String(i+1).padStart(2,'0')}</div>
-          <div class="doc-section-title">${this.esc(sec.title)}</div>
-        </div>
-        <table class="doc-table">
-          <thead>
-            <tr class="avoid-break">
-              <th style="width: 25%;">SERVICE</th>
-              <th style="width: 45%;">DESCRIPTION</th>
-              <th style="width: 10%; text-align: center;">QTY</th>
-              <th style="width: 20%; text-align: right;">PRICE</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-      sec.rows.forEach(r => {
-        const lineTotal = (r.qty || 0) * (r.price || 0);
-        subtotal += lineTotal;
-        html += `
-          <tr class="avoid-break">
-            <td><strong>${this.esc(r.name)}</strong></td>
-            <td>${this.esc(r.desc)}</td>
-            <td style="text-align: center;">${r.qty}</td>
-            <td style="text-align: right;"><strong>${this.fmtCur(lineTotal)}</strong></td>
-          </tr>
-        `;
-      });
-      html += `</tbody></table>`;
-    });
-
-    const discAmt = subtotal * ((s.finance.discount || 0) / 100);
-    const taxBase = subtotal - discAmt;
-    const taxAmt = taxBase * ((s.finance.tax || 0) / 100);
-    const grandTotal = taxBase + taxAmt;
-
-    html += `
-      <div class="doc-totals avoid-break">
-        <div class="tot-row"><span>Subtotal</span><span>${this.fmtCur(subtotal)}</span></div>
-        ${s.finance.discount > 0 ? `<div class="tot-row"><span>Discount (${s.finance.discount}%)</span><span>-${this.fmtCur(discAmt)}</span></div>` : ''}
-        ${s.finance.tax > 0 ? `<div class="tot-row"><span>Tax (${s.finance.tax}%)</span><span>${this.fmtCur(taxAmt)}</span></div>` : ''}
-        <div class="tot-row grand"><span>GRAND TOTAL</span><span>${this.fmtCur(grandTotal)}</span></div>
-      </div>
-    `;
-
-    if (s.terms && s.terms.length > 0) {
-      html += `
-        <div class="doc-section-header avoid-break" style="margin-top:50px;">
-          <div class="doc-section-num">${String(s.sections.length+1).padStart(2,'0')}</div>
-          <div class="doc-section-title">Terms & Conditions</div>
-        </div>
-        <table class="doc-table">
-          <thead><tr class="avoid-break"><th style="width: 25%;">CLAUSE</th><th>DETAILS</th></tr></thead>
-          <tbody>
-            ${s.terms.map(t => `
-              <tr class="avoid-break">
-                <td><strong>${this.esc(t.title)}</strong></td>
-                <td>${this.esc(t.details)}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      `;
-    }
-
-    html += `
-      <div class="doc-signatures avoid-break">
-        <div class="sig-grid">
-          <div class="sig-col">
-            <div class="sig-gold-label">CLIENT</div>
-            <div class="sig-name">${this.esc(s.client.name)}</div>
-            <div class="sig-company">${this.esc(s.client.company)}</div>
-            <div class="sig-line-row">
-              <span>Signature:</span>
-              <div class="line">${s.signatures.client ? `<img src="${s.signatures.client}" class="sig-img">` : ''}</div>
-            </div>
-            <div class="sig-line-row" style="margin-bottom:0;">
-              <span>Date:</span>
-              <div class="line" style="height:20px;"></div>
-            </div>
-          </div>
-          <div class="sig-col">
-            <div class="sig-gold-label">FREELANCER</div>
-            <div class="sig-name">${this.esc(s.freelancer.name)}</div>
-            <div class="sig-company">${this.esc(s.freelancer.role)}</div>
-            <div class="sig-line-row">
-              <span>Signature:</span>
-              <div class="line">${s.signatures.freelancer ? `<img src="${s.signatures.freelancer}" class="sig-img">` : ''}</div>
-            </div>
-            <div class="sig-line-row" style="margin-bottom:0;">
-              <span>Date:</span>
-              <div class="line" style="height:20px;"></div>
-            </div>
-          </div>
-        </div>
-        <div class="sig-footer-bar">This document confirms agreement on the above-mentioned services, pricing, and terms.</div>
-      </div>
-    `;
-
-    container.innerHTML = html;
-  },
-
-  // EXPORT / IMPORT
-  exportData() {
-    const exportState = JSON.parse(JSON.stringify(this.state));
-    delete exportState.isPreviewVisible;
-
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportState));
-    const a = document.createElement('a');
-    a.setAttribute("href", dataStr);
-    a.setAttribute("download", `${this.state.general.ref}.json`);
-    a.click();
-    this.toast("JSON Exported!");
-  },
-  importData(e) {
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const imported = JSON.parse(e.target.result);
-        imported.isPreviewVisible = this.state.isPreviewVisible; 
-        this.state = imported;
-        
-        document.getElementById('g-title').value = this.state.general.title || '';
-        document.getElementById('g-ref').value = this.state.general.ref || '';
-        document.getElementById('g-date').value = this.state.general.date || '';
-        document.getElementById('g-tagline').value = this.state.general.tagline || '';
-        
-        document.getElementById('f-name').value = this.state.freelancer.name || '';
-        document.getElementById('f-role').value = this.state.freelancer.role || '';
-        document.getElementById('f-info').value = this.state.freelancer.info || '';
-        
-        document.getElementById('c-name').value = this.state.client.name || '';
-        document.getElementById('c-company').value = this.state.client.company || '';
-        document.getElementById('c-info').value = this.state.client.info || '';
-        
-        document.getElementById('fin-currency').value = this.state.finance.currency || '₹';
-        document.getElementById('fin-discount').value = this.state.finance.discount || 0;
-        document.getElementById('fin-tax').value = this.state.finance.tax || 0;
-
-        this.renderBuilder();
-        this.resizeCanvases();
-        this.debounceRender();
-        this.toast("Data Imported!");
-      } catch (err) {
-        this.toast("Error importing file!");
-      }
-    };
-    reader.readAsText(file);
-  },
-  generatePDF() {
-    this.toast("Generating PDF...");
-    const element = document.getElementById('pdf-content');
-    const opt = {
-      margin: 0,
-      filename: `${this.state.general.ref}.pdf`,
-      image: { type: 'jpeg', quality: 1 },
-      html2canvas: { scale: 2, useCORS: true, letterRendering: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['css', 'legacy'], avoid: '.avoid-break' }
-    };
-    html2pdf().set(opt).from(element).save().then(() => {
-      this.toast("PDF Downloaded!");
-    });
-  },
-
-  toast(msg) {
-    const cont = document.getElementById('toast-container');
-    const t = document.createElement('div');
-    t.className = 'toast show';
-    t.innerText = msg;
-    cont.appendChild(t);
-    setTimeout(() => {
-      t.classList.remove('show');
-      setTimeout(() => t.remove(), 300);
-    }, 3000);
-  }
-};
-
-window.addEventListener('DOMContentLoaded', () => {
-    app.init();
-});
+}
 </script>
 </body>
 </html>
