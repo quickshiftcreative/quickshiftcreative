@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Enterprise Quotation Management System</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700;800&family=Dancing+Script:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet">
+<title>JK-MGMT Enterprise Quotation Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700;800&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 :root {
@@ -28,32 +28,40 @@ body { background-color: var(--bg-color); color: var(--text-main); height: 100vh
 ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
 
 /* Topbar */
-.topbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; background: var(--panel-bg); border-bottom: 1px solid var(--border); z-index: 10; }
+.topbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; background: var(--panel-bg); border-bottom: 1px solid var(--border); z-index: 100; }
 .logo { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--gold); letter-spacing: 1px; }
 .logo span { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 400; color: var(--text-muted); display: block; letter-spacing: 2px; text-transform: uppercase; }
-.actions { display: flex; gap: 10px; }
+.actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .btn { padding: 8px 16px; border: none; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
 .btn-gold { background: var(--gold); color: #000; }
 .btn-gold:hover { background: var(--gold-hover); }
 .btn-outline { background: transparent; border: 1px solid var(--gold); color: var(--gold); }
 .btn-outline:hover { background: rgba(212,175,55,0.1); }
 .btn-danger { background: rgba(239,68,68,0.1); border: 1px solid var(--danger); color: var(--danger); }
-.btn-danger:hover { background: rgba(239,68,68,0.2); }
 .btn-icon { padding: 4px 8px; font-size: 14px; }
 
-/* Main Layout */
-.layout { display: flex; flex: 1; height: calc(100vh - 60px); overflow: hidden; }
-.panel-left { width: 45%; background: var(--bg-color); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
-.panel-right { width: 55%; background: #2A2A2A; overflow-y: auto; padding: 40px; display: flex; justify-content: center; position: relative; }
+/* Main Layout & Toggle Logic */
+.layout { display: flex; flex: 1; height: calc(100vh - 60px); overflow: hidden; transition: all 0.3s ease; }
+.panel-left { width: 100%; background: var(--bg-color); border-right: 1px solid var(--border); display: flex; flex-direction: column; transition: width 0.3s ease; }
+.panel-right { width: 0%; background: #2A2A2A; overflow-y: auto; padding: 0; display: none; justify-content: center; position: relative; transition: width 0.3s ease; }
 
-/* Tabs */
+.layout.preview-active .panel-left { width: 45%; }
+.layout.preview-active .panel-right { width: 55%; display: flex; padding: 40px; }
+
+@media(max-width: 900px) {
+  .layout.preview-active .panel-left { width: 100%; }
+  .layout.preview-active .panel-right { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200; padding: 20px; padding-top: 60px; }
+  .close-preview-mobile { display: block !important; position: fixed; top: 10px; right: 20px; z-index: 201; background: var(--danger); color: #fff; padding: 8px 16px; border-radius: 4px; border: none; font-weight: bold; }
+}
+.close-preview-mobile { display: none; }
+
+/* Tabs & UI */
 .tabs { display: flex; background: var(--panel-bg); padding: 8px 12px 0; border-bottom: 1px solid var(--border); overflow-x: auto; flex-shrink: 0; }
 .tab { padding: 10px 16px; font-size: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
 .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
 .tab-content { display: none; padding: 20px; overflow-y: auto; flex: 1; }
 .tab-content.active { display: block; }
 
-/* Forms */
 .card { background: var(--panel-bg); border: 1px solid var(--border-light); border-radius: 6px; padding: 16px; margin-bottom: 16px; }
 .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border-light); }
 .card-title { font-size: 12px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; }
@@ -70,77 +78,80 @@ textarea { resize: vertical; min-height: 80px; }
 .section-header { background: rgba(255,255,255,0.05); padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
 .section-title-input { background: transparent; border: none; color: var(--gold); font-weight: 600; font-size: 14px; flex: 1; outline: none; }
 .section-body { padding: 16px; }
-.row-item { display: grid; grid-template-columns: 3fr 1fr 1.5fr auto; gap: 8px; margin-bottom: 8px; align-items: start; }
+.row-item { display: grid; grid-template-columns: 2fr 3fr 1fr 1fr auto; gap: 8px; margin-bottom: 8px; align-items: start; }
+@media(max-width: 700px) { .row-item { grid-template-columns: 1fr; } }
 .row-item input { width: 100%; }
 
-/* Canvas */
+/* Canvas (Strict White Bg, Black Ink) */
 .signature-wrapper { display: flex; flex-direction: column; gap: 10px; }
-.sig-canvas-container { background: #FFFFFF; border: 2px solid var(--border-light); border-radius: 4px; overflow: hidden; position: relative; }
-canvas { display: block; width: 100%; height: 200px; touch-action: none; cursor: crosshair; }
+.sig-canvas-container { background: #FFFFFF; border: 2px solid var(--border-light); border-radius: 4px; overflow: hidden; position: relative; width: 100%; height: 180px; }
+canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
 
-/* PDF Document Rendering - STRICT A4 */
-.pdf-preview { width: 210mm; min-height: 297mm; background: #FFFFFF; box-shadow: 0 10px 30px rgba(0,0,0,0.5); padding: 20mm; font-family: 'Inter', sans-serif; color: #000000; position: relative; }
+/* =========================================================
+   PDF Document Rendering - EXACT PDF REFERENCE MATCH
+   ========================================================= */
+.pdf-preview { width: 210mm; min-height: 297mm; background: #FFFFFF; box-shadow: 0 10px 30px rgba(0,0,0,0.5); padding: 25mm 20mm; font-family: 'Inter', sans-serif; color: #000000; position: relative; }
 .avoid-break { page-break-inside: avoid; break-inside: avoid; }
-.page-break { page-break-before: always; break-before: page; }
 
-/* Document Typography & Styles */
-.doc-title { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 800; color: #000; letter-spacing: 2px; text-transform: uppercase; }
-.doc-subtitle { font-size: 16px; color: #444; font-weight: 500; margin-top: 4px; margin-bottom: 16px; }
-.doc-meta { display: flex; justify-content: space-between; font-size: 11px; color: #666; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; border-bottom: 1px solid #E5E7EB; padding-bottom: 16px; margin-bottom: 30px; }
-.doc-parties { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; }
-.party-label { font-size: 9px; color: #D4AF37; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-bottom: 8px; }
-.party-name { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: #000; margin-bottom: 4px; }
-.party-desc { font-size: 12px; color: #444; line-height: 1.5; }
-.doc-tagline { text-align: center; font-size: 11px; font-weight: 500; color: #666; padding: 12px; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; margin-bottom: 40px; letter-spacing: 1px; }
+.doc-title { font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 800; color: #000; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.doc-subtitle { font-size: 16px; color: #333; font-weight: 600; margin-bottom: 15px; }
+.doc-meta { display: flex; font-size: 11px; color: #555; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 30px; gap: 20px; }
 
-/* Tables */
-.doc-section-header { display: flex; align-items: center; gap: 16px; margin-top: 40px; margin-bottom: 16px; }
-.doc-section-num { font-family: 'Inter', sans-serif; font-size: 24px; font-weight: 800; color: #D4AF37; }
-.doc-section-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #000; flex: 1; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 4px; }
+.doc-parties { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 35px; }
+.party-label { font-size: 10px; color: #D4AF37; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 10px; }
+.party-name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #000; margin-bottom: 5px; }
+.party-desc { font-size: 12px; color: #444; line-height: 1.6; }
 
-.doc-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
-.doc-table th { background: #F9FAFB; padding: 12px; text-align: left; font-size: 10px; text-transform: uppercase; color: #666; font-weight: 700; letter-spacing: 1px; border-bottom: 2px solid #E5E7EB; }
-.doc-table td { padding: 14px 12px; border-bottom: 1px solid #E5E7EB; vertical-align: top; color: #333; }
+.doc-tagline { text-align: center; font-size: 11px; font-weight: 600; color: #555; padding: 12px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; margin-bottom: 40px; letter-spacing: 0.5px; }
+
+.doc-section-header { display: flex; align-items: center; gap: 12px; margin-top: 40px; margin-bottom: 12px; }
+.doc-section-num { font-size: 24px; font-weight: 800; color: #D4AF37; line-height: 1; }
+.doc-section-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #000; flex: 1; }
+
+.doc-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+.doc-table th { background: #f9f9f9; padding: 12px; text-align: left; font-size: 10px; text-transform: uppercase; color: #555; font-weight: 700; border-bottom: 2px solid #ddd; letter-spacing: 0.5px; }
+.doc-table td { padding: 12px; border-bottom: 1px solid #eee; vertical-align: top; color: #444; font-size: 12px; line-height: 1.5; }
 .doc-table td strong { color: #000; font-size: 13px; display: block; margin-bottom: 4px; }
-.col-right { text-align: right !important; }
-.col-center { text-align: center !important; }
 
-/* Pricing */
-.doc-totals { width: 350px; margin-left: auto; margin-top: 20px; border-top: 1px solid #E5E7EB; padding-top: 10px; }
-.tot-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 12px; color: #555; }
-.tot-row.grand { font-size: 16px; font-weight: 700; color: #000; border-top: 2px solid #000; padding-top: 12px; margin-top: 6px; }
+.doc-totals { width: 350px; margin-left: auto; margin-top: 20px; }
+.tot-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px; color: #444; border-bottom: 1px solid #eee; }
+.tot-row.grand { font-size: 16px; font-weight: 800; color: #000; border-top: 2px solid #000; border-bottom: none; padding-top: 12px; margin-top: 4px; }
 
-/* Signatures */
-.doc-signatures { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #D4AF37; margin-top: 60px; }
-.sig-block { padding: 24px; border-right: 1px solid #E5E7EB; display: flex; flex-direction: column; justify-content: space-between; min-height: 200px; }
-.sig-block:last-child { border-right: none; }
-.sig-label { font-size: 10px; color: #D4AF37; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin-bottom: 16px; }
-.sig-name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #000; }
-.sig-company { font-size: 11px; color: #666; margin-bottom: 30px; }
-.sig-line-container { display: flex; align-items: flex-end; margin-bottom: 12px; }
-.sig-line-label { font-size: 12px; color: #555; width: 70px; }
-.sig-line { flex: 1; border-bottom: 1px solid #000; height: 40px; position: relative; }
-.sig-img { position: absolute; bottom: 2px; left: 10px; max-height: 60px; max-width: 90%; object-fit: contain; }
-.sig-footer { grid-column: span 2; background: #000; color: #D4AF37; text-align: center; padding: 12px; font-size: 11px; letter-spacing: 1px; font-weight: 500; }
+.doc-signatures { border: 1px solid #D4AF37; margin-top: 60px; page-break-inside: avoid; }
+.sig-grid { display: grid; grid-template-columns: 1fr 1fr; }
+.sig-col { padding: 25px; border-right: 1px solid #eee; display: flex; flex-direction: column; }
+.sig-col:last-child { border-right: none; }
+.sig-gold-label { font-size: 10px; color: #D4AF37; text-transform: uppercase; font-weight: 700; margin-bottom: 15px; letter-spacing: 1px; }
+.sig-name { font-size: 16px; font-weight: 700; color: #000; margin-bottom: 4px; }
+.sig-company { font-size: 11px; color: #555; margin-bottom: 40px; }
+.sig-line-row { display: flex; align-items: flex-end; margin-bottom: 15px; }
+.sig-line-row span { font-size: 12px; color: #555; margin-right: 10px; width: 60px; }
+.sig-line-row .line { flex: 1; border-bottom: 1px solid #000; height: 35px; position: relative; }
+.sig-img { position: absolute; bottom: 2px; left: 10px; max-height: 50px; max-width: 90%; object-fit: contain; }
+.sig-footer-bar { background: #111; color: #D4AF37; text-align: center; padding: 12px; font-size: 10px; letter-spacing: 1px; font-weight: 500; border-top: 1px solid #D4AF37; }
 
+/* Toast */
 .toast-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
-.toast { background: var(--gold); color: #000; padding: 12px 24px; border-radius: 4px; font-size: 12px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.5); opacity: 0; transform: translateY(20px); transition: all 0.3s; }
+.toast { background: var(--gold); color: #000; padding: 12px 24px; border-radius: 4px; font-size: 12px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.5); opacity: 0; transform: translateY(20px); transition: all 0.3s; pointer-events: none; }
 .toast.show { opacity: 1; transform: translateY(0); }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="logo">JK-MGMT<span>Enterprise Quotation Engine</span></div>
+  <div class="logo">JK-MGMT<span>Enterprise Quotation Builder</span></div>
   <div class="actions">
-    <button class="btn btn-outline" onclick="app.exportData()">Export JSON</button>
-    <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">Import JSON</button>
+    <button class="btn btn-outline" id="togglePreviewBtn" onclick="app.togglePreview()">👁 Toggle Preview</button>
+    <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📂 Import JSON</button>
     <input type="file" id="importFile" style="display:none" accept=".json" onchange="app.importData(event)">
-    <button class="btn btn-gold" onclick="app.generatePDF()">Generate PDF</button>
+    <button class="btn btn-gold" onclick="app.generatePDF()">⬇ Export PDF</button>
   </div>
 </div>
 
-<div class="layout">
+<button class="close-preview-mobile" onclick="app.togglePreview()">✕ Close Preview</button>
+
+<div class="layout" id="main-layout">
+  <!-- LEFT PANEL -->
   <div class="panel-left">
     <div class="tabs">
       <div class="tab active" onclick="app.switchTab('general')">General</div>
@@ -150,6 +161,7 @@ canvas { display: block; width: 100%; height: 200px; touch-action: none; cursor:
       <div class="tab" onclick="app.switchTab('settings')">Finance</div>
     </div>
 
+    <!-- GENERAL TAB -->
     <div class="tab-content active" id="tab-general">
       <div class="card">
         <div class="card-title">Document Setup</div>
@@ -160,7 +172,7 @@ canvas { display: block; width: 100%; height: 200px; touch-action: none; cursor:
           </div>
           <div class="form-group">
             <label>Reference No</label>
-            <input type="text" id="g-ref" value="JK-MGMT-2026-001" oninput="app.updateState('general','ref',this.value)">
+            <input type="text" id="g-ref" value="JK-MGMT-2026-004-WRITEASE" oninput="app.updateState('general','ref',this.value)">
           </div>
           <div class="form-group">
             <label>Date</label>
@@ -174,7 +186,7 @@ canvas { display: block; width: 100%; height: 200px; touch-action: none; cursor:
       </div>
 
       <div class="card">
-        <div class="card-title">Prepared By (Freelancer/Agency)</div>
+        <div class="card-title">Prepared By (Freelancer)</div>
         <div class="form-grid">
           <div class="form-group full">
             <label>Name</label>
@@ -210,6 +222,7 @@ canvas { display: block; width: 100%; height: 200px; touch-action: none; cursor:
       </div>
     </div>
 
+    <!-- SERVICES TAB -->
     <div class="tab-content" id="tab-services">
       <div class="card">
         <div class="card-header">
@@ -220,6 +233,7 @@ canvas { display: block; width: 100%; height: 200px; touch-action: none; cursor:
       </div>
     </div>
 
+    <!-- TERMS TAB -->
     <div class="tab-content" id="tab-terms">
       <div class="card">
         <div class="card-header">
@@ -230,7 +244,9 @@ canvas { display: block; width: 100%; height: 200px; touch-action: none; cursor:
       </div>
     </div>
 
+    <!-- SIGNATURES TAB -->
     <div class="tab-content" id="tab-signatures">
+      <div style="margin-bottom: 15px; font-size: 11px; color: var(--text-muted);">* Signatures are drawn on a white canvas with black ink for exact PDF matching.</div>
       <div class="card">
         <div class="card-title">Client Signature</div>
         <div class="signature-wrapper">
@@ -239,7 +255,7 @@ canvas { display: block; width: 100%; height: 200px; touch-action: none; cursor:
           </div>
           <div class="actions">
             <button class="btn btn-outline" onclick="app.clearCanvas('client')">Clear</button>
-            <button class="btn btn-gold" onclick="app.saveSignature('client')">Apply</button>
+            <button class="btn btn-gold" onclick="app.saveSignature('client')">Apply / Save</button>
           </div>
         </div>
       </div>
@@ -251,12 +267,13 @@ canvas { display: block; width: 100%; height: 200px; touch-action: none; cursor:
           </div>
           <div class="actions">
             <button class="btn btn-outline" onclick="app.clearCanvas('freelancer')">Clear</button>
-            <button class="btn btn-gold" onclick="app.saveSignature('freelancer')">Apply</button>
+            <button class="btn btn-gold" onclick="app.saveSignature('freelancer')">Apply / Save</button>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- FINANCE TAB -->
     <div class="tab-content" id="tab-settings">
       <div class="card">
         <div class="card-title">Global Finance Settings</div>
@@ -275,12 +292,18 @@ canvas { display: block; width: 100%; height: 200px; touch-action: none; cursor:
           </div>
         </div>
       </div>
+      <div class="card">
+        <div class="card-title">Data Actions</div>
+        <button class="btn btn-outline" style="width: 100%;" onclick="app.exportData()">📤 Backup Data (Export JSON)</button>
+      </div>
     </div>
   </div>
 
+  <!-- RIGHT PANEL (PREVIEW) -->
   <div class="panel-right" id="preview-scroll">
     <div class="pdf-preview" id="pdf-content">
-      </div>
+      <!-- Dynamic PDF Content Rendered Here -->
+    </div>
   </div>
 </div>
 
@@ -289,7 +312,8 @@ canvas { display: block; width: 100%; height: 200px; touch-action: none; cursor:
 <script>
 const app = {
   state: {
-    general: { title: "E-Commerce & Quick Commerce Growth Services", ref: "JK-MGMT-2026-004", date: "20/05/2026", tagline: "Prepared with precision | Built for growth | Designed for success" },
+    isPreviewVisible: false,
+    general: { title: "E-Commerce & Quick Commerce Growth Services", ref: "JK-MGMT-2026-004-WRITEASE", date: "20/05/2026", tagline: "Prepared with precision | Built for growth | Designed for success" },
     freelancer: { name: "Jenish Kamli", role: "Freelance E-Commerce Growth Manager", info: "Marketplace Specialist, Independent Consultant" },
     client: { name: "Abhiral Jain", company: "Writease.in", info: "+91 88306 93895\nIndia" },
     finance: { currency: "₹", discount: 0, tax: 0 },
@@ -301,7 +325,7 @@ const app = {
       ]},
       { id: 2, title: "Product Listing (Per SKU)", rows: [
         { id: 201, name: "Standard Listing", desc: "SEO Title, Bullet Points, Description, Keywords", qty: 1, price: 150 },
-        { id: 202, name: "Premium Listing", desc: "Full creative, image design, 2-3 infographics", qty: 1, price: 499 }
+        { id: 202, name: "Enhanced Listing", desc: "Content + Image Optimization + 1-2 Infographics", qty: 1, price: 300 }
       ]},
       { id: 3, title: "Monthly Management Retainer", rows: [
         { id: 301, name: "Starter Plan", desc: "1 Platform: SPF Claims, HPF Claims, Account Health Monitoring", qty: 1, price: 10000 },
@@ -321,9 +345,28 @@ const app = {
   renderTimeout: null,
 
   init() {
-    this.initCanvases();
     this.renderBuilder();
+    this.initCanvases();
     this.renderPreview();
+  },
+
+  togglePreview() {
+    this.state.isPreviewVisible = !this.state.isPreviewVisible;
+    const layout = document.getElementById('main-layout');
+    const btn = document.getElementById('togglePreviewBtn');
+    
+    if (this.state.isPreviewVisible) {
+      layout.classList.add('preview-active');
+      btn.innerText = "✕ Close Preview";
+      btn.classList.add('btn-danger');
+      btn.classList.remove('btn-outline');
+      this.renderPreview();
+    } else {
+      layout.classList.remove('preview-active');
+      btn.innerText = "👁 Toggle Preview";
+      btn.classList.remove('btn-danger');
+      btn.classList.add('btn-outline');
+    }
   },
 
   switchTab(tabId) {
@@ -331,8 +374,9 @@ const app = {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     event.target.classList.add('active');
     document.getElementById(`tab-${tabId}`).classList.add('active');
+    
     if (tabId === 'signatures') {
-      this.resizeCanvases();
+      setTimeout(() => this.resizeCanvases(), 100); 
     }
   },
 
@@ -342,6 +386,7 @@ const app = {
   },
 
   debounceRender() {
+    if(!this.state.isPreviewVisible) return;
     clearTimeout(this.renderTimeout);
     this.renderTimeout = setTimeout(() => this.renderPreview(), 150);
   },
@@ -418,13 +463,11 @@ const app = {
         <div class="section-body">
           ${sec.rows.map(r => `
             <div class="row-item">
-              <div style="display:flex; flex-direction:column; gap:4px;">
-                <input placeholder="Service Name" value="${this.esc(r.name)}" oninput="app.updateRow(${sec.id}, ${r.id}, 'name', this.value)">
-                <input placeholder="Description" value="${this.esc(r.desc)}" oninput="app.updateRow(${sec.id}, ${r.id}, 'desc', this.value)">
-              </div>
+              <input placeholder="Service Name" value="${this.esc(r.name)}" oninput="app.updateRow(${sec.id}, ${r.id}, 'name', this.value)">
+              <input placeholder="Description" value="${this.esc(r.desc)}" oninput="app.updateRow(${sec.id}, ${r.id}, 'desc', this.value)">
               <input type="number" placeholder="Qty" value="${r.qty}" oninput="app.updateRow(${sec.id}, ${r.id}, 'qty', this.value)">
               <input type="number" placeholder="Price" value="${r.price}" oninput="app.updateRow(${sec.id}, ${r.id}, 'price', this.value)">
-              <button class="btn btn-danger btn-icon" style="height: 35px;" onclick="app.removeRow(${sec.id}, ${r.id})">✕</button>
+              <button class="btn btn-danger btn-icon" onclick="app.removeRow(${sec.id}, ${r.id})">✕</button>
             </div>
           `).join('')}
           <button class="btn btn-outline" style="width:100%; margin-top:8px;" onclick="app.addRow(${sec.id})">+ Add Row</button>
@@ -444,15 +487,16 @@ const app = {
     `).join('');
   },
 
-  // SIGNATURE CANVAS (High Performance, White Bg, Black Ink)
+  // SIGNATURE CANVAS
   initCanvases() {
     ['client', 'freelancer'].forEach(type => {
       const cvs = document.getElementById(`canvas-${type}`);
+      if(!cvs) return;
       const ctx = cvs.getContext('2d', { alpha: false });
       this.canvases[type] = { cvs, ctx };
       this.drawingParams[type] = { isDrawing: false, lastX: 0, lastY: 0 };
       
-      this.clearCanvas(type);
+      this.resetCanvasStyle(type);
 
       const startPos = (e) => {
         const rect = cvs.getBoundingClientRect();
@@ -483,33 +527,49 @@ const app = {
       window.addEventListener('touchend', stop);
     });
     window.addEventListener('resize', () => this.resizeCanvases());
+    setTimeout(() => this.resizeCanvases(), 500); 
   },
   resizeCanvases() {
     ['client', 'freelancer'].forEach(type => {
       const c = this.canvases[type];
       if(!c) return;
-      const rect = c.cvs.parentElement.getBoundingClientRect();
-      if(rect.width > 0) {
-        const imgData = c.ctx.getImageData(0,0,c.cvs.width,c.cvs.height);
-        c.cvs.width = rect.width;
-        c.cvs.height = 200;
-        this.resetCanvasStyle(type);
+      const parent = c.cvs.parentElement;
+      const newWidth = parent.clientWidth || 400; 
+      
+      if(newWidth > 0 && c.cvs.width !== newWidth) {
+        let imgData = null;
         if(this.state.signatures[type]) {
+            imgData = this.state.signatures[type];
+        }
+        c.cvs.width = newWidth;
+        c.cvs.height = 180;
+        this.resetCanvasStyle(type);
+        
+        if(imgData) {
             const img = new Image();
             img.onload = () => { c.ctx.drawImage(img, 0, 0); };
-            img.src = this.state.signatures[type];
+            img.src = imgData;
         }
       }
     });
   },
   resetCanvasStyle(type) {
-    const c = this.canvases[type].ctx;
-    c.fillStyle = '#FFFFFF';
-    c.fillRect(0, 0, this.canvases[type].cvs.width, this.canvases[type].cvs.height);
-    c.strokeStyle = '#000000';
-    c.lineWidth = 3;
-    c.lineCap = 'round';
-    c.lineJoin = 'round';
+    const c = this.canvases[type];
+    if(!c) return;
+    const ctx = c.ctx;
+    
+    // Ensure canvas dimensions are set if missing
+    if(c.cvs.width === 0 || c.cvs.width === 300) {
+        c.cvs.width = c.cvs.parentElement.clientWidth || 400;
+        c.cvs.height = 180;
+    }
+    
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, c.cvs.width, c.cvs.height);
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
   },
   clearCanvas(type) {
     this.resetCanvasStyle(type);
@@ -517,19 +577,27 @@ const app = {
     this.debounceRender();
   },
   saveSignature(type) {
-    this.state.signatures[type] = this.canvases[type].cvs.toDataURL('image/png');
-    this.debounceRender();
-    this.toast(`${type} signature applied.`);
+    const c = this.canvases[type];
+    if(c) {
+      this.state.signatures[type] = c.cvs.toDataURL('image/png');
+      this.debounceRender();
+      this.toast(`${type} signature applied.`);
+    }
   },
 
   // RENDER ENGINE
-  esc: str => String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'),
-  fmtCur: n => `${app.state.finance.currency}${Number(n).toLocaleString('en-IN', {maximumFractionDigits:2})}`,
+  esc(str) { 
+      return str ? String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>') : ''; 
+  },
+  fmtCur(n) { 
+      return `${this.state.finance.currency}${Number(n).toLocaleString('en-IN', {maximumFractionDigits:2})}`; 
+  },
 
   renderPreview() {
     const s = this.state;
-    
-    // Header
+    const container = document.getElementById('pdf-content');
+    if(!container) return;
+
     let html = `
       <div class="doc-header avoid-break">
         <div class="doc-title">QUOTATION</div>
@@ -554,10 +622,9 @@ const app = {
       <div class="doc-tagline avoid-break">${this.esc(s.general.tagline)}</div>
     `;
 
-    // Sections & Totals
     let subtotal = 0;
     s.sections.forEach((sec, i) => {
-      if(!sec.rows.length) return;
+      if(!sec.rows || !sec.rows.length) return;
       html += `
         <div class="doc-section-header avoid-break">
           <div class="doc-section-num">${String(i+1).padStart(2,'0')}</div>
@@ -566,32 +633,32 @@ const app = {
         <table class="doc-table">
           <thead>
             <tr class="avoid-break">
-              <th style="width: 35%;">SERVICE</th>
-              <th style="width: 40%;">DESCRIPTION</th>
-              <th class="col-center" style="width: 10%;">QTY</th>
-              <th class="col-right" style="width: 15%;">PRICE</th>
+              <th style="width: 25%;">SERVICE</th>
+              <th style="width: 45%;">DESCRIPTION</th>
+              <th style="width: 10%; text-align: center;">QTY</th>
+              <th style="width: 20%; text-align: right;">PRICE</th>
             </tr>
           </thead>
           <tbody>
       `;
       sec.rows.forEach(r => {
-        const lineTotal = r.qty * r.price;
+        const lineTotal = (r.qty || 0) * (r.price || 0);
         subtotal += lineTotal;
         html += `
           <tr class="avoid-break">
             <td><strong>${this.esc(r.name)}</strong></td>
             <td>${this.esc(r.desc)}</td>
-            <td class="col-center">${r.qty}</td>
-            <td class="col-right">${this.fmtCur(lineTotal)}</td>
+            <td style="text-align: center;">${r.qty}</td>
+            <td style="text-align: right;"><strong>${this.fmtCur(lineTotal)}</strong></td>
           </tr>
         `;
       });
       html += `</tbody></table>`;
     });
 
-    const discAmt = subtotal * (s.finance.discount / 100);
+    const discAmt = subtotal * ((s.finance.discount || 0) / 100);
     const taxBase = subtotal - discAmt;
-    const taxAmt = taxBase * (s.finance.tax / 100);
+    const taxAmt = taxBase * ((s.finance.tax || 0) / 100);
     const grandTotal = taxBase + taxAmt;
 
     html += `
@@ -603,8 +670,7 @@ const app = {
       </div>
     `;
 
-    // Terms
-    if (s.terms.length > 0) {
+    if (s.terms && s.terms.length > 0) {
       html += `
         <div class="doc-section-header avoid-break" style="margin-top:50px;">
           <div class="doc-section-num">${String(s.sections.length+1).padStart(2,'0')}</div>
@@ -616,7 +682,7 @@ const app = {
             ${s.terms.map(t => `
               <tr class="avoid-break">
                 <td><strong>${this.esc(t.title)}</strong></td>
-                <td style="line-height: 1.6;">${this.esc(t.details)}</td>
+                <td>${this.esc(t.details)}</td>
               </tr>
             `).join('')}
           </tbody>
@@ -624,57 +690,49 @@ const app = {
       `;
     }
 
-    // Signatures (Force break-inside avoid to keep them together)
     html += `
-      <div class="doc-signatures avoid-break page-break-if-needed">
-        <div class="sig-block">
-          <div>
-            <div class="sig-label">CLIENT</div>
+      <div class="doc-signatures avoid-break">
+        <div class="sig-grid">
+          <div class="sig-col">
+            <div class="sig-gold-label">CLIENT</div>
             <div class="sig-name">${this.esc(s.client.name)}</div>
             <div class="sig-company">${this.esc(s.client.company)}</div>
-          </div>
-          <div>
-            <div class="sig-line-container">
-              <div class="sig-line-label">Signature:</div>
-              <div class="sig-line">
-                ${s.signatures.client ? `<img src="${s.signatures.client}" class="sig-img">` : ''}
-              </div>
+            <div class="sig-line-row">
+              <span>Signature:</span>
+              <div class="line">${s.signatures.client ? `<img src="${s.signatures.client}" class="sig-img">` : ''}</div>
             </div>
-            <div class="sig-line-container" style="margin-bottom:0;">
-              <div class="sig-line-label">Date:</div>
-              <div class="sig-line" style="height:20px;"></div>
+            <div class="sig-line-row" style="margin-bottom:0;">
+              <span>Date:</span>
+              <div class="line" style="height:20px;"></div>
             </div>
           </div>
-        </div>
-        <div class="sig-block">
-          <div>
-            <div class="sig-label">FREELANCER</div>
+          <div class="sig-col">
+            <div class="sig-gold-label">FREELANCER</div>
             <div class="sig-name">${this.esc(s.freelancer.name)}</div>
             <div class="sig-company">${this.esc(s.freelancer.role)}</div>
-          </div>
-          <div>
-            <div class="sig-line-container">
-              <div class="sig-line-label">Signature:</div>
-              <div class="sig-line">
-                ${s.signatures.freelancer ? `<img src="${s.signatures.freelancer}" class="sig-img">` : ''}
-              </div>
+            <div class="sig-line-row">
+              <span>Signature:</span>
+              <div class="line">${s.signatures.freelancer ? `<img src="${s.signatures.freelancer}" class="sig-img">` : ''}</div>
             </div>
-            <div class="sig-line-container" style="margin-bottom:0;">
-              <div class="sig-line-label">Date:</div>
-              <div class="sig-line" style="height:20px;"></div>
+            <div class="sig-line-row" style="margin-bottom:0;">
+              <span>Date:</span>
+              <div class="line" style="height:20px;"></div>
             </div>
           </div>
         </div>
-        <div class="sig-footer">This document confirms agreement on the above-mentioned services, pricing, and terms.</div>
+        <div class="sig-footer-bar">This document confirms agreement on the above-mentioned services, pricing, and terms.</div>
       </div>
     `;
 
-    document.getElementById('pdf-content').innerHTML = html;
+    container.innerHTML = html;
   },
 
   // EXPORT / IMPORT
   exportData() {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.state));
+    const exportState = JSON.parse(JSON.stringify(this.state));
+    delete exportState.isPreviewVisible;
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportState));
     const a = document.createElement('a');
     a.setAttribute("href", dataStr);
     a.setAttribute("download", `${this.state.general.ref}.json`);
@@ -688,29 +746,29 @@ const app = {
     reader.onload = (e) => {
       try {
         const imported = JSON.parse(e.target.result);
+        imported.isPreviewVisible = this.state.isPreviewVisible; 
         this.state = imported;
         
-        // Update DOM inputs
-        document.getElementById('g-title').value = this.state.general.title;
-        document.getElementById('g-ref').value = this.state.general.ref;
-        document.getElementById('g-date').value = this.state.general.date;
-        document.getElementById('g-tagline').value = this.state.general.tagline;
+        document.getElementById('g-title').value = this.state.general.title || '';
+        document.getElementById('g-ref').value = this.state.general.ref || '';
+        document.getElementById('g-date').value = this.state.general.date || '';
+        document.getElementById('g-tagline').value = this.state.general.tagline || '';
         
-        document.getElementById('f-name').value = this.state.freelancer.name;
-        document.getElementById('f-role').value = this.state.freelancer.role;
-        document.getElementById('f-info').value = this.state.freelancer.info;
+        document.getElementById('f-name').value = this.state.freelancer.name || '';
+        document.getElementById('f-role').value = this.state.freelancer.role || '';
+        document.getElementById('f-info').value = this.state.freelancer.info || '';
         
-        document.getElementById('c-name').value = this.state.client.name;
-        document.getElementById('c-company').value = this.state.client.company;
-        document.getElementById('c-info').value = this.state.client.info;
+        document.getElementById('c-name').value = this.state.client.name || '';
+        document.getElementById('c-company').value = this.state.client.company || '';
+        document.getElementById('c-info').value = this.state.client.info || '';
         
-        document.getElementById('fin-currency').value = this.state.finance.currency;
-        document.getElementById('fin-discount').value = this.state.finance.discount;
-        document.getElementById('fin-tax').value = this.state.finance.tax;
+        document.getElementById('fin-currency').value = this.state.finance.currency || '₹';
+        document.getElementById('fin-discount').value = this.state.finance.discount || 0;
+        document.getElementById('fin-tax').value = this.state.finance.tax || 0;
 
-        this.resizeCanvases();
         this.renderBuilder();
-        this.renderPreview();
+        this.resizeCanvases();
+        this.debounceRender();
         this.toast("Data Imported!");
       } catch (err) {
         this.toast("Error importing file!");
@@ -719,10 +777,10 @@ const app = {
     reader.readAsText(file);
   },
   generatePDF() {
-    this.toast("Generating PDF... Please wait.");
+    this.toast("Generating PDF...");
     const element = document.getElementById('pdf-content');
     const opt = {
-      margin: [10, 0, 10, 0],
+      margin: 0,
       filename: `${this.state.general.ref}.pdf`,
       image: { type: 'jpeg', quality: 1 },
       html2canvas: { scale: 2, useCORS: true, letterRendering: true },
@@ -747,7 +805,9 @@ const app = {
   }
 };
 
-window.onload = () => app.init();
+window.addEventListener('DOMContentLoaded', () => {
+    app.init();
+});
 </script>
 </body>
 </html>
