@@ -1,595 +1,753 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>JK-MGMT Quotation Builder Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Dancing+Script:wght@400;700&family=Playfair+Display:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enterprise Quotation Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700;800&family=Dancing+Script:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 :root {
-  --bg: #0B0B0B;
+  --bg-color: #0B0B0B;
+  --panel-bg: #141414;
   --gold: #D4AF37;
-  --gold2: #C9A227;
-  --white: #FFFFFF;
-  --muted: #B8B8B8;
-  --card: #141414;
-  --border: #2a2a2a;
-  --gold-border: rgba(212,175,55,0.3);
-  --input-bg: #1a1a1a;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;min-height:100vh;}
-
-/* SCROLLBAR */
-::-webkit-scrollbar{width:5px;height:5px;}
-::-webkit-scrollbar-track{background:#111;}
-::-webkit-scrollbar-thumb{background:var(--gold);border-radius:3px;}
-
-/* TOPBAR */
-.topbar{background:#0d0d0d;border-bottom:1px solid var(--gold-border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.topbar-logo{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold);font-weight:700;letter-spacing:2px;}
-.topbar-logo span{color:var(--white);font-size:11px;display:block;letter-spacing:3px;font-family:'Inter',sans-serif;font-weight:300;}
-.topbar-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-.btn{padding:7px 14px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .2s;letter-spacing:.5px;text-transform:uppercase;}
-.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;}
-.btn-gold:hover{opacity:.85;}
-.btn-outline{background:transparent;border:1px solid var(--gold-border);color:var(--gold);font-size:11px;}
-.btn-outline:hover{background:rgba(212,175,55,.1);}
-.btn-danger{background:rgba(220,53,69,.15);border:1px solid rgba(220,53,69,.3);color:#ff6b6b;}
-.btn-danger:hover{background:rgba(220,53,69,.25);}
-.btn-sm{padding:5px 10px;font-size:10px;}
-
-/* LAYOUT */
-.main-layout{display:grid;grid-template-columns:42% 58%;height:calc(100vh - 57px);overflow:hidden;}
-@media(max-width:900px){.main-layout{grid-template-columns:1fr;height:auto;overflow:visible;}}
-.left-panel{overflow-y:auto;border-right:1px solid var(--gold-border);padding:16px;}
-.right-panel{overflow-y:auto;background:#111;padding:20px;display:flex;flex-direction:column;align-items:center;}
-@media(max-width:900px){
-  .left-panel{height:auto;border-right:none;border-bottom:1px solid var(--gold-border);}
-  .right-panel{display:none;padding:16px;}
-  .right-panel.show{display:flex;}
+  --gold-hover: #C9A227;
+  --border: rgba(212,175,55,0.35);
+  --border-light: rgba(255,255,255,0.1);
+  --text-main: #FFFFFF;
+  --text-muted: #B8B8B8;
+  --input-bg: #1A1A1A;
+  --danger: #EF4444;
 }
 
-/* TABS */
-.tab-bar{display:flex;gap:2px;margin-bottom:16px;background:#111;padding:4px;border-radius:6px;flex-wrap:wrap;}
-.tab{padding:6px 12px;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;transition:all .2s;border:none;background:transparent;}
-.tab.active{background:var(--gold);color:#000;}
-.tab-content{display:none;}
-.tab-content.active{display:block;}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+body { background-color: var(--bg-color); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
-/* CARDS & INPUTS */
-.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px;}
-.card-gold{border-color:var(--gold-border);}
-.card-title{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
-.card-title::after{content:'';flex:1;height:1px;background:var(--gold-border);}
-.form-group{margin-bottom:10px;}
-.form-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;display:block;}
-.form-input{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:4px;padding:8px 10px;color:var(--white);font-size:13px;font-family:'Inter',sans-serif;transition:border-color .2s;}
-.form-input:focus{outline:none;border-color:var(--gold);}
-.form-select{width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:4px;padding:8px 10px;color:var(--white);font-size:13px;}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-color); }
+::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
 
-/* SECTION BUILDER */
-.section-block{background:#111;border:1px solid var(--border);border-radius:6px;margin-bottom:12px;overflow:hidden;}
-.section-header{background:#1a1a1a;padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);}
-.section-num{background:var(--gold);color:#000;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
-.section-title-input{flex:1;background:transparent;border:none;color:var(--white);font-size:13px;font-weight:600;}
-.section-title-input:focus{outline:none;}
-.section-body{padding:10px;}
-.service-row{background:#0d0d0d;border:1px solid var(--border);border-radius:4px;padding:10px;margin-bottom:8px;}
-.service-row-grid{display:grid;grid-template-columns:2fr 2fr 1fr 1fr auto;gap:6px;align-items:center;}
-@media(max-width:600px){.service-row-grid{grid-template-columns:1fr 1fr;}}
-.row-input{background:var(--input-bg);border:1px solid var(--border);border-radius:3px;padding:5px 7px;color:var(--white);font-size:12px;width:100%;}
+/* Topbar */
+.topbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; background: var(--panel-bg); border-bottom: 1px solid var(--border); z-index: 10; }
+.logo { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--gold); letter-spacing: 1px; }
+.logo span { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 400; color: var(--text-muted); display: block; letter-spacing: 2px; text-transform: uppercase; }
+.actions { display: flex; gap: 10px; }
+.btn { padding: 8px 16px; border: none; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
+.btn-gold { background: var(--gold); color: #000; }
+.btn-gold:hover { background: var(--gold-hover); }
+.btn-outline { background: transparent; border: 1px solid var(--gold); color: var(--gold); }
+.btn-outline:hover { background: rgba(212,175,55,0.1); }
+.btn-danger { background: rgba(239,68,68,0.1); border: 1px solid var(--danger); color: var(--danger); }
+.btn-danger:hover { background: rgba(239,68,68,0.2); }
+.btn-icon { padding: 4px 8px; font-size: 14px; }
 
-/* TEMPLATES & TERMS */
-.template-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;}
-.template-chip{background:#1a1a1a;border:1px solid var(--gold-border);border-radius:4px;padding:8px 10px;font-size:11px;color:var(--gold);cursor:pointer;text-align:center;transition:all .2s;}
-.template-chip:hover{background:rgba(212,175,55,.15);}
-.term-row{display:flex;align-items:flex-start;gap:6px;margin-bottom:6px;padding:8px;background:#111;border-radius:4px;border:1px solid var(--border);}
-.term-row .term-text{flex:1;font-size:12px;color:var(--white);}
+/* Main Layout */
+.layout { display: flex; flex: 1; height: calc(100vh - 60px); overflow: hidden; }
+.panel-left { width: 45%; background: var(--bg-color); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+.panel-right { width: 55%; background: #2A2A2A; overflow-y: auto; padding: 40px; display: flex; justify-content: center; position: relative; }
 
-/* SIGNATURE UI */
-.sig-canvas{border:1px dashed var(--gold-border);border-radius:4px;cursor:crosshair;width:100%;touch-action:none;background:#0d0d0d;}
-.sig-font-preview{font-size:28px;padding:10px;text-align:center;color:var(--gold);min-height:60px;display:flex;align-items:center;justify-content:center;}
-.radio-tabs{display:flex;gap:2px;background:#111;padding:3px;border-radius:5px;margin-bottom:10px;}
-.radio-tab{flex:1;text-align:center;padding:6px;font-size:11px;cursor:pointer;border-radius:3px;color:var(--muted);font-weight:600;}
-.radio-tab.active{background:var(--gold);color:#000;}
+/* Tabs */
+.tabs { display: flex; background: var(--panel-bg); padding: 8px 12px 0; border-bottom: 1px solid var(--border); overflow-x: auto; flex-shrink: 0; }
+.tab { padding: 10px 16px; font-size: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.tab-content { display: none; padding: 20px; overflow-y: auto; flex: 1; }
+.tab-content.active { display: block; }
 
-/* TOAST & EXTRAS */
-.toast{position:fixed;bottom:80px;right:20px;background:var(--gold);color:#000;padding:10px 18px;border-radius:4px;font-size:12px;font-weight:700;z-index:1000;transform:translateY(100px);transition:transform .3s;letter-spacing:.5px;}
-.toast.show{transform:translateY(0);}
-.preview-toggle-bar{display:none;background:#1a1a1a;border-bottom:1px solid var(--gold-border);padding:10px 16px;}
-@media(max-width:900px){.preview-toggle-bar{display:block;}}
-.close-preview-btn{display:none;position:sticky;top:0;z-index:10;background:var(--gold);color:#000;border:none;padding:10px;font-weight:700;font-size:12px;cursor:pointer;width:100%;}
-@media(max-width:900px){.close-preview-btn{display:block;}}
+/* Forms */
+.card { background: var(--panel-bg); border: 1px solid var(--border-light); border-radius: 6px; padding: 16px; margin-bottom: 16px; }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border-light); }
+.card-title { font-size: 12px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.form-group.full { grid-column: span 2; }
+label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+input, select, textarea { background: var(--input-bg); border: 1px solid var(--border-light); color: var(--text-main); padding: 8px 12px; border-radius: 4px; font-size: 13px; outline: none; transition: border 0.2s; }
+input:focus, select:focus, textarea:focus { border-color: var(--gold); }
+textarea { resize: vertical; min-height: 80px; }
 
-/* ============================================================
-   A4 PREVIEW (EXACT PDF MATCH STYLES)
-   ============================================================ */
-.a4-wrapper{width:794px;max-width:100%;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.5);font-family:'Inter',sans-serif;color:#1a1a1a;}
-@media(max-width:900px){.a4-wrapper{width:100%;}}
+/* Dynamic Builders */
+.section-block { background: var(--input-bg); border: 1px solid var(--border-light); border-radius: 6px; margin-bottom: 16px; overflow: hidden; }
+.section-header { background: rgba(255,255,255,0.05); padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.section-title-input { background: transparent; border: none; color: var(--gold); font-weight: 600; font-size: 14px; flex: 1; outline: none; }
+.section-body { padding: 16px; }
+.row-item { display: grid; grid-template-columns: 3fr 1fr 1.5fr auto; gap: 8px; margin-bottom: 8px; align-items: start; }
+.row-item input { width: 100%; }
 
-.pdf-page { background: #fff; color: #000; padding: 50px 40px; position: relative; min-height: 1123px; box-sizing: border-box; }
+/* Canvas */
+.signature-wrapper { display: flex; flex-direction: column; gap: 10px; }
+.sig-canvas-container { background: #FFFFFF; border: 2px solid var(--border-light); border-radius: 4px; overflow: hidden; position: relative; }
+canvas { display: block; width: 100%; height: 200px; touch-action: none; cursor: crosshair; }
 
-.pdf-header { text-align: left; padding-bottom: 20px; margin-bottom: 20px; }
-.pdf-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 800; letter-spacing: 1px; margin-bottom: 5px; color: #000; }
-.pdf-subtitle { font-size: 16px; font-weight: 600; color: #333; margin-bottom: 10px; }
-.pdf-ref-line { font-size: 12px; color: #666; font-weight: 500; text-transform: uppercase; display: flex; justify-content: space-between;}
+/* PDF Document Rendering - STRICT A4 */
+.pdf-preview { width: 210mm; min-height: 297mm; background: #FFFFFF; box-shadow: 0 10px 30px rgba(0,0,0,0.5); padding: 20mm; font-family: 'Inter', sans-serif; color: #000000; position: relative; }
+.avoid-break { page-break-inside: avoid; break-inside: avoid; }
+.page-break { page-break-before: always; break-before: page; }
 
-.pdf-prepared-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 20px; }
-.pdf-prepared-label { font-size: 10px; color: #D4AF37; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-.pdf-prepared-name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #000; margin-bottom: 4px; }
-.pdf-prepared-sub { font-size: 12px; color: #555; line-height: 1.5; }
+/* Document Typography & Styles */
+.doc-title { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 800; color: #000; letter-spacing: 2px; text-transform: uppercase; }
+.doc-subtitle { font-size: 16px; color: #444; font-weight: 500; margin-top: 4px; margin-bottom: 16px; }
+.doc-meta { display: flex; justify-content: space-between; font-size: 11px; color: #666; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; border-bottom: 1px solid #E5E7EB; padding-bottom: 16px; margin-bottom: 30px; }
+.doc-parties { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+.party-label { font-size: 9px; color: #D4AF37; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-bottom: 8px; }
+.party-name { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: #000; margin-bottom: 4px; }
+.party-desc { font-size: 12px; color: #444; line-height: 1.5; }
+.doc-tagline { text-align: center; font-size: 11px; font-weight: 500; color: #666; padding: 12px; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; margin-bottom: 40px; letter-spacing: 1px; }
 
-.pdf-tagline { text-align: center; font-size: 11px; font-weight: 600; color: #555; margin-bottom: 30px; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 10px 0; }
+/* Tables */
+.doc-section-header { display: flex; align-items: center; gap: 16px; margin-top: 40px; margin-bottom: 16px; }
+.doc-section-num { font-family: 'Inter', sans-serif; font-size: 24px; font-weight: 800; color: #D4AF37; }
+.doc-section-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #000; flex: 1; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 4px; }
 
-.pdf-section-title { display: flex; align-items: center; gap: 12px; margin-top: 35px; margin-bottom: 15px; }
-.pdf-section-num { font-size: 26px; font-weight: 800; color: #D4AF37; line-height: 1; }
-.pdf-section-name { font-size: 18px; font-weight: 700; color: #000; }
+.doc-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
+.doc-table th { background: #F9FAFB; padding: 12px; text-align: left; font-size: 10px; text-transform: uppercase; color: #666; font-weight: 700; letter-spacing: 1px; border-bottom: 2px solid #E5E7EB; }
+.doc-table td { padding: 14px 12px; border-bottom: 1px solid #E5E7EB; vertical-align: top; color: #333; }
+.doc-table td strong { color: #000; font-size: 13px; display: block; margin-bottom: 4px; }
+.col-right { text-align: right !important; }
+.col-center { text-align: center !important; }
 
-.pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-.pdf-table th { background: #f9f9f9; color: #555; font-size: 10px; font-weight: 700; padding: 10px 12px; text-align: left; text-transform: uppercase; border-bottom: 2px solid #ddd; }
-.pdf-table td { padding: 12px; font-size: 12px; border-bottom: 1px solid #eee; vertical-align: top; color: #444; }
-.pdf-table td strong { color: #000; display: block; margin-bottom: 4px; font-size: 13px; }
+/* Pricing */
+.doc-totals { width: 350px; margin-left: auto; margin-top: 20px; border-top: 1px solid #E5E7EB; padding-top: 10px; }
+.tot-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 12px; color: #555; }
+.tot-row.grand { font-size: 16px; font-weight: 700; color: #000; border-top: 2px solid #000; padding-top: 12px; margin-top: 6px; }
 
-.pdf-totals-box { width: 350px; margin-left: auto; margin-top: 20px; margin-bottom: 40px; }
-.pdf-total-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 12px; border-bottom: 1px solid #eee; color: #555;}
-.pdf-total-row.grand { font-size: 16px; font-weight: 800; color: #000; border-bottom: 2px solid #000; border-top: 1px solid #000; padding: 10px 0; margin-top: 5px; }
+/* Signatures */
+.doc-signatures { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #D4AF37; margin-top: 60px; }
+.sig-block { padding: 24px; border-right: 1px solid #E5E7EB; display: flex; flex-direction: column; justify-content: space-between; min-height: 200px; }
+.sig-block:last-child { border-right: none; }
+.sig-label { font-size: 10px; color: #D4AF37; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin-bottom: 16px; }
+.sig-name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #000; }
+.sig-company { font-size: 11px; color: #666; margin-bottom: 30px; }
+.sig-line-container { display: flex; align-items: flex-end; margin-bottom: 12px; }
+.sig-line-label { font-size: 12px; color: #555; width: 70px; }
+.sig-line { flex: 1; border-bottom: 1px solid #000; height: 40px; position: relative; }
+.sig-img { position: absolute; bottom: 2px; left: 10px; max-height: 60px; max-width: 90%; object-fit: contain; }
+.sig-footer { grid-column: span 2; background: #000; color: #D4AF37; text-align: center; padding: 12px; font-size: 11px; letter-spacing: 1px; font-weight: 500; }
 
-.pdf-sig-wrapper { border: 1px solid #D4AF37; margin-top: 50px; page-break-inside: avoid; }
-.pdf-sig-grid { display: grid; grid-template-columns: 1fr 1fr; }
-.pdf-sig-col { padding: 25px; border-right: 1px solid #eee; }
-.pdf-sig-col:last-child { border-right: none; }
-.pdf-sig-role-label { font-size: 10px; color: #D4AF37; text-transform: uppercase; font-weight: 700; margin-bottom: 20px; letter-spacing: 1px; }
-.pdf-sig-person { font-size: 18px; font-weight: 700; color: #000; margin-bottom: 5px; }
-.pdf-sig-company { font-size: 12px; color: #555; margin-bottom: 40px; }
-.pdf-sig-line-box { display: flex; align-items: flex-end; margin-bottom: 20px; }
-.pdf-sig-line-label { font-size: 12px; color: #555; margin-right: 10px; width: 65px; }
-.pdf-sig-line { flex: 1; border-bottom: 1px solid #000; height: 35px; position: relative; }
-.pdf-sig-img { position: absolute; bottom: 2px; left: 10px; max-height: 55px; max-width: 90%; }
-.pdf-sig-footer { background: #111; color: #D4AF37; text-align: center; padding: 12px; font-size: 11px; font-weight: 500; letter-spacing: 0.5px; }
+.toast-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
+.toast { background: var(--gold); color: #000; padding: 12px 24px; border-radius: 4px; font-size: 12px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.5); opacity: 0; transform: translateY(20px); transition: all 0.3s; }
+.toast.show { opacity: 1; transform: translateY(0); }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="topbar-logo">JK-MGMT<span>Quotation Builder Pro</span></div>
-  <div class="topbar-actions">
-    <button class="btn btn-outline btn-sm" onclick="exportJSON()">📤 Export JSON</button>
-    <button class="btn btn-gold btn-sm" onclick="exportPDF()">⬇ Export PDF</button>
+  <div class="logo">JK-MGMT<span>Enterprise Quotation Engine</span></div>
+  <div class="actions">
+    <button class="btn btn-outline" onclick="app.exportData()">Export JSON</button>
+    <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">Import JSON</button>
+    <input type="file" id="importFile" style="display:none" accept=".json" onchange="app.importData(event)">
+    <button class="btn btn-gold" onclick="app.generatePDF()">Generate PDF</button>
   </div>
 </div>
 
-<div class="preview-toggle-bar">
-  <button onclick="toggleMobilePreview()" style="background:linear-gradient(135deg,#D4AF37,#C9A227);color:#000;border:none;padding:8px 20px;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;width:100%;">
-    👁 Preview Quotation
-  </button>
-</div>
-
-<div class="main-layout">
-  <div class="left-panel">
-    <div class="tab-bar">
-      <button class="tab active" onclick="switchTab('info')">Info</button>
-      <button class="tab" onclick="switchTab('services')">Services</button>
-      <button class="tab" onclick="switchTab('finance')">Finance</button>
-      <button class="tab" onclick="switchTab('terms')">Terms</button>
-      <button class="tab" onclick="switchTab('signature')">Signatures</button>
-      <button class="tab" onclick="switchTab('settings')">Settings</button>
+<div class="layout">
+  <div class="panel-left">
+    <div class="tabs">
+      <div class="tab active" onclick="app.switchTab('general')">General</div>
+      <div class="tab" onclick="app.switchTab('services')">Services & Pricing</div>
+      <div class="tab" onclick="app.switchTab('terms')">Terms</div>
+      <div class="tab" onclick="app.switchTab('signatures')">Signatures</div>
+      <div class="tab" onclick="app.switchTab('settings')">Finance</div>
     </div>
 
-    <div class="tab-content active" id="tab-info">
-      <div class="card card-gold">
-        <div class="card-title">Quotation Details</div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Ref No.</label><input class="form-input" id="refNum" value="JK-MGMT-2026-004-WRITEASE" oninput="renderPreview()"/></div>
-          <div class="form-group"><label class="form-label">Date</label><input class="form-input" id="quoteDate" value="20/05/2026" oninput="renderPreview()"/></div>
+    <div class="tab-content active" id="tab-general">
+      <div class="card">
+        <div class="card-title">Document Setup</div>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Title</label>
+            <input type="text" id="g-title" value="E-Commerce & Quick Commerce Growth Services" oninput="app.updateState('general','title',this.value)">
+          </div>
+          <div class="form-group">
+            <label>Reference No</label>
+            <input type="text" id="g-ref" value="JK-MGMT-2026-001" oninput="app.updateState('general','ref',this.value)">
+          </div>
+          <div class="form-group">
+            <label>Date</label>
+            <input type="text" id="g-date" value="20/05/2026" oninput="app.updateState('general','date',this.value)">
+          </div>
+          <div class="form-group full">
+            <label>Tagline</label>
+            <input type="text" id="g-tagline" value="Prepared with precision | Built for growth | Designed for success" oninput="app.updateState('general','tagline',this.value)">
+          </div>
         </div>
-        <div class="form-group"><label class="form-label">Title</label><input class="form-input" id="quoteTitle" value="E-Commerce & Quick Commerce Growth Services" oninput="renderPreview()"/></div>
-        <div class="form-group"><label class="form-label">Tagline</label><input class="form-input" id="quoteTagline" value="Prepared with precision | Built for growth | Designed for success" oninput="renderPreview()"/></div>
       </div>
-      <div class="card card-gold">
-        <div class="card-title">Prepared By (You)</div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="fromName" value="Jenish Kamli" oninput="renderPreview()"/></div>
-          <div class="form-group"><label class="form-label">Role</label><input class="form-input" id="fromRole" value="Freelance E-Commerce Growth Manager" oninput="renderPreview()"/></div>
+
+      <div class="card">
+        <div class="card-title">Prepared By (Freelancer/Agency)</div>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Name</label>
+            <input type="text" id="f-name" value="Jenish Kamli" oninput="app.updateState('freelancer','name',this.value)">
+          </div>
+          <div class="form-group full">
+            <label>Role</label>
+            <input type="text" id="f-role" value="Freelance E-Commerce Growth Manager" oninput="app.updateState('freelancer','role',this.value)">
+          </div>
+          <div class="form-group full">
+            <label>Additional Info</label>
+            <textarea id="f-info" oninput="app.updateState('freelancer','info',this.value)">Marketplace Specialist, Independent Consultant</textarea>
+          </div>
         </div>
-        <div class="form-group"><label class="form-label">Address/Info</label><input class="form-input" id="fromAddress" value="Marketplace Specialist, Independent Consultant" oninput="renderPreview()"/></div>
-        <div class="form-group"><label class="form-label">Phone/Email</label><input class="form-input" id="fromPhone" value="" oninput="renderPreview()"/></div>
       </div>
-      <div class="card card-gold">
+
+      <div class="card">
         <div class="card-title">Prepared For (Client)</div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="toName" value="Abhiral Jain" oninput="renderPreview()"/></div>
-          <div class="form-group"><label class="form-label">Company</label><input class="form-input" id="toCompany" value="Writease.in" oninput="renderPreview()"/></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="toPhone" value="+91 88306 93895" oninput="renderPreview()"/></div>
-          <div class="form-group"><label class="form-label">Location</label><input class="form-input" id="toAddress" value="India" oninput="renderPreview()"/></div>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Client Name</label>
+            <input type="text" id="c-name" value="Abhiral Jain" oninput="app.updateState('client','name',this.value)">
+          </div>
+          <div class="form-group full">
+            <label>Company</label>
+            <input type="text" id="c-company" value="Writease.in" oninput="app.updateState('client','company',this.value)">
+          </div>
+          <div class="form-group full">
+            <label>Additional Info</label>
+            <textarea id="c-info" oninput="app.updateState('client','info',this.value)">+91 88306 93895&#10;India</textarea>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="tab-content" id="tab-services">
-      <div class="card card-gold">
-        <div class="card-title">Templates</div>
-        <div class="template-grid" id="templateGrid"></div>
-      </div>
-      <div id="sectionsContainer"></div>
-      <button class="btn btn-outline" style="width:100%;margin-bottom:12px;" onclick="addSection()">+ Add Section</button>
-    </div>
-
-    <div class="tab-content" id="tab-finance">
-      <div class="card card-gold">
-        <div class="card-title">Tax & Discount</div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">GST %</label><input class="form-input" id="gstRate" value="0" type="number" oninput="renderPreview()"/></div>
-          <div class="form-group"><label class="form-label">Discount %</label><input class="form-input" id="discountPct" value="0" type="number" oninput="renderPreview()"/></div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Dynamic Sections</div>
+          <button class="btn btn-outline btn-icon" onclick="app.addSection()">+ Add Section</button>
         </div>
-        <div class="form-group"><label class="form-label">Currency</label><select class="form-select" id="currency" onchange="renderPreview()"><option value="₹">₹ INR</option><option value="$">$ USD</option></select></div>
+        <div id="sections-container"></div>
       </div>
     </div>
 
     <div class="tab-content" id="tab-terms">
-      <div class="card card-gold">
-        <div class="card-title">Add Term</div>
-        <input class="form-input" id="termTitle" placeholder="Title" style="margin-bottom:8px;"/>
-        <textarea class="form-input" id="termDetails" placeholder="Details..."></textarea>
-        <div style="margin-top:8px; display:flex; gap:5px;">
-            <button class="btn btn-gold btn-sm" onclick="addTerm()">Add Term</button>
-            <button class="btn btn-outline btn-sm" onclick="loadDefaultTerms()">Load Defaults</button>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Terms & Conditions</div>
+          <button class="btn btn-outline btn-icon" onclick="app.addTerm()">+ Add Clause</button>
         </div>
+        <div id="terms-container"></div>
       </div>
-      <div id="termsList"></div>
     </div>
 
-    <div class="tab-content" id="tab-signature">
-      <div class="card card-gold">
-        <div class="card-title">Apply To</div>
-        <div class="radio-tabs">
-          <div class="radio-tab active" id="destClient" onclick="setDestination('client')">Client Block</div>
-          <div class="radio-tab" id="destFreelancer" onclick="setDestination('freelancer')">Freelancer Block</div>
+    <div class="tab-content" id="tab-signatures">
+      <div class="card">
+        <div class="card-title">Client Signature</div>
+        <div class="signature-wrapper">
+          <div class="sig-canvas-container">
+            <canvas id="canvas-client"></canvas>
+          </div>
+          <div class="actions">
+            <button class="btn btn-outline" onclick="app.clearCanvas('client')">Clear</button>
+            <button class="btn btn-gold" onclick="app.saveSignature('client')">Apply</button>
+          </div>
         </div>
       </div>
-      <div class="card card-gold">
-        <div class="card-title">Method</div>
-        <div class="radio-tabs">
-          <div class="radio-tab active" id="sigModeDraw" onclick="setSigMode('draw')">Draw</div>
-          <div class="radio-tab" id="sigModeType" onclick="setSigMode('type')">Type</div>
-          <div class="radio-tab" id="sigModeUpload" onclick="setSigMode('upload')">Upload</div>
+      <div class="card">
+        <div class="card-title">Freelancer Signature</div>
+        <div class="signature-wrapper">
+          <div class="sig-canvas-container">
+            <canvas id="canvas-freelancer"></canvas>
+          </div>
+          <div class="actions">
+            <button class="btn btn-outline" onclick="app.clearCanvas('freelancer')">Clear</button>
+            <button class="btn btn-gold" onclick="app.saveSignature('freelancer')">Apply</button>
+          </div>
         </div>
       </div>
-
-      <div class="card card-gold" id="sigDrawPanel">
-        <canvas id="sigCanvas" class="sig-canvas" height="150"></canvas>
-        <div style="margin-top:8px; display:flex; gap:5px;">
-          <button class="btn btn-outline btn-sm" onclick="clearCanvas()">Clear</button>
-          <button class="btn btn-gold btn-sm" onclick="applyCanvasSig()">Apply Sign</button>
-        </div>
-      </div>
-
-      <div class="card card-gold" id="sigTypePanel" style="display:none;">
-        <input class="form-input" id="sigTypeInput" placeholder="Type name..." oninput="updateTypeSigPreview()"/>
-        <select class="form-select" id="sigFont" onchange="updateTypeSigPreview()" style="margin-top:8px;">
-          <option value="'Dancing Script',cursive">Dancing Script</option>
-          <option value="'Great Vibes',cursive">Great Vibes</option>
-        </select>
-        <div class="sig-font-preview" id="typeSigPreview">Signature</div>
-        <button class="btn btn-gold btn-sm" onclick="applyTypeSig()">Apply</button>
-      </div>
-
-      <div class="card card-gold" id="sigUploadPanel" style="display:none;">
-        <input type="file" id="sigUploadFile" accept="image/*" onchange="applySigUpload()" style="display:none;"/>
-        <button class="btn btn-outline btn-sm" onclick="document.getElementById('sigUploadFile').click()">Choose Image</button>
-      </div>
-      <button class="btn btn-danger btn-sm" onclick="clearAllSignatures()">Clear All Signatures</button>
     </div>
 
     <div class="tab-content" id="tab-settings">
-      <div class="card card-gold">
-        <div class="card-title">Data Actions</div>
-        <input type="file" id="importJSONFile" accept=".json" onchange="importJSON()" style="display:none;"/>
-        <button class="btn btn-outline btn-sm" onclick="document.getElementById('importJSONFile').click()">📂 Import JSON</button>
+      <div class="card">
+        <div class="card-title">Global Finance Settings</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Currency Symbol</label>
+            <input type="text" id="fin-currency" value="₹" oninput="app.updateState('finance','currency',this.value)">
+          </div>
+          <div class="form-group">
+            <label>Global Discount (%)</label>
+            <input type="number" id="fin-discount" value="0" oninput="app.updateState('finance','discount',this.value)">
+          </div>
+          <div class="form-group">
+            <label>Global Tax / GST (%)</label>
+            <input type="number" id="fin-tax" value="0" oninput="app.updateState('finance','tax',this.value)">
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="right-panel" id="rightPanel">
-    <button class="close-preview-btn" onclick="toggleMobilePreview()">✕ Close</button>
-    <div class="a4-wrapper" id="previewContent"></div>
+  <div class="panel-right" id="preview-scroll">
+    <div class="pdf-preview" id="pdf-content">
+      </div>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast-container" id="toast-container"></div>
 
 <script>
-// ================= STATE =================
-let state = {
-  sections: [], terms: [],
-  clientSig: null, freelancerSig: null
-};
+const app = {
+  state: {
+    general: { title: "E-Commerce & Quick Commerce Growth Services", ref: "JK-MGMT-2026-004", date: "20/05/2026", tagline: "Prepared with precision | Built for growth | Designed for success" },
+    freelancer: { name: "Jenish Kamli", role: "Freelance E-Commerce Growth Manager", info: "Marketplace Specialist, Independent Consultant" },
+    client: { name: "Abhiral Jain", company: "Writease.in", info: "+91 88306 93895\nIndia" },
+    finance: { currency: "₹", discount: 0, tax: 0 },
+    sections: [
+      { id: 1, title: "One-Time Setup & Onboarding", rows: [
+        { id: 101, name: "Marketplace Onboarding", desc: "Full account setup on Amazon, Flipkart, Meesho including GST, bank verification & shipping configuration", qty: 1, price: 1500 },
+        { id: 102, name: "Brand Registry", desc: "Trademark linking, brand protection & A+ content unlock", qty: 1, price: 1700 },
+        { id: 103, name: "Quick Commerce Setup", desc: "Blinkit, Zepto, Instamart onboarding & store mapping", qty: 1, price: 5000 }
+      ]},
+      { id: 2, title: "Product Listing (Per SKU)", rows: [
+        { id: 201, name: "Standard Listing", desc: "SEO Title, Bullet Points, Description, Keywords", qty: 1, price: 150 },
+        { id: 202, name: "Premium Listing", desc: "Full creative, image design, 2-3 infographics", qty: 1, price: 499 }
+      ]},
+      { id: 3, title: "Monthly Management Retainer", rows: [
+        { id: 301, name: "Starter Plan", desc: "1 Platform: SPF Claims, HPF Claims, Account Health Monitoring", qty: 1, price: 10000 },
+        { id: 302, name: "Growth Plan", desc: "2 Platforms: Advanced optimization & strategic management", qty: 1, price: 15000 }
+      ]}
+    ],
+    terms: [
+      { id: 1, title: "Payment Milestones", details: "50% non-refundable advance required to commence onboarding/listing work. The remaining 50% is due immediately upon completion of the agreed scope." },
+      { id: 2, title: "Scope & Revisions", details: "The proposal covers the exact number of SKUs and platforms specified. Any additional SKUs will be billed separately. Includes 2 rounds of minor revisions per listing." },
+      { id: 3, title: "Platform Dependency", details: "Final brand registry approvals, account verifications, and go-live timelines are strictly subject to internal policies of Amazon, Flipkart, Blinkit, Zepto, and Instamart." },
+      { id: 4, title: "Data Security & Trust", details: "All client business data, sales volumes, proprietary product details, and login credentials provided during the tenure are handled with strict confidentiality." }
+    ],
+    signatures: { client: null, freelancer: null }
+  },
+  canvases: {},
+  drawingParams: {},
+  renderTimeout: null,
 
-let sigDestination = 'client';
-let isDrawing = false;
+  init() {
+    this.initCanvases();
+    this.renderBuilder();
+    this.renderPreview();
+  },
 
-const TEMPLATES = [
-  {name:'Marketplace Setup',service:'Marketplace Onboarding',desc:'Full account setup on platforms',price:1500,qty:1},
-  {name:'Brand Registry',service:'Brand Registry',desc:'Trademark linking, brand protection',price:1700,qty:1},
-  {name:'Listing (Standard)',service:'Standard Listing',desc:'SEO Title, Bullet Points, Description',price:150,qty:1},
-  {name:'Retainer',service:'Growth Plan',desc:'Account Health Monitoring, Support',price:10000,qty:1},
-];
-const DEFAULT_TERMS = [
-  {title:'Payment Milestones',details:'50% non-refundable advance required to commence onboarding/listing work. The remaining 50% is due immediately upon completion.'},
-  {title:'Scope & Revisions',details:'The proposal covers the exact number of SKUs and platforms specified. Includes 2 rounds of minor revisions per listing.'},
-  {title:'Late Payments',details:'Work will be paused if milestone payments are delayed by more than 7 days.'},
-];
-
-const esc = str => (str||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const q = id => document.getElementById(id);
-const qVal = id => { const el = document.getElementById(id); return el ? el.value : ''; };
-const toast = msg => { const t = q('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2500); };
-
-// ================= INIT =================
-window.onload = function init() {
-  console.log("App Initialization Started...");
-  renderTemplates();
-  
-  // Create Default Sections
-  addSection('One-Time Setup & Onboarding');
-  state.sections[0].rows.push({id:1, service:'Marketplace Onboarding', desc:'Full account setup on Amazon, Flipkart, Meesho', price:1500, qty:1});
-  state.sections[0].rows.push({id:2, service:'Brand Registry', desc:'Trademark linking & brand protection', price:1700, qty:1});
-  
-  addSection('Product Listing (Per SKU)');
-  state.sections[1].rows.push({id:3, service:'Standard Listing', desc:'SEO Title, Bullet Points, Keywords', price:150, qty:1});
-  
-  state.terms = [...DEFAULT_TERMS];
-  initCanvas();
-  renderTermsList();
-  renderPreview();
-  console.log("App Initialized Successfully.");
-};
-
-function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  event.target.classList.add('active');
-  q('tab-'+tab).classList.add('active');
-}
-function toggleMobilePreview() { q('rightPanel').classList.toggle('show'); renderPreview(); }
-
-// ================= SECTIONS & ROWS =================
-function addSection(title='New Section') { state.sections.push({id:Date.now(), title:title, rows:[]}); renderSections(); renderPreview(); }
-function removeSection(id) { state.sections = state.sections.filter(s=>s.id!==id); renderSections(); renderPreview(); }
-function updateSectionTitle(id, val) { state.sections.find(s=>s.id===id).title = val; renderPreview(); }
-function addRow(sId) { state.sections.find(s=>s.id===sId).rows.push({id:Date.now(), service:'', desc:'', price:0, qty:1}); renderSections(); renderPreview(); }
-function removeRow(sId, rId) { const s = state.sections.find(s=>s.id===sId); s.rows = s.rows.filter(r=>r.id!==rId); renderSections(); renderPreview(); }
-function updateRow(sId, rId, field, val) { 
-  const r = state.sections.find(s=>s.id===sId).rows.find(x=>x.id===rId);
-  r[field] = ['price','qty'].includes(field) ? parseFloat(val)||0 : val;
-  renderPreview();
-}
-
-function renderSections() {
-  const c = q('sectionsContainer');
-  c.innerHTML = state.sections.map((sec,idx) => `
-    <div class="section-block">
-      <div class="section-header">
-        <div class="section-num">${idx+1}</div>
-        <input class="section-title-input" value="${esc(sec.title)}" onchange="updateSectionTitle(${sec.id},this.value)"/>
-        <button class="btn btn-danger btn-sm" onclick="removeSection(${sec.id})">✕</button>
-      </div>
-      <div class="section-body">
-        ${sec.rows.map(r => `
-        <div class="service-row">
-          <div class="service-row-grid">
-            <input class="row-input" placeholder="Service" value="${esc(r.service)}" oninput="updateRow(${sec.id},${r.id},'service',this.value)"/>
-            <input class="row-input" placeholder="Description" value="${esc(r.desc)}" oninput="updateRow(${sec.id},${r.id},'desc',this.value)"/>
-            <input class="row-input" type="number" placeholder="Price" value="${r.price}" oninput="updateRow(${sec.id},${r.id},'price',this.value)"/>
-            <input class="row-input" type="number" placeholder="Qty" value="${r.qty}" oninput="updateRow(${sec.id},${r.id},'qty',this.value)"/>
-            <button class="btn btn-danger btn-sm" onclick="removeRow(${sec.id},${r.id})">✕</button>
-          </div>
-        </div>`).join('')}
-        <button class="btn btn-outline btn-sm" onclick="addRow(${sec.id})">+ Add Row</button>
-      </div>
-    </div>`).join('');
-}
-
-// ================= TEMPLATES & TERMS =================
-function renderTemplates() { q('templateGrid').innerHTML = TEMPLATES.map(t=>`<div class="template-chip" onclick='insertTemplate(${JSON.stringify(t)})'>${t.name}</div>`).join(''); }
-function insertTemplate(t) { 
-  if(!state.sections.length) addSection('Services');
-  state.sections[state.sections.length-1].rows.push({id:Date.now(), service:t.service, desc:t.desc, price:t.price, qty:t.qty});
-  renderSections(); renderPreview(); toast('Added!');
-}
-function addTerm() {
-  const t = qVal('termTitle'), d = qVal('termDetails');
-  if(t || d) { state.terms.push({title:t, details:d}); q('termTitle').value=''; q('termDetails').value=''; renderTermsList(); renderPreview(); }
-}
-function loadDefaultTerms() { state.terms = [...DEFAULT_TERMS]; renderTermsList(); renderPreview(); }
-function renderTermsList() {
-  q('termsList').innerHTML = state.terms.map((t,i)=>`<div class="term-row"><div class="term-text"><b>${esc(t.title)}</b><br>${esc(t.details)}</div><button class="btn btn-danger btn-sm" onclick="state.terms.splice(${i},1);renderTermsList();renderPreview();">✕</button></div>`).join('');
-}
-
-// ================= FINANCE MATH =================
-function calcFinancials() {
-  let sub = 0;
-  state.sections.forEach(s => s.rows.forEach(r => { sub += (r.price||0) * (r.qty||0); }));
-  const gst = parseFloat(qVal('gstRate')) || 0;
-  const disc = parseFloat(qVal('discountPct')) || 0;
-  const discAmt = sub * (disc/100);
-  const tax = (sub - discAmt) * (gst/100);
-  return { sub, discAmt, tax, grand: sub - discAmt + tax };
-}
-const formatCur = n => (qVal('currency')||'₹') + Number(n).toLocaleString('en-IN',{maximumFractionDigits:2});
-
-// ================= SIGNATURE CANVAS & TYPE =================
-function setDestination(d) { sigDestination=d; q('destClient').classList.toggle('active',d==='client'); q('destFreelancer').classList.toggle('active',d==='freelancer'); }
-function setSigMode(m) {
-  ['Draw','Type','Upload'].forEach(x=>{ 
-    q('sigMode'+x).classList.toggle('active', m.toLowerCase()===x.toLowerCase()); 
-    q('sig'+x+'Panel').style.display = m.toLowerCase()===x.toLowerCase()?'block':'none'; 
-  });
-}
-function initCanvas() {
-  const cvs = q('sigCanvas'), ctx = cvs.getContext('2d');
-  cvs.width = cvs.offsetWidth || 400; ctx.strokeStyle = '#D4AF37'; ctx.lineWidth = 2.5; ctx.lineCap='round';
-  const getP = e => { const r=cvs.getBoundingClientRect(); return e.touches ? {x:e.touches[0].clientX-r.left, y:e.touches[0].clientY-r.top} : {x:e.clientX-r.left, y:e.clientY-r.top}; };
-  const draw = e => { if(!isDrawing)return; const p=getP(e); ctx.lineTo(p.x,p.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(p.x,p.y); };
-  cvs.onmousedown=cvs.ontouchstart = e=>{isDrawing=true; ctx.beginPath(); const p=getP(e); ctx.moveTo(p.x,p.y);};
-  cvs.onmousemove=cvs.ontouchmove = draw; cvs.onmouseup=cvs.onmouseleave=cvs.ontouchend = ()=>isDrawing=false;
-}
-function clearCanvas() { const c=q('sigCanvas'); c.getContext('2d').clearRect(0,0,c.width,c.height); }
-function applyCanvasSig() {
-  const data = q('sigCanvas').toDataURL('image/png');
-  sigDestination==='client' ? state.clientSig=data : state.freelancerSig=data;
-  renderPreview(); toast('Signature Applied');
-}
-function updateTypeSigPreview() { q('typeSigPreview').style.fontFamily = qVal('sigFont'); q('typeSigPreview').textContent = qVal('sigTypeInput')||'Signature'; }
-function applyTypeSig() {
-  const cvs=document.createElement('canvas'); cvs.width=400; cvs.height=150; const ctx=cvs.getContext('2d');
-  ctx.font = `40px ${qVal('sigFont')}`; ctx.fillStyle='#D4AF37'; ctx.textAlign='center'; ctx.fillText(qVal('sigTypeInput')||'Signature', 200, 90);
-  sigDestination==='client' ? state.clientSig=cvs.toDataURL() : state.freelancerSig=cvs.toDataURL();
-  renderPreview(); toast('Signature Applied');
-}
-function applySigUpload() { 
-  const file = q('sigUploadFile').files[0]; if(!file) return;
-  const r=new FileReader(); r.onload=e=>{ sigDestination==='client' ? state.clientSig=e.target.result : state.freelancerSig=e.target.result; renderPreview(); toast('Uploaded'); }; r.readAsDataURL(file);
-}
-function clearAllSignatures() { state.clientSig = null; state.freelancerSig = null; renderPreview(); toast('Cleared'); }
-
-// ================= RENDER HTML =================
-function renderPreview() {
-  const f = calcFinancials(); 
-  
-  let sectionsHtml = '';
-  state.sections.forEach((sec, i) => {
-    if(!sec.rows || !sec.rows.length) return;
-    const num = String(i + 1).padStart(2, '0');
-    sectionsHtml += `<div class="pdf-section-title"><div class="pdf-section-num">${num}</div><div class="pdf-section-name">${esc(sec.title)}</div></div>
-    <table class="pdf-table"><tr><th style="width: 35%;">SERVICE</th><th style="width: 35%;">DESCRIPTION</th><th style="text-align: center;">QTY</th><th style="text-align: right;">PRICE</th><th style="text-align: right;">TOTAL</th></tr>`;
-    sec.rows.forEach(r => {
-      sectionsHtml += `<tr><td><strong>${esc(r.service)}</strong></td><td>${esc(r.desc)}</td><td style="text-align: center;">${r.qty}</td><td style="text-align: right;">${formatCur(r.price)}</td><td style="text-align: right; font-weight: 600; color: #000;">${formatCur((r.price||0) * (r.qty||0))}</td></tr>`;
-    });
-    sectionsHtml += `</table>`;
-  });
-
-  let termsHtml = '';
-  if (state.terms && state.terms.length > 0) {
-    const termNum = String(state.sections.length + 1).padStart(2, '0');
-    termsHtml += `<div class="pdf-section-title" style="margin-top: 40px;"><div class="pdf-section-num">${termNum}</div><div class="pdf-section-name">Terms & Conditions</div></div>
-    <table class="pdf-table" style="margin-bottom: 0;"><tr><th style="width: 25%;">CLAUSE</th><th>DETAILS</th></tr>`;
-    state.terms.forEach(t => { termsHtml += `<tr><td><strong style="font-size: 12px;">${esc(t.title)}</strong></td><td style="line-height: 1.5;">${esc(t.details)}</td></tr>`; });
-    termsHtml += `</table>`;
-  }
-
-  q('previewContent').innerHTML = `
-    <div class="pdf-page" id="pdf-export-element">
-      <div class="pdf-header">
-        <div class="pdf-title">QUOTATION</div>
-        <div class="pdf-subtitle">${esc(qVal('quoteTitle'))}</div>
-        <div class="pdf-ref-line">
-          <span>REF: ${esc(qVal('refNum'))}</span>
-          <span>DATE: ${esc(qVal('quoteDate'))}</span>
-        </div>
-      </div>
-      <div class="pdf-prepared-grid">
-        <div>
-          <div class="pdf-prepared-label">PREPARED BY</div>
-          <div class="pdf-prepared-name">${esc(qVal('fromName'))}</div>
-          <div class="pdf-prepared-sub">${esc(qVal('fromRole'))}<br>${esc(qVal('fromAddress'))}<br>${esc(qVal('fromPhone'))}</div>
-        </div>
-        <div>
-          <div class="pdf-prepared-label">PREPARED FOR</div>
-          <div class="pdf-prepared-name">${esc(qVal('toName')) || 'Client Name'}</div>
-          <div class="pdf-prepared-sub">${esc(qVal('toCompany'))}<br>${esc(qVal('toPhone'))}<br>${esc(qVal('toAddress'))}</div>
-        </div>
-      </div>
-      <div class="pdf-tagline">${esc(qVal('quoteTagline'))}</div>
-      ${sectionsHtml}
-      <div class="pdf-totals-box">
-        <div class="pdf-total-row"><span>Subtotal</span><span>${formatCur(f.sub)}</span></div>
-        ${f.discAmt > 0 ? `<div class="pdf-total-row"><span>Discount</span><span>-${formatCur(f.discAmt)}</span></div>` : ''}
-        <div class="pdf-total-row"><span>Tax (${qVal('gstRate')}%)</span><span>${formatCur(f.tax)}</span></div>
-        <div class="pdf-total-row grand"><span>GRAND TOTAL</span><span>${formatCur(f.grand)}</span></div>
-      </div>
-      ${termsHtml}
-      <div class="pdf-sig-wrapper">
-        <div class="pdf-sig-grid">
-          <div class="pdf-sig-col">
-            <div class="pdf-sig-role-label">CLIENT</div>
-            <div class="pdf-sig-person">${esc(qVal('toName')) || 'Client Name'}</div>
-            <div class="pdf-sig-company">${esc(qVal('toCompany')) || 'Company Name'}</div>
-            <div class="pdf-sig-line-box"><span class="pdf-sig-line-label">Signature:</span><div class="pdf-sig-line">${state.clientSig ? `<img src="${state.clientSig}" class="pdf-sig-img"/>` : ''}</div></div>
-            <div class="pdf-sig-line-box" style="margin-bottom: 0;"><span class="pdf-sig-line-label">Date:</span><div class="pdf-sig-line" style="height: 20px;"></div></div>
-          </div>
-          <div class="pdf-sig-col">
-            <div class="pdf-sig-role-label">FREELANCER</div>
-            <div class="pdf-sig-person">${esc(qVal('fromName'))}</div>
-            <div class="pdf-sig-company">${esc(qVal('fromRole'))}</div>
-            <div class="pdf-sig-line-box"><span class="pdf-sig-line-label">Signature:</span><div class="pdf-sig-line">${state.freelancerSig ? `<img src="${state.freelancerSig}" class="pdf-sig-img"/>` : ''}</div></div>
-            <div class="pdf-sig-line-box" style="margin-bottom: 0;"><span class="pdf-sig-line-label">Date:</span><div class="pdf-sig-line" style="height: 20px;"></div></div>
-          </div>
-        </div>
-        <div class="pdf-sig-footer">This document confirms agreement on the above-mentioned services, pricing, and terms.</div>
-      </div>
-    </div>`;
-}
-
-// ================= EXPORTS & IMPORTS =================
-function exportPDF() {
-  const el = q('pdf-export-element');
-  html2pdf().set({ margin:0, filename: qVal('refNum')+'.pdf', image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'pt',format:'a4',orientation:'portrait'} }).from(el).save();
-}
-
-function getFullData() {
-  return { 
-    state, refNum: qVal('refNum'), date: qVal('quoteDate'), title: qVal('quoteTitle'), tag: qVal('quoteTagline'),
-    from: {n:qVal('fromName'), r:qVal('fromRole'), p:qVal('fromPhone'), a:qVal('fromAddress')},
-    to: {n:qVal('toName'), c:qVal('toCompany'), p:qVal('toPhone'), a:qVal('toAddress')},
-    fin: {g:qVal('gstRate'), d:qVal('discountPct'), c:qVal('currency')}
-  };
-}
-
-function exportJSON() {
-  const b = new Blob([JSON.stringify(getFullData())], {type:'application/json'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = qVal('refNum')+'.json'; a.click();
-}
-
-function importJSON() {
-  const file = q('importJSONFile').files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const data = JSON.parse(e.target.result);
-      state = data.state;
-      q('refNum').value = data.refNum || '';
-      q('quoteDate').value = data.date || '';
-      q('quoteTitle').value = data.title || '';
-      q('quoteTagline').value = data.tag || '';
-      q('fromName').value = data.from?.n || '';
-      q('fromRole').value = data.from?.r || '';
-      q('fromPhone').value = data.from?.p || '';
-      q('fromAddress').value = data.from?.a || '';
-      q('toName').value = data.to?.n || '';
-      q('toCompany').value = data.to?.c || '';
-      q('toPhone').value = data.to?.p || '';
-      q('toAddress').value = data.to?.a || '';
-      q('gstRate').value = data.fin?.g || 0;
-      q('discountPct').value = data.fin?.d || 0;
-      q('currency').value = data.fin?.c || '₹';
-      
-      renderSections();
-      renderTermsList();
-      renderPreview();
-      toast('Imported Successfully!');
-    } catch(err) {
-      toast('Invalid JSON File');
-      console.error(err);
+  switchTab(tabId) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById(`tab-${tabId}`).classList.add('active');
+    if (tabId === 'signatures') {
+      this.resizeCanvases();
     }
-  };
-  reader.readAsText(file);
-}
+  },
+
+  updateState(category, field, value) {
+    this.state[category][field] = value;
+    this.debounceRender();
+  },
+
+  debounceRender() {
+    clearTimeout(this.renderTimeout);
+    this.renderTimeout = setTimeout(() => this.renderPreview(), 150);
+  },
+
+  // SECTION BUILDER
+  addSection() {
+    this.state.sections.push({ id: Date.now(), title: "New Section", rows: [] });
+    this.renderBuilder();
+    this.debounceRender();
+  },
+  removeSection(id) {
+    this.state.sections = this.state.sections.filter(s => s.id !== id);
+    this.renderBuilder();
+    this.debounceRender();
+  },
+  updateSectionTitle(id, value) {
+    const sec = this.state.sections.find(s => s.id === id);
+    if(sec) { sec.title = value; this.debounceRender(); }
+  },
+  addRow(secId) {
+    const sec = this.state.sections.find(s => s.id === secId);
+    if(sec) {
+      sec.rows.push({ id: Date.now(), name: "", desc: "", qty: 1, price: 0 });
+      this.renderBuilder();
+      this.debounceRender();
+    }
+  },
+  removeRow(secId, rowId) {
+    const sec = this.state.sections.find(s => s.id === secId);
+    if(sec) {
+      sec.rows = sec.rows.filter(r => r.id !== rowId);
+      this.renderBuilder();
+      this.debounceRender();
+    }
+  },
+  updateRow(secId, rowId, field, value) {
+    const sec = this.state.sections.find(s => s.id === secId);
+    if(sec) {
+      const row = sec.rows.find(r => r.id === rowId);
+      if(row) {
+        row[field] = (field === 'qty' || field === 'price') ? Number(value) : value;
+        this.debounceRender();
+      }
+    }
+  },
+
+  // TERMS BUILDER
+  addTerm() {
+    this.state.terms.push({ id: Date.now(), title: "New Clause", details: "Details here..." });
+    this.renderBuilder();
+    this.debounceRender();
+  },
+  removeTerm(id) {
+    this.state.terms = this.state.terms.filter(t => t.id !== id);
+    this.renderBuilder();
+    this.debounceRender();
+  },
+  updateTerm(id, field, value) {
+    const term = this.state.terms.find(t => t.id === id);
+    if(term) { term[field] = value; this.debounceRender(); }
+  },
+
+  renderBuilder() {
+    const sCont = document.getElementById('sections-container');
+    sCont.innerHTML = this.state.sections.map((sec, i) => `
+      <div class="section-block">
+        <div class="section-header">
+          <div style="display:flex; align-items:center; gap:10px; flex:1;">
+            <div class="section-num">${String(i+1).padStart(2,'0')}</div>
+            <input class="section-title-input" value="${this.esc(sec.title)}" oninput="app.updateSectionTitle(${sec.id}, this.value)">
+          </div>
+          <button class="btn btn-danger btn-icon" onclick="app.removeSection(${sec.id})">✕</button>
+        </div>
+        <div class="section-body">
+          ${sec.rows.map(r => `
+            <div class="row-item">
+              <div style="display:flex; flex-direction:column; gap:4px;">
+                <input placeholder="Service Name" value="${this.esc(r.name)}" oninput="app.updateRow(${sec.id}, ${r.id}, 'name', this.value)">
+                <input placeholder="Description" value="${this.esc(r.desc)}" oninput="app.updateRow(${sec.id}, ${r.id}, 'desc', this.value)">
+              </div>
+              <input type="number" placeholder="Qty" value="${r.qty}" oninput="app.updateRow(${sec.id}, ${r.id}, 'qty', this.value)">
+              <input type="number" placeholder="Price" value="${r.price}" oninput="app.updateRow(${sec.id}, ${r.id}, 'price', this.value)">
+              <button class="btn btn-danger btn-icon" style="height: 35px;" onclick="app.removeRow(${sec.id}, ${r.id})">✕</button>
+            </div>
+          `).join('')}
+          <button class="btn btn-outline" style="width:100%; margin-top:8px;" onclick="app.addRow(${sec.id})">+ Add Row</button>
+        </div>
+      </div>
+    `).join('');
+
+    const tCont = document.getElementById('terms-container');
+    tCont.innerHTML = this.state.terms.map(t => `
+      <div class="section-block" style="padding: 12px; display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <input style="flex:1; font-weight:bold; color:var(--gold); border:none; background:transparent;" value="${this.esc(t.title)}" oninput="app.updateTerm(${t.id}, 'title', this.value)">
+          <button class="btn btn-danger btn-icon" onclick="app.removeTerm(${t.id})">✕</button>
+        </div>
+        <textarea style="width:100%; border:none; background:rgba(0,0,0,0.2);" oninput="app.updateTerm(${t.id}, 'details', this.value)">${this.esc(t.details)}</textarea>
+      </div>
+    `).join('');
+  },
+
+  // SIGNATURE CANVAS (High Performance, White Bg, Black Ink)
+  initCanvases() {
+    ['client', 'freelancer'].forEach(type => {
+      const cvs = document.getElementById(`canvas-${type}`);
+      const ctx = cvs.getContext('2d', { alpha: false });
+      this.canvases[type] = { cvs, ctx };
+      this.drawingParams[type] = { isDrawing: false, lastX: 0, lastY: 0 };
+      
+      this.clearCanvas(type);
+
+      const startPos = (e) => {
+        const rect = cvs.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return { x: clientX - rect.left, y: clientY - rect.top };
+      };
+
+      const start = (e) => { e.preventDefault(); this.drawingParams[type].isDrawing = true; const p = startPos(e); this.drawingParams[type].lastX = p.x; this.drawingParams[type].lastY = p.y; ctx.beginPath(); ctx.moveTo(p.x, p.y); };
+      const draw = (e) => {
+        if (!this.drawingParams[type].isDrawing) return;
+        e.preventDefault();
+        requestAnimationFrame(() => {
+          const p = startPos(e);
+          ctx.lineTo(p.x, p.y);
+          ctx.stroke();
+          this.drawingParams[type].lastX = p.x;
+          this.drawingParams[type].lastY = p.y;
+        });
+      };
+      const stop = () => { this.drawingParams[type].isDrawing = false; };
+
+      cvs.addEventListener('mousedown', start);
+      cvs.addEventListener('mousemove', draw);
+      window.addEventListener('mouseup', stop);
+      cvs.addEventListener('touchstart', start, { passive: false });
+      cvs.addEventListener('touchmove', draw, { passive: false });
+      window.addEventListener('touchend', stop);
+    });
+    window.addEventListener('resize', () => this.resizeCanvases());
+  },
+  resizeCanvases() {
+    ['client', 'freelancer'].forEach(type => {
+      const c = this.canvases[type];
+      if(!c) return;
+      const rect = c.cvs.parentElement.getBoundingClientRect();
+      if(rect.width > 0) {
+        const imgData = c.ctx.getImageData(0,0,c.cvs.width,c.cvs.height);
+        c.cvs.width = rect.width;
+        c.cvs.height = 200;
+        this.resetCanvasStyle(type);
+        if(this.state.signatures[type]) {
+            const img = new Image();
+            img.onload = () => { c.ctx.drawImage(img, 0, 0); };
+            img.src = this.state.signatures[type];
+        }
+      }
+    });
+  },
+  resetCanvasStyle(type) {
+    const c = this.canvases[type].ctx;
+    c.fillStyle = '#FFFFFF';
+    c.fillRect(0, 0, this.canvases[type].cvs.width, this.canvases[type].cvs.height);
+    c.strokeStyle = '#000000';
+    c.lineWidth = 3;
+    c.lineCap = 'round';
+    c.lineJoin = 'round';
+  },
+  clearCanvas(type) {
+    this.resetCanvasStyle(type);
+    this.state.signatures[type] = null;
+    this.debounceRender();
+  },
+  saveSignature(type) {
+    this.state.signatures[type] = this.canvases[type].cvs.toDataURL('image/png');
+    this.debounceRender();
+    this.toast(`${type} signature applied.`);
+  },
+
+  // RENDER ENGINE
+  esc: str => String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'),
+  fmtCur: n => `${app.state.finance.currency}${Number(n).toLocaleString('en-IN', {maximumFractionDigits:2})}`,
+
+  renderPreview() {
+    const s = this.state;
+    
+    // Header
+    let html = `
+      <div class="doc-header avoid-break">
+        <div class="doc-title">QUOTATION</div>
+        <div class="doc-subtitle">${this.esc(s.general.title)}</div>
+        <div class="doc-meta">
+          <span>REF: ${this.esc(s.general.ref)}</span>
+          <span>DATE: ${this.esc(s.general.date)}</span>
+        </div>
+      </div>
+      <div class="doc-parties avoid-break">
+        <div>
+          <div class="party-label">PREPARED BY</div>
+          <div class="party-name">${this.esc(s.freelancer.name)}</div>
+          <div class="party-desc">${this.esc(s.freelancer.role)}<br>${this.esc(s.freelancer.info)}</div>
+        </div>
+        <div>
+          <div class="party-label">PREPARED FOR</div>
+          <div class="party-name">${this.esc(s.client.name)}</div>
+          <div class="party-desc">${this.esc(s.client.company)}<br>${this.esc(s.client.info)}</div>
+        </div>
+      </div>
+      <div class="doc-tagline avoid-break">${this.esc(s.general.tagline)}</div>
+    `;
+
+    // Sections & Totals
+    let subtotal = 0;
+    s.sections.forEach((sec, i) => {
+      if(!sec.rows.length) return;
+      html += `
+        <div class="doc-section-header avoid-break">
+          <div class="doc-section-num">${String(i+1).padStart(2,'0')}</div>
+          <div class="doc-section-title">${this.esc(sec.title)}</div>
+        </div>
+        <table class="doc-table">
+          <thead>
+            <tr class="avoid-break">
+              <th style="width: 35%;">SERVICE</th>
+              <th style="width: 40%;">DESCRIPTION</th>
+              <th class="col-center" style="width: 10%;">QTY</th>
+              <th class="col-right" style="width: 15%;">PRICE</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      sec.rows.forEach(r => {
+        const lineTotal = r.qty * r.price;
+        subtotal += lineTotal;
+        html += `
+          <tr class="avoid-break">
+            <td><strong>${this.esc(r.name)}</strong></td>
+            <td>${this.esc(r.desc)}</td>
+            <td class="col-center">${r.qty}</td>
+            <td class="col-right">${this.fmtCur(lineTotal)}</td>
+          </tr>
+        `;
+      });
+      html += `</tbody></table>`;
+    });
+
+    const discAmt = subtotal * (s.finance.discount / 100);
+    const taxBase = subtotal - discAmt;
+    const taxAmt = taxBase * (s.finance.tax / 100);
+    const grandTotal = taxBase + taxAmt;
+
+    html += `
+      <div class="doc-totals avoid-break">
+        <div class="tot-row"><span>Subtotal</span><span>${this.fmtCur(subtotal)}</span></div>
+        ${s.finance.discount > 0 ? `<div class="tot-row"><span>Discount (${s.finance.discount}%)</span><span>-${this.fmtCur(discAmt)}</span></div>` : ''}
+        ${s.finance.tax > 0 ? `<div class="tot-row"><span>Tax (${s.finance.tax}%)</span><span>${this.fmtCur(taxAmt)}</span></div>` : ''}
+        <div class="tot-row grand"><span>GRAND TOTAL</span><span>${this.fmtCur(grandTotal)}</span></div>
+      </div>
+    `;
+
+    // Terms
+    if (s.terms.length > 0) {
+      html += `
+        <div class="doc-section-header avoid-break" style="margin-top:50px;">
+          <div class="doc-section-num">${String(s.sections.length+1).padStart(2,'0')}</div>
+          <div class="doc-section-title">Terms & Conditions</div>
+        </div>
+        <table class="doc-table">
+          <thead><tr class="avoid-break"><th style="width: 25%;">CLAUSE</th><th>DETAILS</th></tr></thead>
+          <tbody>
+            ${s.terms.map(t => `
+              <tr class="avoid-break">
+                <td><strong>${this.esc(t.title)}</strong></td>
+                <td style="line-height: 1.6;">${this.esc(t.details)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    // Signatures (Force break-inside avoid to keep them together)
+    html += `
+      <div class="doc-signatures avoid-break page-break-if-needed">
+        <div class="sig-block">
+          <div>
+            <div class="sig-label">CLIENT</div>
+            <div class="sig-name">${this.esc(s.client.name)}</div>
+            <div class="sig-company">${this.esc(s.client.company)}</div>
+          </div>
+          <div>
+            <div class="sig-line-container">
+              <div class="sig-line-label">Signature:</div>
+              <div class="sig-line">
+                ${s.signatures.client ? `<img src="${s.signatures.client}" class="sig-img">` : ''}
+              </div>
+            </div>
+            <div class="sig-line-container" style="margin-bottom:0;">
+              <div class="sig-line-label">Date:</div>
+              <div class="sig-line" style="height:20px;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="sig-block">
+          <div>
+            <div class="sig-label">FREELANCER</div>
+            <div class="sig-name">${this.esc(s.freelancer.name)}</div>
+            <div class="sig-company">${this.esc(s.freelancer.role)}</div>
+          </div>
+          <div>
+            <div class="sig-line-container">
+              <div class="sig-line-label">Signature:</div>
+              <div class="sig-line">
+                ${s.signatures.freelancer ? `<img src="${s.signatures.freelancer}" class="sig-img">` : ''}
+              </div>
+            </div>
+            <div class="sig-line-container" style="margin-bottom:0;">
+              <div class="sig-line-label">Date:</div>
+              <div class="sig-line" style="height:20px;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="sig-footer">This document confirms agreement on the above-mentioned services, pricing, and terms.</div>
+      </div>
+    `;
+
+    document.getElementById('pdf-content').innerHTML = html;
+  },
+
+  // EXPORT / IMPORT
+  exportData() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.state));
+    const a = document.createElement('a');
+    a.setAttribute("href", dataStr);
+    a.setAttribute("download", `${this.state.general.ref}.json`);
+    a.click();
+    this.toast("JSON Exported!");
+  },
+  importData(e) {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const imported = JSON.parse(e.target.result);
+        this.state = imported;
+        
+        // Update DOM inputs
+        document.getElementById('g-title').value = this.state.general.title;
+        document.getElementById('g-ref').value = this.state.general.ref;
+        document.getElementById('g-date').value = this.state.general.date;
+        document.getElementById('g-tagline').value = this.state.general.tagline;
+        
+        document.getElementById('f-name').value = this.state.freelancer.name;
+        document.getElementById('f-role').value = this.state.freelancer.role;
+        document.getElementById('f-info').value = this.state.freelancer.info;
+        
+        document.getElementById('c-name').value = this.state.client.name;
+        document.getElementById('c-company').value = this.state.client.company;
+        document.getElementById('c-info').value = this.state.client.info;
+        
+        document.getElementById('fin-currency').value = this.state.finance.currency;
+        document.getElementById('fin-discount').value = this.state.finance.discount;
+        document.getElementById('fin-tax').value = this.state.finance.tax;
+
+        this.resizeCanvases();
+        this.renderBuilder();
+        this.renderPreview();
+        this.toast("Data Imported!");
+      } catch (err) {
+        this.toast("Error importing file!");
+      }
+    };
+    reader.readAsText(file);
+  },
+  generatePDF() {
+    this.toast("Generating PDF... Please wait.");
+    const element = document.getElementById('pdf-content');
+    const opt = {
+      margin: [10, 0, 10, 0],
+      filename: `${this.state.general.ref}.pdf`,
+      image: { type: 'jpeg', quality: 1 },
+      html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'], avoid: '.avoid-break' }
+    };
+    html2pdf().set(opt).from(element).save().then(() => {
+      this.toast("PDF Downloaded!");
+    });
+  },
+
+  toast(msg) {
+    const cont = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    t.className = 'toast show';
+    t.innerText = msg;
+    cont.appendChild(t);
+    setTimeout(() => {
+      t.classList.remove('show');
+      setTimeout(() => t.remove(), 300);
+    }, 3000);
+  }
+};
+
+window.onload = () => app.init();
 </script>
 </body>
 </html>
